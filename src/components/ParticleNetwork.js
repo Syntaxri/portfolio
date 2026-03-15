@@ -172,23 +172,40 @@ export default function ParticleNetwork({ config = {} }) {
     }
 
     // ── Draw cursor node ────────────────────────────────────────────────────
-    function drawCursorNode() {
-      if (mouse.x < 0) return;
-      const r = 3;
-      // Outer glow
-      const grd = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, r * 6);
-      grd.addColorStop(0, `rgba(${hexToRgb(cfg.cursorNodeColor)},0.18)`);
-      grd.addColorStop(1, `rgba(${hexToRgb(cfg.cursorNodeColor)},0)`);
-      ctx.beginPath();
-      ctx.arc(mouse.x, mouse.y, r * 6, 0, Math.PI * 2);
-      ctx.fillStyle = grd;
-      ctx.fill();
-      // Core dot
-      ctx.beginPath();
-      ctx.arc(mouse.x, mouse.y, r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${hexToRgb(cfg.cursorNodeColor)},0.9)`;
-      ctx.fill();
-    }
+    function hexToRgb(hex) {
+  if (!hex) return [255, 15, 0]; // fallback
+
+  hex = hex.replace(/^#/, '');
+  if (hex.length !== 6) return [255, 15, 0]; // fallback for invalid hex
+
+  const bigint = parseInt(hex, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return [r, g, b];
+}
+
+function drawCursorNode() {
+  if (!mouse || mouse.x < 0 || mouse.y < 0) return;
+
+  const r = 3;
+  const [red, green, blue] = hexToRgb(cfg.cursorNodeColor);
+
+  // Outer glow
+  const grd = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, r * 6);
+  grd.addColorStop(0, `rgba(${red},${green},${blue},0.18)`);
+  grd.addColorStop(1, `rgba(${red},${green},${blue},0)`);
+  ctx.beginPath();
+  ctx.arc(mouse.x, mouse.y, r * 6, 0, Math.PI * 2);
+  ctx.fillStyle = grd;
+  ctx.fill();
+
+  // Core dot
+  ctx.beginPath();
+  ctx.arc(mouse.x, mouse.y, r, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(${red},${green},${blue},0.9)`;
+  ctx.fill();
+}
 
     // ── Render loop ─────────────────────────────────────────────────────────
     function render() {

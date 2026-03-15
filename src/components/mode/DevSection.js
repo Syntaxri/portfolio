@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { featuredProjects } from '../../lib/data/developerProjects';
+import { featuredProjects } from '../../lib/data/Developerprojects';
 
 // ParticleNetwork is canvas-based — lazy load, no SSR
 const ParticleNetwork = dynamic(() => import('../ParticleNetwork'), { ssr: false });

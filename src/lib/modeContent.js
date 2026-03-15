@@ -9,7 +9,7 @@
  *   // Only loads developer data in developer mode
  *   const { featuredProjects } = await import('../lib/data/developerProjects');
  */
-import { developerProjects, featuredProjects }           from './data/developerProjects';
+import { developerProjects, featuredProjects }           from './data/Developerprojects';
 import { photographyGallery, photographyCollections, featuredPhotos } from './data/photographyGallery';
 
 export const developerContent = {

@@ -373,7 +373,7 @@ export default function ModeSelector() {
   };
 
   const handlePasswordSuccess = () => {
-    exit(() => setMode('photography'));
+    exit(() => setMode('photography', { verified: true }));
   };
 
   const exit = (cb) => {

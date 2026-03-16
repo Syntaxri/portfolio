@@ -1,110 +1,108 @@
 /**
  * ModeContext.js
  * ─────────────────────────────────────────────────────────────────────────────
- * Global portfolio mode state — hardened per spec:
- *
- *  • Validates localStorage value before trusting it (handles corruption)
- *  • Falls back to selection screen if value is missing / invalid
- *  • setMode() updates state + localStorage atomically
- *  • CSS variables applied to :root whenever mode changes
- *  • isReady prevents flash of wrong state on first render
- *  • switchMode() resets without breaking component state (no hard reload)
+ * Security rules:
+ *  • Developer → Photography: requires password (blocks direct setMode call)
+ *  • Photography → Developer: free switch
+ *  • Photography mode is never auto-loaded without a verified session
+ *  • Session verification stored separately from mode choice
  */
 "use client";
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { MODES } from '../lib/modeContent';
 
-const STORAGE_KEY   = 'portfolioMode';
-const VALID_MODES   = Object.keys(MODES); // ['developer', 'photography']
+const STORAGE_KEY          = 'portfolioMode';
+const SESSION_VERIFIED_KEY = 'photoSessionVerified'; // tab-session flag
+const VALID_MODES          = Object.keys(MODES);
 
 const ModeContext = createContext(null);
 
-/**
- * Safely read + validate localStorage.
- * Returns the stored mode string if valid, null otherwise.
- * Catches JSON errors, tampered values, and storage access failures.
- */
 function readPersistedMode() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;                         // key absent
-    const val = raw.trim().replace(/"/g, '');      // strip accidental JSON quotes
+    if (!raw) return null;
+    const val = raw.trim().replace(/"/g, '');
     if (!VALID_MODES.includes(val)) {
-      // Value present but invalid — clear it to prevent infinite bad state
       localStorage.removeItem(STORAGE_KEY);
       return null;
     }
+    // Photography mode persisted but session not verified → treat as null
+    // (forces password re-entry on new browser session)
+    if (val === 'photography') {
+      const sessionOk = sessionStorage.getItem(SESSION_VERIFIED_KEY);
+      if (!sessionOk) return null;
+    }
     return val;
   } catch {
-    // localStorage blocked (private mode, security policy, etc.)
     return null;
   }
 }
 
 function persistMode(mode) {
-  try { localStorage.setItem(STORAGE_KEY, mode); } catch { /* silent */ }
+  try { localStorage.setItem(STORAGE_KEY, mode); } catch { }
 }
 
 function applyTheme(mode) {
   if (!mode || !MODES[mode]) return;
-  const theme = MODES[mode].theme;
-  const root  = document.documentElement.style;
-  root.setProperty('--accent',  theme.accent);
-  root.setProperty('--bg',      theme.bg);
-  root.setProperty('--surface', theme.surface);
-  // Also expose raw RGB for box-shadow calculations
-  const hex = theme.accent.replace('#', '');
-  const r   = parseInt(hex.slice(0,2), 16);
-  const g   = parseInt(hex.slice(2,4), 16);
-  const b   = parseInt(hex.slice(4,6), 16);
-  root.setProperty('--accent-rgb', `${r},${g},${b}`);
+  const { accent, bg, surface } = MODES[mode].theme;
+  const root = document.documentElement.style;
+  root.setProperty('--accent',  accent);
+  root.setProperty('--bg',      bg);
+  root.setProperty('--surface', surface);
+  const hex = accent.replace('#', '');
+  root.setProperty('--accent-rgb',
+    `${parseInt(hex.slice(0,2),16)},${parseInt(hex.slice(2,4),16)},${parseInt(hex.slice(4,6),16)}`
+  );
 }
 
 export function ModeProvider({ children }) {
-  // null = not yet chosen (show selector), string = active mode
-  const [mode,    setModeState] = useState(null);
-  const [isReady, setIsReady]   = useState(false);
+  const [mode,              setModeState]    = useState(null);
+  const [isReady,           setIsReady]      = useState(false);
+  // Controls whether the password modal appears when switching to photography
+  const [pendingPhotoSwitch, setPendingPhotoSwitch] = useState(false);
 
-  // ── Read + validate persisted choice on mount ────────────────────────────
   useEffect(() => {
     const saved = readPersistedMode();
-    if (saved) {
-      setModeState(saved);
-      applyTheme(saved);
-    }
-    setIsReady(true); // always set ready so selector can render if no valid mode
+    if (saved) { setModeState(saved); applyTheme(saved); }
+    setIsReady(true);
   }, []);
 
-  // ── Apply CSS variables whenever mode changes ────────────────────────────
-  useEffect(() => {
-    if (mode) applyTheme(mode);
-  }, [mode]);
+  useEffect(() => { if (mode) applyTheme(mode); }, [mode]);
 
   /**
-   * setMode — public API for ModeSelector and ModeSwitcher
-   * Validates the value before accepting it.
+   * setMode — public API
+   * Direct call with 'photography' only allowed from ModeSelector/password gate.
+   * ModeSwitcher should use requestPhotoSwitch() instead.
    */
-  const setMode = useCallback((m) => {
-    if (!VALID_MODES.includes(m)) {
-      console.warn(`[ModeContext] Invalid mode: "${m}". Expected one of: ${VALID_MODES.join(', ')}`);
+  const setMode = useCallback((m, { verified = false } = {}) => {
+    if (!VALID_MODES.includes(m)) return;
+    if (m === 'photography' && !verified) {
+      // Trigger password gate instead of switching directly
+      setPendingPhotoSwitch(true);
       return;
+    }
+    if (m === 'photography' && verified) {
+      try { sessionStorage.setItem(SESSION_VERIFIED_KEY, '1'); } catch { }
     }
     setModeState(m);
     persistMode(m);
+    setPendingPhotoSwitch(false);
   }, []);
 
-  /**
-   * clearMode — resets to selector screen (for testing / edge cases)
-   */
   const clearMode = useCallback(() => {
     setModeState(null);
-    try { localStorage.removeItem(STORAGE_KEY); } catch { /* silent */ }
+    try { localStorage.removeItem(STORAGE_KEY); sessionStorage.removeItem(SESSION_VERIFIED_KEY); } catch { }
   }, []);
+
+  const cancelPendingSwitch = useCallback(() => setPendingPhotoSwitch(false), []);
 
   const content = useMemo(() => (mode ? MODES[mode] : null), [mode]);
 
   return (
-    <ModeContext.Provider value={{ mode, content, setMode, clearMode, isReady, validModes: VALID_MODES }}>
+    <ModeContext.Provider value={{
+      mode, content, setMode, clearMode, isReady,
+      pendingPhotoSwitch, cancelPendingSwitch, validModes: VALID_MODES,
+    }}>
       {children}
     </ModeContext.Provider>
   );
@@ -112,6 +110,6 @@ export function ModeProvider({ children }) {
 
 export function useMode() {
   const ctx = useContext(ModeContext);
-  if (!ctx) throw new Error('[useMode] Must be called inside <ModeProvider>');
+  if (!ctx) throw new Error('[useMode] Must be inside <ModeProvider>');
   return ctx;
 }

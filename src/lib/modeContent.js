@@ -54,11 +54,11 @@ export const developerContent = {
     ],
   },
   theme: {
-    accent:          '#ff6b35',
-    accentSecondary: '#c8f04a',
-    bg:              '#0a0a08',
-    surface:         '#111110',
-    particleColor:   '#ff6b35',
+    accent:          '#fc6b11',      
+    accentSecondary: '#ff8a47',      
+    bg:              '#050a14',
+    surface:         '#0b1426',
+    particleColor:   '#ff6200',
     cursorColor:     '#ffffff',
   },
 };

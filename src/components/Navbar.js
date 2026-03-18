@@ -122,63 +122,137 @@ function MobileMenu({ open, onClose, navLinks }) {
 
   return (
     <>
+      {/* Backdrop */}
       <div onClick={onClose} aria-hidden="true" style={{
-        position: 'fixed', inset: 0, zIndex: 299,
-        background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
-        opacity: open ? 1 : 0, pointerEvents: open ? 'auto' : 'none',
+        position: 'fixed', inset: 0,
+        zIndex: 590,                              /* below panel, above everything else */
+        background: 'rgba(0,0,0,0.65)',
+        backdropFilter: 'blur(6px)',
+        opacity: open ? 1 : 0,
+        pointerEvents: open ? 'auto' : 'none',
         transition: 'opacity 0.3s ease',
       }} />
-      <div id="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation" style={{
-        position: 'fixed', top: 0, right: 0, bottom: 0,
-        width: 'min(320px, 85vw)', zIndex: 300,
-        background: 'rgba(10,10,8,0.95)', backdropFilter: 'blur(24px)',
-        borderLeft: '1px solid rgba(255,255,255,0.08)',
-        transform: open ? 'translateX(0)' : 'translateX(100%)',
-        transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)',
-        display: 'flex', flexDirection: 'column', padding: '5rem 2.5rem 3rem',
-      }}>
-        <button onClick={onClose} aria-label="Close menu" style={{
-          position: 'absolute', top: '1.5rem', right: '1.5rem',
-          background: 'none', border: '1px solid rgba(255,255,255,0.12)',
-          color: 'var(--muted)', cursor: 'pointer', width: '36px', height: '36px',
-          borderRadius: '4px', fontSize: '1rem', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', outline: 'none',
-        }}>✕</button>
 
-        <nav aria-label="Mobile navigation">
+      {/* Slide-in panel — zIndex 600 so it's ABOVE the navbar (500) */}
+      <div
+        id="mobile-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation"
+        style={{
+          position: 'fixed', top: 0, right: 0, bottom: 0,
+          width: 'min(320px, 85vw)',
+          zIndex: 600,                            /* above navbar zIndex 500 */
+          /* Navy dark blue matching the new theme */
+          background: 'rgba(5, 10, 20, 0.97)',
+          backdropFilter: 'blur(28px)',
+          WebkitBackdropFilter: 'blur(28px)',
+          borderLeft: '1px solid rgba(96,165,250,0.12)',
+          boxShadow: open ? '-20px 0 60px rgba(0,0,0,0.6)' : 'none',
+          transform: open ? 'translateX(0)' : 'translateX(100%)',
+          transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)',
+          display: 'flex', flexDirection: 'column',
+          /* Padding top keeps content clear of the top edge — no close button needed */
+          padding: '4rem 2.5rem 3rem',
+        }}
+      >
+        {/* ── NO close button here — hamburger in navbar already morphs to X ── */}
+
+        {/* Brand mark */}
+        <p style={{
+          fontFamily: 'Syne, sans-serif', fontWeight: 800,
+          fontSize: '1rem', letterSpacing: '-0.03em',
+          marginBottom: '2.5rem', color: 'var(--text)',
+        }}>
+          <span style={{ color: 'var(--accent)' }}>{'{'}</span>
+          {' '}AR{' '}
+          <span style={{ color: 'var(--accent)' }}>{'}'}</span>
+        </p>
+
+        {/* Accent top bar */}
+        <div aria-hidden="true" style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
+          background: 'linear-gradient(90deg, var(--accent), transparent)',
+          opacity: 0.5,
+        }} />
+
+        {/* Nav links with stagger */}
+        <nav aria-label="Mobile navigation" style={{ flex: 1 }}>
           {navLinks.map((link, i) => {
             const isActive = pathname === link.href;
             return (
-              <Link key={link.href} href={link.href} onClick={onClose}
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={onClose}
                 aria-current={isActive ? 'page' : undefined}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '16px',
                   fontFamily: 'Syne, sans-serif', fontWeight: 800,
-                  fontSize: '1.6rem', letterSpacing: '-0.03em',
+                  fontSize: '1.5rem', letterSpacing: '-0.03em',
                   color: isActive ? 'var(--accent)' : 'var(--text)',
-                  textDecoration: 'none', paddingBottom: '1.2rem',
-                  marginBottom: '0.4rem',
-                  borderBottom: '1px solid rgba(255,255,255,0.06)',
-                  transform: open ? 'translateX(0)' : 'translateX(30px)',
+                  textDecoration: 'none',
+                  paddingBottom: '1.1rem', marginBottom: '0.3rem',
+                  borderBottom: '1px solid rgba(96,165,250,0.08)',
                   opacity: open ? 1 : 0,
-                  transition: `transform 0.4s cubic-bezier(0.16,1,0.3,1) ${0.1+i*0.06}s, opacity 0.3s ease ${0.1+i*0.06}s`,
+                  transform: open ? 'translateX(0)' : 'translateX(24px)',
+                  transition: `
+                    transform 0.4s cubic-bezier(0.16,1,0.3,1) ${0.08 + i * 0.06}s,
+                    opacity   0.35s ease                       ${0.08 + i * 0.06}s,
+                    color     0.2s ease
+                  `,
                 }}
               >
-                <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '0.65rem', color: 'var(--muted)', fontWeight: 400 }}>
-                  0{i+1}
+                <span style={{
+                  fontFamily: 'DM Mono, monospace', fontSize: '0.62rem',
+                  letterSpacing: '0.1em', color: 'var(--muted)', fontWeight: 400,
+                  minWidth: '20px',
+                }}>
+                  0{i + 1}
                 </span>
                 {link.label}
+                {isActive && (
+                  <span style={{
+                    marginLeft: 'auto', width: '6px', height: '6px',
+                    borderRadius: '50%', background: 'var(--accent)',
+                    flexShrink: 0,
+                  }} />
+                )}
               </Link>
             );
           })}
         </nav>
 
-        <div style={{ marginTop: 'auto',
+        {/* Bottom: mode switcher + email */}
+        <div style={{
+          marginTop: '2rem',
           opacity: open ? 1 : 0,
-          transform: open ? 'translateY(0)' : 'translateY(12px)',
-          transition: `opacity 0.4s ease 0.35s, transform 0.4s cubic-bezier(0.16,1,0.3,1) 0.35s`,
+          transform: open ? 'translateY(0)' : 'translateY(10px)',
+          transition: `opacity 0.4s ease 0.38s, transform 0.4s cubic-bezier(0.16,1,0.3,1) 0.38s`,
+          display: 'flex', flexDirection: 'column', gap: '12px',
         }}>
           <ModeSwitcher />
+          <a
+            href="mailto:hello@akramrihani.dev"
+            onClick={onClose}
+            style={{
+              display: 'block', textAlign: 'center',
+              fontFamily: 'DM Mono, monospace', fontSize: '0.72rem',
+              letterSpacing: '0.1em', textTransform: 'uppercase',
+              padding: '12px', borderRadius: '8px',
+              background: 'var(--accent)', color: 'var(--bg)',
+              textDecoration: 'none', fontWeight: 500,
+            }}
+          >
+            Hire me
+          </a>
+          <p style={{
+            fontFamily: 'DM Mono, monospace', fontSize: '0.6rem',
+            letterSpacing: '0.07em', color: 'var(--muted)',
+            textAlign: 'center',
+          }}>
+            hello@akramrihani.dev
+          </p>
         </div>
       </div>
     </>

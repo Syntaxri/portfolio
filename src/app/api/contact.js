@@ -122,7 +122,7 @@ export default async function handler(req, res) {
     });
     await transporter.sendMail({
       from:    `"Portfolio Contact" <${process.env.SMTP_USER}>`,
-      to:      process.env.CONTACT_EMAIL || 'hello@akramrihani.dev',
+      to:      process.env.CONTACT_EMAIL || 'akramrihanie@gmail.com',
       replyTo: email,
       subject: `New message from ${name} via portfolio`,
       text:    `Name: ${name}\nEmail: ${email}\n\n${message}`,
@@ -134,7 +134,7 @@ export default async function handler(req, res) {
     // const resend = new Resend(process.env.RESEND_API_KEY);
     // await resend.emails.send({
     //   from: 'Portfolio <onboarding@resend.dev>',
-    //   to:   process.env.CONTACT_EMAIL || 'hello@akramrihani.dev',
+    //   to:   process.env.CONTACT_EMAIL || 'akramrihanie@gmail.com',
     //   subject: `Portfolio message from ${name}`,
     //   html: `<p>${message}</p>`,
     // });

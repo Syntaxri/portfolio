@@ -437,7 +437,7 @@ export default function Photography() {
               </p>
             </div>
             <a
-              href="mailto:hello@example.com"
+              href="mailto:akramrihanie@gmail.com"
               style={{
                 fontFamily: 'DM Mono, monospace',
                 fontSize: '0.78rem',

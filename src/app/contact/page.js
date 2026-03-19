@@ -592,7 +592,7 @@ export default function ContactPage() {
             {/* Contact details */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {[
-                { icon: '✉', label: 'Email',    value: 'hello@akramrihani.dev', href: 'mailto:hello@akramrihani.dev' },
+                { icon: '✉', label: 'Email',    value: 'akramrihanie@gmail.com', href: 'mailto:hello@akramrihani.dev' },
                 { icon: '⌨', label: 'GitHub',   value: 'github.com/Syntaxri',    href: 'https://github.com/Syntaxri' },
                 { icon: '◈', label: 'LinkedIn', value: 'linkedin.com/in/riihaniakram', href: 'https://linkedin.com/in/riihaniakram' },
               ].map(({ icon, label, value, href }) => (

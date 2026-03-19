@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useMode } from '../context/ModeContext';
 import Navbar from './Navbar';
@@ -8,9 +8,15 @@ import RightNav from './RightNav';
 import MusicPlayer from './MusicPlayer';
 import ModeSelector from './ModeSelector';
 import PasswordModal from './PasswordModal';
+import dynamic from 'next/dynamic';
+
+// Loader is canvas/animation heavy — load only client side
+const PageLoader = dynamic(() => import('./PageLoader'), { ssr: false });
 
 const SELECTOR = '.reveal, .reveal-left, .reveal-right, .reveal-scale';
+const LOADER_KEY = 'ar_loader_seen'; // sessionStorage key — shows once per session
 
+// ─── Scroll reveal (unchanged logic) ─────────────────────────────────────────
 function useScrollReveal() {
   const pathname    = usePathname();
   const observerRef = useRef(null);
@@ -19,28 +25,18 @@ function useScrollReveal() {
   useEffect(() => {
     function revealIfVisible(el) {
       const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight && rect.bottom > 0) {
-        el.classList.add('revealed');
-      }
+      if (rect.top < window.innerHeight && rect.bottom > 0) el.classList.add('revealed');
     }
-
     function observe(el) {
       if (!observerRef.current || el.classList.contains('revealed')) return;
       revealIfVisible(el);
-      if (!el.classList.contains('revealed')) {
-        observerRef.current.observe(el);
-      }
+      if (!el.classList.contains('revealed')) observerRef.current.observe(el);
     }
 
     observerRef.current = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
-            observerRef.current?.unobserve(entry.target);
-          }
-        });
-      },
+      entries => entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('revealed'); observerRef.current?.unobserve(e.target); }
+      }),
       { threshold: 0.08, rootMargin: '0px' }
     );
 
@@ -48,17 +44,15 @@ function useScrollReveal() {
     document.querySelectorAll(SELECTOR).forEach(observe);
 
     mutObsRef.current = new MutationObserver(mutations => {
-      mutations.forEach(mutation => {
-        mutation.addedNodes.forEach(node => {
-          if (node.nodeType !== 1) return;
-          if (node.matches?.(SELECTOR)) observe(node);
-          node.querySelectorAll?.(SELECTOR).forEach(observe);
-        });
-      });
+      mutations.forEach(m => m.addedNodes.forEach(node => {
+        if (node.nodeType !== 1) return;
+        if (node.matches?.(SELECTOR)) observe(node);
+        node.querySelectorAll?.(SELECTOR).forEach(observe);
+      }));
     });
     mutObsRef.current.observe(document.body, { childList: true, subtree: true });
 
-    const safetyTimer = setTimeout(() => {
+    const t = setTimeout(() => {
       document.querySelectorAll(SELECTOR).forEach(el => {
         if (!el.classList.contains('revealed')) observe(el);
       });
@@ -67,16 +61,54 @@ function useScrollReveal() {
     return () => {
       observerRef.current?.disconnect();
       mutObsRef.current?.disconnect();
-      clearTimeout(safetyTimer);
+      clearTimeout(t);
       document.querySelectorAll(SELECTOR).forEach(el => el.classList.remove('revealed'));
     };
   }, [pathname]);
 }
 
+// ─── Layout ───────────────────────────────────────────────────────────────────
 export default function Layout({ children }) {
   useScrollReveal();
   const { mode, isReady } = useMode();
 
+  // Show loader once per session (not on every route change, not after mode select)
+  const [showLoader, setShowLoader] = useState(false);
+  const [loaderDone, setLoaderDone] = useState(false);
+
+  useEffect(() => {
+    try {
+      const seen = sessionStorage.getItem(LOADER_KEY);
+      if (!seen) {
+        setShowLoader(true);
+      } else {
+        setLoaderDone(true);
+      }
+    } catch {
+      setLoaderDone(true); // sessionStorage blocked — skip loader
+    }
+  }, []);
+
+  const handleLoaderComplete = () => {
+    try { sessionStorage.setItem(LOADER_KEY, '1'); } catch {}
+    setShowLoader(false);
+    setLoaderDone(true);
+  };
+
+  // Phase 1: Show loader (before mode is even known)
+  if (showLoader && !loaderDone) {
+    return (
+      <>
+        <PageLoader onComplete={handleLoaderComplete} />
+        {/* Render page underneath so it's ready when loader exits */}
+        <div style={{ visibility: 'hidden', pointerEvents: 'none', userSelect: 'none' }} aria-hidden="true">
+          {isReady && mode && children}
+        </div>
+      </>
+    );
+  }
+
+  // Phase 2: Loader done — show mode selector or app
   if (!isReady) return null;
   if (!mode)    return <ModeSelector />;
 
@@ -104,8 +136,6 @@ export default function Layout({ children }) {
       <div>{children}</div>
       <Footer />
       <MusicPlayer />
-
-      {/* Password modal for Dev → Photo switching — rendered at root level */}
       <PasswordModal />
     </>
   );

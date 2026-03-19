@@ -419,7 +419,7 @@ export default function PageLoader({ onComplete }) {
             color: 'rgba(108,122,146,0.9)',
             whiteSpace: 'nowrap',
           }}>
-            Frontend Engineer &nbsp;·&nbsp; UI / UX
+            Full-Stack Junior Developer &nbsp;·&nbsp; UI / UX
           </p>
         </div>
 

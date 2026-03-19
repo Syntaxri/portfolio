@@ -78,14 +78,15 @@ export default function Layout({ children }) {
 
   useEffect(() => {
     try {
+      const forceShow = new URLSearchParams(window.location.search).has('loader');
       const seen = sessionStorage.getItem(LOADER_KEY);
-      if (!seen) {
+      if (!seen || forceShow) {
         setShowLoader(true);
       } else {
         setLoaderDone(true);
       }
     } catch {
-      setLoaderDone(true); // sessionStorage blocked — skip loader
+      setLoaderDone(true);
     }
   }, []);
 

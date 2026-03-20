@@ -56,10 +56,11 @@ function applyTheme(mode) {
 }
 
 export function ModeProvider({ children }) {
-  const [mode,              setModeState]    = useState(null);
-  const [isReady,           setIsReady]      = useState(false);
-  // Controls whether the password modal appears when switching to photography
+  const [mode,              setModeState]       = useState(null);
+  const [isReady,           setIsReady]         = useState(false);
   const [pendingPhotoSwitch, setPendingPhotoSwitch] = useState(false);
+  // switching = true triggers the loader overlay in Layout
+  const [switching,         setSwitching]       = useState(false);
 
   useEffect(() => {
     const saved = readPersistedMode();
@@ -69,15 +70,9 @@ export function ModeProvider({ children }) {
 
   useEffect(() => { if (mode) applyTheme(mode); }, [mode]);
 
-  /**
-   * setMode — public API
-   * Direct call with 'photography' only allowed from ModeSelector/password gate.
-   * ModeSwitcher should use requestPhotoSwitch() instead.
-   */
   const setMode = useCallback((m, { verified = false } = {}) => {
     if (!VALID_MODES.includes(m)) return;
     if (m === 'photography' && !verified) {
-      // Trigger password gate instead of switching directly
       setPendingPhotoSwitch(true);
       return;
     }
@@ -88,6 +83,15 @@ export function ModeProvider({ children }) {
     persistMode(m);
     setPendingPhotoSwitch(false);
   }, []);
+
+  // switchMode — same as setMode but signals Layout to show the loader first
+  const switchMode = useCallback((m, opts = {}) => {
+    setSwitching(true);
+    // Small delay so Layout renders the loader before mode actually changes
+    setTimeout(() => setMode(m, opts), 80);
+  }, [setMode]);
+
+  const clearSwitching = useCallback(() => setSwitching(false), []);
 
   const clearMode = useCallback(() => {
     setModeState(null);
@@ -100,7 +104,8 @@ export function ModeProvider({ children }) {
 
   return (
     <ModeContext.Provider value={{
-      mode, content, setMode, clearMode, isReady,
+      mode, content, setMode, switchMode, clearMode, clearSwitching,
+      switching, isReady,
       pendingPhotoSwitch, cancelPendingSwitch, validModes: VALID_MODES,
     }}>
       {children}

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useMode } from '../context/ModeContext';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -11,11 +11,10 @@ import PasswordModal from './PasswordModal';
 import dynamic from 'next/dynamic';
 import { CursorTrail } from './Motion';
 
-// Loader is canvas/animation heavy — load only client side
 const PageLoader = dynamic(() => import('./PageLoader'), { ssr: false });
 
-const SELECTOR = '.reveal, .reveal-left, .reveal-right, .reveal-scale';
-const LOADER_KEY = 'ar_loader_seen'; // sessionStorage key — shows once per session
+const SELECTOR   = '.reveal, .reveal-left, .reveal-right, .reveal-scale';
+const LOADER_KEY = 'ar_loader_seen';
 
 // ─── Scroll reveal (unchanged logic) ─────────────────────────────────────────
 function useScrollReveal() {
@@ -71,22 +70,23 @@ function useScrollReveal() {
 // ─── Layout ───────────────────────────────────────────────────────────────────
 export default function Layout({ children }) {
   useScrollReveal();
-  const { mode, isReady } = useMode();
+  const { mode, isReady, switching, clearSwitching } = useMode();
+  const router = useRouter();
 
-  // Show loader once per session (not on every route change, not after mode select)
-  const [showLoader, setShowLoader] = useState(false);
-  const [loaderDone, setLoaderDone] = useState(false);
+  // ── First-visit loader ────────────────────────────────────────────────────
+  const [showLoader,   setShowLoader]   = useState(false);
+  const [loaderDone,   setLoaderDone]   = useState(false);
+  // ── Mode-switch loader ────────────────────────────────────────────────────
+  const [showSwitch,   setShowSwitch]   = useState(false);
 
+  // First visit check
   useEffect(() => {
     try {
       const seen = sessionStorage.getItem(LOADER_KEY);
-      if (!seen) {
-        setShowLoader(true);
-      } else {
-        setLoaderDone(true);
-      }
+      if (!seen) setShowLoader(true);
+      else       setLoaderDone(true);
     } catch {
-      setLoaderDone(true); // sessionStorage blocked — skip loader
+      setLoaderDone(true);
     }
   }, []);
 
@@ -96,20 +96,46 @@ export default function Layout({ children }) {
     setLoaderDone(true);
   };
 
-  // Phase 1: Show loader (before mode is even known)
+  // Watch for mode switch signal
+  useEffect(() => {
+    if (switching) setShowSwitch(true);
+  }, [switching]);
+
+  const handleSwitchComplete = () => {
+    setShowSwitch(false);
+    clearSwitching();
+    // Navigate to home after the loader finishes
+    router.push('/');
+    // Scroll to top smoothly
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  // ── First-visit loader phase ──────────────────────────────────────────────
   if (showLoader && !loaderDone) {
     return (
       <>
         <PageLoader onComplete={handleLoaderComplete} />
-        {/* Render page underneath so it's ready when loader exits */}
-        <div style={{ visibility: 'hidden', pointerEvents: 'none', userSelect: 'none' }} aria-hidden="true">
+        <div style={{ visibility:'hidden', pointerEvents:'none', userSelect:'none' }} aria-hidden="true">
           {isReady && mode && children}
         </div>
       </>
     );
   }
 
-  // Phase 2: Loader done — show mode selector or app
+  // ── Mode switch loader — overlays current page ────────────────────────────
+  // Renders on top of everything so the transition feels cinematic
+  if (showSwitch) {
+    return (
+      <>
+        <PageLoader onComplete={handleSwitchComplete} />
+        {/* Keep current page underneath so there's no blank flash */}
+        <div style={{ visibility:'hidden', pointerEvents:'none', userSelect:'none' }} aria-hidden="true">
+          {children}
+        </div>
+      </>
+    );
+  }
+
   if (!isReady) return null;
   if (!mode)    return <ModeSelector />;
 

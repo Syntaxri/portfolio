@@ -10,7 +10,7 @@ import { useMode } from '../context/ModeContext';
 const PHOTO_PASSWORD = 'photography will never die';
 
 export default function PasswordModal() {
-  const { pendingPhotoSwitch, cancelPendingSwitch, setMode } = useMode();
+  const { pendingPhotoSwitch, cancelPendingSwitch, setMode, switchMode } = useMode();
   const [value,   setValue]   = useState('');
   const [error,   setError]   = useState('');
   const [shaking, setShaking] = useState(false);
@@ -43,7 +43,7 @@ export default function PasswordModal() {
     setLoading(true);
     setTimeout(() => {
       if (value.trim().toLowerCase() === PHOTO_PASSWORD) {
-        setMode('photography', { verified: true });
+        switchMode('photography', { verified: true }); // shows loader + navigates home
       } else {
         setLoading(false);
         setValue('');

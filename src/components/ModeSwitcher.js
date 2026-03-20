@@ -15,7 +15,7 @@ const MODE_META = {
 };
 
 export default function ModeSwitcher() {
-  const { mode, setMode }     = useMode();
+  const { mode, setMode, switchMode } = useMode();
   const [confirm, setConfirm] = useState(false);
   const [hovered, setHovered] = useState(false);
   const timerRef              = useRef(null);
@@ -24,25 +24,25 @@ export default function ModeSwitcher() {
 
   if (!mode) return null;
 
-  const other     = mode === 'developer' ? 'photography' : 'developer';
-  const otherMeta = MODE_META[other];
+  const other          = mode === 'developer' ? 'photography' : 'developer';
+  const otherMeta      = MODE_META[other];
   const isGoingToPhoto = other === 'photography';
 
   const handleClick = () => {
     if (isGoingToPhoto) {
-      // Dev → Photo: setMode will trigger pendingPhotoSwitch → PasswordModal
-      // No confirm step needed — the password IS the confirmation
-      setMode('photography'); // context blocks and sets pendingPhotoSwitch
+      // Dev → Photo: password required — setMode triggers pendingPhotoSwitch
+      // PasswordModal will call switchMode after password confirmed
+      setMode('photography');
       return;
     }
-    // Photo → Dev: two-click confirm
+    // Photo → Dev: two-click confirm, then show loader + go home
     if (!confirm) {
       setConfirm(true);
       timerRef.current = setTimeout(() => setConfirm(false), 2500);
     } else {
       clearTimeout(timerRef.current);
       setConfirm(false);
-      setMode('developer');
+      switchMode('developer'); // shows loader, then switches, then navigates home
     }
   };
 

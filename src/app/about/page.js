@@ -2,8 +2,9 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
-import SkillBadge from '../../components/SkillBadge';
-import ParticleNetwork from '../../components/ParticleNetwork';
+import SkillBadge from '../components/SkillBadge';
+import ParticleNetwork from '../components/ParticleNetwork';
+import { FadeUp, SlideLeft, SlideRight, ScaleIn, Stagger, CountUp } from '../components/Motion';
 
 const skills = [
   { skill: 'JavaScript / TypeScript', level: 95 },
@@ -35,7 +36,7 @@ function Portrait() {
       {/* Circular accent ring behind the image */}
       <div style={{
         position: 'absolute',
-        top: '-10px', left: '-18px', right: '-15px', bottom: '25px',
+        top: '-10px', left: '-10px', right: '-10px', bottom: '-10px',
         border: '1.5px solid var(--accent)',
         borderRadius: '50%',
         opacity: hovered ? 0.6 : 0.25,
@@ -221,19 +222,26 @@ export default function About() {
                 When I'm not shipping features, I'm out with my Sony α7 capturing landscapes, cityscapes, and anything with interesting light.
               </p>
 
-              {/* Stat pills */}
+              {/* Stat pills — animated CountUp */}
               <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
                 {[
-                  { n: '5+',  label: 'Years coding'     },
-                  { n: '30+', label: 'Projects shipped'  },
-                  { n: '8',   label: 'Countries shot'    },
-                ].map(({ n, label }) => (
+                  { n: 5,  suffix: '+', label: 'Years coding',    delay: 800  },
+                  { n: 30, suffix: '+', label: 'Projects shipped', delay: 1000 },
+                  { n: 8,  suffix: '',  label: 'Countries shot',   delay: 1200 },
+                ].map(({ n, suffix, label, delay }) => (
                   <div key={label} style={{
                     padding: '10px 16px',
                     border: '1px solid var(--border)',
                     borderRadius: '4px', textAlign: 'center',
-                  }}>
-                    <p style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '1.3rem', color: 'var(--accent)', letterSpacing: '-0.03em', lineHeight: 1 }}>{n}</p>
+                    transition: 'border-color 0.3s ease, background 0.3s ease',
+                    cursor: 'default',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(var(--accent-rgb),0.4)'; e.currentTarget.style.background='rgba(var(--accent-rgb),0.04)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.background='transparent'; }}
+                  >
+                    <p style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '1.3rem', color: 'var(--accent)', letterSpacing: '-0.03em', lineHeight: 1 }}>
+                      <CountUp end={n} suffix={suffix} duration={delay} />
+                    </p>
                     <p style={{ fontFamily: 'DM Mono, monospace', fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted)', marginTop: '4px' }}>{label}</p>
                   </div>
                 ))}
@@ -252,9 +260,9 @@ export default function About() {
               Technical Skills
             </h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.8rem' }}>
+          <Stagger style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.8rem' }}>
             {skills.map(s => <SkillBadge key={s.skill} {...s} />)}
-          </div>
+          </Stagger>
         </section>
 
         {/* ══ TIMELINE ══════════════════════════════════════════════════ */}
@@ -270,7 +278,7 @@ export default function About() {
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {timeline.map((item, i) => (
-              <div key={i} style={{
+              <FadeUp key={i} delay={i * 0.12} style={{
                 display: 'grid',
                 gridTemplateColumns: '80px 1fr',
                 gap: '2rem',
@@ -287,14 +295,14 @@ export default function About() {
                   <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '0.75rem', color: 'var(--accent)', letterSpacing: '0.06em' }}>
                     {item.year}
                   </span>
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', marginLeft: 'auto', marginTop: '8px', boxShadow: '0 0 6px var(--accent)' }} />
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', marginLeft: 'auto', marginTop: '8px', boxShadow: '0 0 8px var(--accent)' }} />
                 </div>
                 <div>
                   <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '1.1rem', color: 'var(--white)', marginBottom: '4px' }}>{item.role}</h3>
                   <p style={{ fontFamily: 'DM Mono, monospace', fontSize: '0.72rem', color: 'var(--accent)', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '8px' }}>{item.company}</p>
                   <p style={{ color: 'var(--muted)', fontSize: '0.88rem', lineHeight: 1.7 }}>{item.desc}</p>
                 </div>
-              </div>
+              </FadeUp>
             ))}
           </div>
         </section>

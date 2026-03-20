@@ -36,7 +36,7 @@ const SOCIAL_LINKS = [
 ];
 
 // ─── Animated gradient separator ─────────────────────────────────────────────
-function GradientLine() {
+function GradientLine({ animate }) {
   return (
     <div
       style={{
@@ -48,32 +48,18 @@ function GradientLine() {
       }}
     >
       {/* Static base line */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'var(--border)',
-        }}
-      />
-      {/* Animated shimmer — infinite blink */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(90deg, transparent 0%, var(--accent) 40%, #fff 50%, var(--accent) 60%, transparent 100%)',
-          backgroundSize: '200% 100%',
-          animation: 'shimmer 1.5s cubic-bezier(0.4,0,0.2,1) infinite',
-        }}
-      />
-      <style>{`
-        @keyframes shimmer {
-          0%   { background-position: 200% center; opacity: 0; }
-          10%  { opacity: 1; }
-          90%  { opacity: 1; }
-          100% { background-position: -200% center; opacity: 0; }
-        }
-      `}</style>
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'var(--border)',
+      }} />
+      {/* Animated shimmer */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(90deg, transparent 0%, var(--accent) 40%, #fff 50%, var(--accent) 60%, transparent 100%)',
+        backgroundSize: '200% 100%',
+        opacity: animate ? 1 : 0,
+        animation: animate ? 'shimmer 1.4s cubic-bezier(0.4,0,0.2,1) forwards' : 'none',
+      }} />
     </div>
   );
 }
@@ -190,7 +176,7 @@ export default function Footer() {
     <>
       <style>{`
         @keyframes footerFadeUp {
-          from { opacity: 0; transform: translateY(28px); }
+          from { opacity: 0; transform: translateY(24px); }
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes shimmer {
@@ -201,14 +187,20 @@ export default function Footer() {
         }
         @keyframes dotPulse {
           0%, 100% { opacity: 0.4; transform: scale(1); }
-          50%       { opacity: 1;   transform: scale(1.4); }
+          50%       { opacity: 1;   transform: scale(1.5); }
         }
-        .footer-inner {
-          opacity: 0;
+        @keyframes iconIn {
+          from { opacity: 0; transform: translateY(12px) scale(0.85); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
         }
+        .footer-inner { opacity: 0; }
         .footer-inner.visible {
           animation: footerFadeUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
         }
+        /* Stagger social icons */
+        .footer-inner.visible .social-icon-0 { animation: iconIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.35s both; }
+        .footer-inner.visible .social-icon-1 { animation: iconIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.45s both; }
+        .footer-inner.visible .social-icon-2 { animation: iconIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.55s both; }
       `}</style>
 
       <footer
@@ -277,8 +269,10 @@ export default function Footer() {
 
             {/* Social icons */}
             <nav aria-label="Social media links" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              {SOCIAL_LINKS.map(s => (
-                <SocialIcon key={s.label} {...s} />
+              {SOCIAL_LINKS.map((s, i) => (
+                <div key={s.label} className={`social-icon-${i}`} style={{ opacity: 0 }}>
+                  <SocialIcon {...s} />
+                </div>
               ))}
             </nav>
           </div>
@@ -314,7 +308,7 @@ export default function Footer() {
               Built with
               {/* Heart */}
               <span style={{ color: '#e25555', fontSize: '0.75rem' }}>♥</span>
-              By Akram Rihani
+              &amp; Next.js
             </p>
           </div>
         </div>

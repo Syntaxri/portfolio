@@ -5,9 +5,9 @@
 "use client";
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { featuredPhotos, photographyCollections } from '../../lib/data/photographyGallery';
+import { FadeUp, FadeIn, SlideLeft, SlideRight, ScaleIn, Stagger } from '../Motion';
 
 const ParticleNetwork = dynamic(() => import('../ParticleNetwork'), { ssr: false });
 
@@ -94,24 +94,24 @@ export default function PhotoSection({ content }) {
 
       {/* ── Collections ── */}
       <section style={{ padding:'8rem 2rem', maxWidth:'960px', margin:'0 auto' }}>
-        <div className="reveal" style={{ marginBottom:'3.5rem' }}>
+        <FadeUp style={{ marginBottom:'3.5rem' }}>
           <span style={{ fontFamily:'DM Mono, monospace', fontSize:'0.7rem', letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--accent)', display:'block', marginBottom:'0.75rem' }}>Collections</span>
           <h2 style={{ fontSize:'clamp(2rem,5vw,3.5rem)', color:'var(--white)', lineHeight:1.05 }}>Curated<br />series</h2>
-        </div>
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(260px,1fr))', gap:'1.5rem' }}>
-          {photographyCollections.map((col, i) => <CollectionCard key={col.slug} col={col} delay={i+1} />)}
-        </div>
+        </FadeUp>
+        <Stagger baseDelay={0.1} staggerMs={90} style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(260px,1fr))', gap:'1.5rem' }}>
+          {photographyCollections.map(col => <CollectionCard key={col.slug} col={col} delay={0} />)}
+        </Stagger>
       </section>
 
       {/* ── Featured gallery strip ── */}
       <section style={{ padding:'0 2rem 8rem', maxWidth:'960px', margin:'0 auto' }}>
-        <div className="reveal" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'2.5rem', flexWrap:'wrap', gap:'1rem' }}>
+        <FadeUp style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'2.5rem', flexWrap:'wrap', gap:'1rem' }}>
           <h2 style={{ fontSize:'clamp(1.8rem,4vw,2.8rem)', color:'var(--white)', lineHeight:1.05 }}>Recent<br />frames</h2>
           <Link href="/photography" style={{ fontFamily:'DM Mono, monospace', fontSize:'0.75rem', letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--accent)', textDecoration:'none' }}>Full gallery →</Link>
-        </div>
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'8px' }}>
-          {featuredPhotos.slice(0,3).map((photo, i) => <GalleryThumb key={photo.id} photo={photo} delay={i} />)}
-        </div>
+        </FadeUp>
+        <Stagger baseDelay={0.1} staggerMs={70} style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'8px' }}>
+          {featuredPhotos.slice(0,3).map(photo => <GalleryThumb key={photo.id} photo={photo} delay={0} />)}
+        </Stagger>
       </section>
     </>
   );

@@ -1,9 +1,6 @@
-"use client";
 import { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
-import Navbar from '../../components/Navbar';
-import Footer from '../../components/Footer';
-import ParticleNetwork from '../../components/ParticleNetwork';
+import { FadeUp, FadeIn, SlideLeft, SlideRight, ScaleIn, CountUp } from '../components/Motion';
 
 // ─── Photo data (swap src with your real images) ──────────────────────────
 const PHOTOS = [
@@ -271,192 +268,115 @@ export default function Photography() {
         <meta name="description" content="Photography portfolio — landscape, portrait, urban" />
       </Head>
 
-      <Navbar />
-
       <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 2rem' }}>
-        <section style={{
-                    position: 'relative',   // ← required so canvas positions inside it
-                    overflow: 'hidden',     // ← prevents canvas bleeding out
-                    paddingTop: '100px',
-                    minHeight: '60vh',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                  }}>
-        
-                    {/* Particle network — behind everything */}
-                    <ParticleNetwork
-                      config={{
-                        nodeCount: 60,
-                        nodeColor: '#ff6b35',
-                        lineColor: '#ff6b35',
-                        cursorNodeColor: '#ffffff',
-                        maxLineDistance: 130,
-                        cursorRadius: 180,
-                        cursorStrength: 0.012,
-                        lineBaseOpacity: 0.12,
-                        speed: 0.25,
-                      }}
-                    />
+
           {/* ── Header ─────────────────────────────────────────────────── */}
           <div style={{ marginBottom: '4rem' }}>
-            <span style={{
-              fontFamily: 'DM Mono, monospace',
-              fontSize: '0.75rem',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: 'var(--accent)',
-              display: 'block',
-              marginBottom: '1rem',
-            }}>
-              Through the lens
-            </span>
+            <FadeIn>
+              <span style={{ fontFamily:'DM Mono, monospace', fontSize:'0.75rem', letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--accent)', display:'block', marginBottom:'1rem' }}>
+                Through the lens
+              </span>
+            </FadeIn>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '2rem' }}>
-              <h1 style={{
-                fontFamily: 'Syne, sans-serif',
-                fontWeight: 800,
-                fontSize: 'clamp(2.8rem, 7vw, 5.5rem)',
-                letterSpacing: '-0.04em',
-                lineHeight: 0.95,
-                color: 'var(--white)',
-              }}>
-                Akramo&shy;<br />
-                <span style={{ color: 'var(--muted)' }}>graphy</span>
-              </h1>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', flexWrap:'wrap', gap:'2rem' }}>
+              <SlideLeft delay={0.1}>
+                <h1 style={{ fontFamily:'Syne, sans-serif', fontWeight:800, fontSize:'clamp(2.8rem,7vw,5.5rem)', letterSpacing:'-0.04em', lineHeight:0.95, color:'var(--white)' }}>
+                  Photo&shy;<br />
+                  <span style={{ color:'var(--muted)' }}>graphy</span>
+                </h1>
+              </SlideLeft>
 
-              <p style={{
-                maxWidth: '340px',
-                color: 'var(--muted)',
-                fontSize: '0.88rem',
-                lineHeight: 1.8,
-                fontFamily: 'DM Mono, monospace',
-              }}>
-                I shoot between commits. Landscapes, street scenes, and the occasional portrait — always chasing the frame where light and geometry collide.
-              </p>
+              <SlideRight delay={0.2}>
+                <p style={{ maxWidth:'340px', color:'var(--muted)', fontSize:'0.88rem', lineHeight:1.8, fontFamily:'DM Mono, monospace' }}>
+                  I shoot between commits. Landscapes, street scenes, and the occasional portrait — always chasing the frame where light and geometry collide.
+                </p>
+              </SlideRight>
             </div>
 
-            {/* Divider */}
-            <div style={{
-              marginTop: '2.5rem',
-              height: '1px',
-              background: 'linear-gradient(90deg, var(--accent) 0%, var(--border) 40%, transparent 100%)',
-            }} />
-          </div>
-          </section>
-          {/* ── Filter tabs ────────────────────────────────────────────── */}
-          <div style={{
-            display: 'flex', gap: '0.4rem', marginBottom: '2.5rem', flexWrap: 'wrap',
-          }}>
-            {CATEGORIES.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                style={{
-                  fontFamily: 'DM Mono, monospace',
-                  fontSize: '0.72rem',
-                  letterSpacing: '0.09em',
-                  textTransform: 'uppercase',
-                  padding: '8px 20px',
-                  border: '1px solid',
-                  borderColor: activeCategory === cat ? 'var(--accent)' : 'var(--border)',
-                  background: activeCategory === cat ? 'var(--accent)' : 'transparent',
-                  color: activeCategory === cat ? 'var(--bg)' : 'var(--muted)',
-                  borderRadius: '2px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={e => {
-                  if (activeCategory !== cat) {
-                    e.currentTarget.style.borderColor = 'var(--text)';
-                    e.currentTarget.style.color = 'var(--text)';
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (activeCategory !== cat) {
-                    e.currentTarget.style.borderColor = 'var(--border)';
-                    e.currentTarget.style.color = 'var(--muted)';
-                  }
-                }}
-              >
-                {cat}
-                <span style={{
-                  marginLeft: '8px',
-                  opacity: 0.5,
-                  fontSize: '0.65rem',
-                }}>
-                  {cat === 'all' ? PHOTOS.length : PHOTOS.filter(p => p.category === cat).length}
-                </span>
-              </button>
-            ))}
+            {/* Animated divider */}
+            <FadeUp delay={0.3}>
+              <div style={{ marginTop:'2.5rem', height:'1px', background:'linear-gradient(90deg, var(--accent) 0%, var(--border) 40%, transparent 100%)', transformOrigin:'left', animation:'lineGrow 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s both' }} />
+            </FadeUp>
           </div>
 
-          {/* ── Masonry Grid ───────────────────────────────────────────── */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gridAutoRows: '220px',
-            gap: '10px',
-            marginBottom: '6rem',
-          }}>
-            {filtered.map(photo => (
-              <PhotoCard key={photo.id} photo={photo} onClick={openLightbox} />
+          {/* ── Filter tabs ────────────────────────────────────────────── */}
+          <FadeUp delay={0.15} style={{ marginBottom: '2.5rem' }}>
+            <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  style={{
+                    fontFamily:'DM Mono, monospace', fontSize:'0.72rem',
+                    letterSpacing:'0.09em', textTransform:'uppercase',
+                    padding:'8px 20px', border:'1px solid',
+                    borderColor: activeCategory === cat ? 'var(--accent)' : 'var(--border)',
+                    background: activeCategory === cat ? 'var(--accent)' : 'transparent',
+                    color: activeCategory === cat ? 'var(--bg)' : 'var(--muted)',
+                    borderRadius:'6px', cursor:'pointer',
+                    transition:'all 0.25s cubic-bezier(0.16,1,0.3,1)',
+                    transform: activeCategory === cat ? 'translateY(-2px)' : 'none',
+                    boxShadow: activeCategory === cat ? '0 4px 16px rgba(var(--accent-rgb),0.3)' : 'none',
+                  }}
+                  onMouseEnter={e => { if (activeCategory !== cat) { e.currentTarget.style.borderColor='rgba(var(--accent-rgb),0.4)'; e.currentTarget.style.color='var(--text)'; }}}
+                  onMouseLeave={e => { if (activeCategory !== cat) { e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.color='var(--muted)'; }}}
+                >
+                  {cat}
+                  <span style={{ marginLeft:'8px', opacity:0.5, fontSize:'0.65rem' }}>
+                    {cat === 'all' ? PHOTOS.length : PHOTOS.filter(p => p.category === cat).length}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </FadeUp>
+
+          {/* ── Masonry Grid — cards fade in with stagger ─────────────── */}
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(260px, 1fr))', gridAutoRows:'220px', gap:'10px', marginBottom:'6rem' }}>
+            {filtered.map((photo, i) => (
+              <div key={photo.id} style={{
+                opacity: 0,
+                transform: 'translateY(20px)',
+                animation: `fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) ${0.05 + i * 0.04}s forwards`,
+                gridRow: photo.aspect === 'tall' ? 'span 2' : 'span 1',
+              }}>
+                <PhotoCard photo={photo} onClick={openLightbox} />
+              </div>
             ))}
           </div>
 
           {/* ── Bottom callout ─────────────────────────────────────────── */}
-          <div style={{
-            marginBottom: '6rem',
-            padding: '3rem',
-            border: '1px solid var(--border)',
-            borderRadius: '2px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '1.5rem',
-            position: 'relative',
-            overflow: 'hidden',
-          }}>
+          <ScaleIn style={{ marginBottom:'6rem' }}>
             <div style={{
-              position: 'absolute', top: 0, left: 0, right: 0,
-              height: '2px',
-              background: 'linear-gradient(90deg, transparent, var(--accent), transparent)',
-            }} />
-            <div>
-              <p style={{
-                fontFamily: 'Syne, sans-serif', fontWeight: 800,
-                fontSize: '1.4rem', color: 'var(--white)', letterSpacing: '-0.02em',
-                marginBottom: '0.4rem',
-              }}>
-                Need a photographer?
-              </p>
-              <p style={{ color: 'var(--muted)', fontSize: '0.85rem', fontFamily: 'DM Mono, monospace' }}>
-                Available for projects, events & collaborations.
-              </p>
-            </div>
-            <a
-              href="mailto:akramrihanie@gmail.com"
-              style={{
-                fontFamily: 'DM Mono, monospace',
-                fontSize: '0.78rem',
-                letterSpacing: '0.07em',
-                textTransform: 'uppercase',
-                padding: '12px 28px',
-                border: '1px solid var(--accent)',
-                color: 'var(--accent)',
-                borderRadius: '2px',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.2s',
-                flexShrink: 0,
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.color = 'var(--bg)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--accent)'; }}
+              padding:'3rem', border:'1px solid var(--border)', borderRadius:'10px',
+              display:'flex', justifyContent:'space-between', alignItems:'center',
+              flexWrap:'wrap', gap:'1.5rem', position:'relative', overflow:'hidden',
+              background:'rgba(11,20,38,0.6)',
+              transition:'border-color 0.3s ease, box-shadow 0.3s ease',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(var(--accent-rgb),0.35)'; e.currentTarget.style.boxShadow='0 8px 32px rgba(var(--accent-rgb),0.08)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.boxShadow='none'; }}
             >
-              Get in touch →
-            </a>
-          </div>
+              <div aria-hidden style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg, transparent, var(--accent), transparent)' }} />
+              <div>
+                <p style={{ fontFamily:'Syne, sans-serif', fontWeight:800, fontSize:'1.4rem', color:'var(--white)', letterSpacing:'-0.02em', marginBottom:'0.4rem' }}>
+                  Need a photographer?
+                </p>
+                <p style={{ color:'var(--muted)', fontSize:'0.85rem', fontFamily:'DM Mono, monospace' }}>
+                  Available for projects, events &amp; collaborations.
+                </p>
+              </div>
+              <a
+                href="mailto:akramrihanie@gmail.com"
+                className="magnetic"
+                style={{ fontFamily:'DM Mono, monospace', fontSize:'0.78rem', letterSpacing:'0.07em', textTransform:'uppercase', padding:'12px 28px', border:'1px solid var(--accent)', color:'var(--accent)', borderRadius:'6px', whiteSpace:'nowrap', transition:'all 0.25s cubic-bezier(0.16,1,0.3,1)', flexShrink:0, display:'inline-block' }}
+                onMouseEnter={e => { e.currentTarget.style.background='var(--accent)'; e.currentTarget.style.color='var(--bg)'; e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 6px 20px rgba(var(--accent-rgb),0.35)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.color='var(--accent)'; e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='none'; }}
+              >
+                Get in touch →
+              </a>
+            </div>
+          </ScaleIn>
 
         </div>
       </main>

@@ -6,9 +6,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { featuredProjects } from '../../lib/data/Developerprojects';
+import { featuredProjects } from '../../lib/data/developerProjects';
+import { FadeUp, FadeIn, SlideLeft, SlideRight, ScaleIn, Stagger } from '../Motion';
 
-// ParticleNetwork is canvas-based — lazy load, no SSR
 const ParticleNetwork = dynamic(() => import('../ParticleNetwork'), { ssr: false });
 
 function ProjectCard({ project }) {
@@ -20,31 +20,62 @@ function ProjectCard({ project }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         border: `1px solid ${hovered ? 'var(--accent)' : 'var(--border)'}`,
-        borderRadius: '4px', padding: '2rem',
-        background: hovered ? 'rgba(255,107,53,0.03)' : 'var(--surface)',
-        transition: 'all 0.25s cubic-bezier(.16,1,.3,1)',
-        transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
+        borderRadius: '8px', padding: '2rem',
+        /* Navy-tinted surface — glows with a warm orange tint on hover */
+        background: hovered
+          ? 'linear-gradient(135deg, rgba(255,140,66,0.07) 0%, rgba(11,20,38,0.98) 100%)'
+          : 'var(--surface)',
+        transition: 'all 0.28s cubic-bezier(.16,1,.3,1)',
+        transform: hovered ? 'translateY(-5px)' : 'translateY(0)',
         position: 'relative', overflow: 'hidden',
+        boxShadow: hovered
+          ? '0 12px 40px rgba(255,140,66,0.12), 0 0 0 1px rgba(255,140,66,0.15)'
+          : '0 2px 12px rgba(0,0,0,0.3)',
       }}
     >
-      <div style={{ position:'absolute', top:0, right:0, width: hovered ? '80px':'0', height:'2px', background:'var(--accent)', transition:'width .3s ease' }} />
+      {/* Top accent bar slides in on hover */}
+      <div style={{
+        position:'absolute', top:0, left:0,
+        width: hovered ? '100%' : '0',
+        height:'2px',
+        background:'linear-gradient(90deg, var(--accent), var(--accent2))',
+        transition:'width .4s cubic-bezier(.16,1,.3,1)',
+      }} />
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:'0.8rem' }}>
-        <h3 style={{ fontFamily:'Syne, sans-serif', fontWeight:800, fontSize:'1.15rem', letterSpacing:'-0.02em', color: hovered ? 'var(--accent)' : 'var(--white)', transition:'color .2s' }}>{title}</h3>
+        <h3 style={{
+          fontFamily:'Syne, sans-serif', fontWeight:800, fontSize:'1.15rem',
+          letterSpacing:'-0.02em',
+          color: hovered ? 'var(--accent)' : 'var(--white)',
+          transition:'color .2s',
+        }}>{title}</h3>
         <div style={{ display:'flex', gap:'6px', alignItems:'center' }}>
-          {status === 'wip' && <span style={{ fontFamily:'DM Mono, monospace', fontSize:'0.6rem', letterSpacing:'0.08em', textTransform:'uppercase', padding:'2px 8px', border:'1px solid var(--accent)', color:'var(--accent)', borderRadius:'10px' }}>WIP</span>}
+          {status === 'wip' && (
+            <span style={{
+              fontFamily:'DM Mono, monospace', fontSize:'0.6rem', letterSpacing:'0.08em',
+              textTransform:'uppercase', padding:'2px 8px',
+              border:'1px solid var(--accent)', color:'var(--accent)', borderRadius:'10px',
+            }}>WIP</span>
+          )}
           {year && <span style={{ fontFamily:'DM Mono, monospace', fontSize:'0.7rem', color:'var(--muted)' }}>{year}</span>}
         </div>
       </div>
       <p style={{ color:'var(--muted)', fontSize:'0.88rem', lineHeight:1.7, marginBottom:'1.2rem' }}>{description}</p>
-      {/* Tech stack badges */}
+      {/* Tech stack badges — navy-tinted with subtle blue border */}
       <div style={{ display:'flex', flexWrap:'wrap', gap:'6px', marginBottom:'1.4rem' }}>
         {techStack.map(t => (
-          <span key={t} style={{ fontFamily:'DM Mono, monospace', fontSize:'0.68rem', letterSpacing:'0.06em', textTransform:'uppercase', padding:'3px 10px', border:'1px solid var(--border)', borderRadius:'2px', color:'var(--muted)' }}>{t}</span>
+          <span key={t} style={{
+            fontFamily:'DM Mono, monospace', fontSize:'0.68rem', letterSpacing:'0.06em',
+            textTransform:'uppercase', padding:'3px 10px',
+            border:'1px solid rgba(96,165,250,0.2)',
+            borderRadius:'4px',
+            color:'rgba(96,165,250,0.7)',
+            background:'rgba(96,165,250,0.05)',
+          }}>{t}</span>
         ))}
       </div>
       <div style={{ display:'flex', gap:'1rem' }}>
         {liveDemo   && <a href={liveDemo}   target="_blank" rel="noopener noreferrer" style={{ fontFamily:'DM Mono, monospace', fontSize:'0.72rem', letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--accent)', textDecoration:'none' }}>Live →</a>}
-        {githubLink && <a href={githubLink} target="_blank" rel="noopener noreferrer" style={{ fontFamily:'DM Mono, monospace', fontSize:'0.72rem', letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--muted)',  textDecoration:'none' }}>GitHub ↗</a>}
+        {githubLink && <a href={githubLink} target="_blank" rel="noopener noreferrer" style={{ fontFamily:'DM Mono, monospace', fontSize:'0.72rem', letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--muted)', textDecoration:'none' }}>GitHub ↗</a>}
       </div>
     </article>
   );
@@ -56,7 +87,7 @@ export default function DevSection({ content }) {
     <>
       {/* ── Hero ── */}
       <section id="hero" style={{ minHeight:'100vh', position:'relative', display:'flex', flexDirection:'column', justifyContent:'center', overflow:'hidden' }}>
-        <ParticleNetwork config={{ nodeCount:80, nodeColor:theme.particleColor, lineColor:theme.particleColor, cursorNodeColor:'#fff', maxLineDistance:140, cursorRadius:200, cursorStrength:0.014, lineBaseOpacity:0.15, speed:0.3 }} />
+        <ParticleNetwork config={{ nodeCount:130, nodeColor:theme.particleColor, lineColor:theme.particleColor, cursorNodeColor:'#fff', maxLineDistance:150, cursorRadius:220, cursorStrength:0.018, lineBaseOpacity:0.18, speed:0.65 }} />
         <div aria-hidden="true" style={{ position:'absolute', inset:0, zIndex:1, pointerEvents:'none', background:'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, var(--bg) 100%)' }} />
         <div style={{ position:'relative', zIndex:2, padding:'0 2rem', maxWidth:'900px', margin:'0 auto', width:'100%' }}>
           <div className="animate-fade-up">
@@ -85,31 +116,35 @@ export default function DevSection({ content }) {
 
       {/* ── Featured Projects ── */}
       <section id="projects" style={{ padding:'8rem 2rem', maxWidth:'960px', margin:'0 auto' }}>
-        <div className="reveal" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'4rem', flexWrap:'wrap', gap:'1rem' }}>
+        <FadeUp style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'4rem', flexWrap:'wrap', gap:'1rem' }}>
           <div>
             <span style={{ fontFamily:'DM Mono, monospace', fontSize:'0.7rem', letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--accent)', display:'block', marginBottom:'0.75rem' }}>Selected work</span>
             <h2 style={{ fontSize:'clamp(2rem,5vw,3.5rem)', color:'var(--white)', lineHeight:1.05 }}>Things I've<br />shipped</h2>
           </div>
-          <Link href="/projects" style={{ fontFamily:'DM Mono, monospace', fontSize:'0.75rem', letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--accent)', textDecoration:'none' }}>All projects →</Link>
-        </div>
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(320px,1fr))', gap:'1.5rem' }}>
-          {featuredProjects.map((p, i) => (
-            <div key={p.id} className="reveal" data-delay={String(i+1)}>
-              <ProjectCard project={p} />
-            </div>
-          ))}
-        </div>
+          <Link href="/projects" style={{ fontFamily:'DM Mono, monospace', fontSize:'0.75rem', letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--accent)', textDecoration:'none', transition:'letter-spacing 0.3s ease' }}
+            onMouseEnter={e => e.currentTarget.style.letterSpacing='0.12em'}
+            onMouseLeave={e => e.currentTarget.style.letterSpacing='0.06em'}
+          >All projects →</Link>
+        </FadeUp>
+        <Stagger baseDelay={0.1} staggerMs={80} style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(320px,1fr))', gap:'1.5rem' }}>
+          {featuredProjects.map(p => <ProjectCard key={p.id} project={p} />)}
+        </Stagger>
       </section>
 
       {/* ── CTA ── */}
       <section id="contact" style={{ padding:'0 2rem 8rem' }}>
-        <div className="reveal-scale" style={{ maxWidth:'860px', margin:'0 auto', padding:'5rem 4rem', border:'1px solid var(--border)', borderRadius:'4px', textAlign:'center', position:'relative', overflow:'hidden' }}>
-          <div aria-hidden="true" style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent,var(--accent),transparent)' }} />
-          <div aria-hidden="true" style={{ position:'absolute', inset:0, pointerEvents:'none', background:'radial-gradient(ellipse 60% 60% at 50% 0%, rgba(255,107,53,0.06) 0%, transparent 70%)' }} />
-          <h2 style={{ fontSize:'clamp(1.8rem,4.5vw,3.2rem)', color:'var(--white)', marginBottom:'1.2rem', lineHeight:1.1, position:'relative' }}>Let's build something<br />remarkable together.</h2>
-          <p style={{ color:'var(--muted)', marginBottom:'3rem', fontSize:'0.9rem', lineHeight:1.8, position:'relative' }}>Open to full-time roles and select freelance projects.</p>
-          <a href="mailto:hello@akramrihani.dev" className="btn-primary" style={{ position:'relative' }}>Get in touch</a>
-        </div>
+        <ScaleIn>
+          <div style={{ maxWidth:'860px', margin:'0 auto', padding:'5rem 4rem', border:'1px solid var(--border)', borderRadius:'12px', textAlign:'center', position:'relative', overflow:'hidden', background:'rgba(11,20,38,0.5)', transition:'border-color 0.3s ease, box-shadow 0.3s ease' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(var(--accent-rgb),0.3)'; e.currentTarget.style.boxShadow='0 12px 48px rgba(var(--accent-rgb),0.08)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor='var(--border)'; e.currentTarget.style.boxShadow='none'; }}
+          >
+            <div aria-hidden="true" style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent,var(--accent),transparent)' }} />
+            <div aria-hidden="true" style={{ position:'absolute', inset:0, pointerEvents:'none', background:'radial-gradient(ellipse 60% 60% at 50% 0%, rgba(255,107,53,0.06) 0%, transparent 70%)' }} />
+            <h2 style={{ fontSize:'clamp(1.8rem,4.5vw,3.2rem)', color:'var(--white)', marginBottom:'1.2rem', lineHeight:1.1, position:'relative' }}>Let's build something<br />remarkable together.</h2>
+            <p style={{ color:'var(--muted)', marginBottom:'3rem', fontSize:'0.9rem', lineHeight:1.8, position:'relative' }}>Open to full-time roles and select freelance projects.</p>
+            <a href="mailto:akramrihanie@gmail.com" className="btn-primary" style={{ position:'relative' }}>Get in touch</a>
+          </div>
+        </ScaleIn>
       </section>
     </>
   );

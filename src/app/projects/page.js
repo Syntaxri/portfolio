@@ -1,9 +1,9 @@
 "use client";
 import { useState } from 'react';
 import Head from 'next/head';
-import ProjectCard from '../components/ProjectCard';
-import ParticleNetwork from '../components/ParticleNetwork';
-import { FadeUp, FadeIn, Stagger, ScaleIn } from '../components/Motion';
+import ProjectCard from '../../components/ProjectCard';
+import ParticleNetwork from '../../components/ParticleNetwork';
+import { FadeUp, FadeIn, Stagger, ScaleIn } from '../../components/Motion';
 
 const allProjects = [
   { title:'Synthwave Studio',  description:'Browser-based audio synthesizer with real-time waveform visualization using Web Audio API and Canvas.', tags:['React','Web Audio','Canvas'],        link:'#', github:'#', year:'2024', category:'frontend'  },

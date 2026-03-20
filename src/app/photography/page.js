@@ -1,6 +1,7 @@
+"use client";
 import { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
-import { FadeUp, FadeIn, SlideLeft, SlideRight, ScaleIn, CountUp } from '../components/Motion';
+import { FadeUp, FadeIn, SlideLeft, SlideRight, ScaleIn, CountUp } from '../../components/Motion';
 
 // ─── Photo data (swap src with your real images) ──────────────────────────
 const PHOTOS = [

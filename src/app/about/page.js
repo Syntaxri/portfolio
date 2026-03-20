@@ -2,9 +2,9 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
-import SkillBadge from '../components/SkillBadge';
-import ParticleNetwork from '../components/ParticleNetwork';
-import { FadeUp, SlideLeft, SlideRight, ScaleIn, Stagger, CountUp } from '../components/Motion';
+import SkillBadge from '../../components/SkillBadge';
+import ParticleNetwork from '../../components/ParticleNetwork';
+import { FadeUp, SlideLeft, SlideRight, ScaleIn, Stagger, CountUp } from '../../components/Motion';
 
 const skills = [
   { skill: 'JavaScript / TypeScript', level: 95 },

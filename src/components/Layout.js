@@ -9,6 +9,7 @@ import MusicPlayer from './MusicPlayer';
 import ModeSelector from './ModeSelector';
 import PasswordModal from './PasswordModal';
 import dynamic from 'next/dynamic';
+import { CursorTrail } from './Motion';
 
 // Loader is canvas/animation heavy — load only client side
 const PageLoader = dynamic(() => import('./PageLoader'), { ssr: false });
@@ -78,15 +79,14 @@ export default function Layout({ children }) {
 
   useEffect(() => {
     try {
-      const forceShow = new URLSearchParams(window.location.search).has('loader');
       const seen = sessionStorage.getItem(LOADER_KEY);
-      if (!seen || forceShow) {
+      if (!seen) {
         setShowLoader(true);
       } else {
         setLoaderDone(true);
       }
     } catch {
-      setLoaderDone(true);
+      setLoaderDone(true); // sessionStorage blocked — skip loader
     }
   }, []);
 
@@ -138,6 +138,8 @@ export default function Layout({ children }) {
       <Footer />
       <MusicPlayer />
       <PasswordModal />
+      {/* Orange dot cursor trail — desktop only, skipped on touch */}
+      <CursorTrail />
     </>
   );
 }

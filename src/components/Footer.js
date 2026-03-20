@@ -38,27 +38,28 @@ const SOCIAL_LINKS = [
 // ─── Animated gradient separator ─────────────────────────────────────────────
 function GradientLine({ animate }) {
   return (
-    <div
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: '1px',
-        overflow: 'hidden',
-        marginBottom: '2.5rem',
-      }}
-    >
+    <div style={{
+      position: 'relative',
+      width: '100%',
+      height: '1px',
+      overflow: 'hidden',
+      marginBottom: '2.5rem',
+    }}>
       {/* Static base line */}
       <div style={{
         position: 'absolute', inset: 0,
         background: 'var(--border)',
       }} />
-      {/* Animated shimmer */}
+
+      {/* Continuous travelling light — loops forever once footer enters view */}
       <div style={{
         position: 'absolute', inset: 0,
         background: 'linear-gradient(90deg, transparent 0%, var(--accent) 40%, #fff 50%, var(--accent) 60%, transparent 100%)',
         backgroundSize: '200% 100%',
+        backgroundPosition: animate ? undefined : '200% center',
         opacity: animate ? 1 : 0,
-        animation: animate ? 'shimmer 1.4s cubic-bezier(0.4,0,0.2,1) forwards' : 'none',
+        animation: animate ? 'footerLineTravel 2.2s cubic-bezier(0.4,0,0.2,1) infinite' : 'none',
+        transition: 'opacity 0.4s ease',
       }} />
     </div>
   );
@@ -179,11 +180,9 @@ export default function Footer() {
           from { opacity: 0; transform: translateY(24px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes shimmer {
-          0%   { background-position: 200% center; opacity: 0; }
-          10%  { opacity: 1; }
-          90%  { opacity: 1; }
-          100% { background-position: -200% center; opacity: 0; }
+        @keyframes footerLineTravel {
+          0%   { background-position: 220% center; }
+          100% { background-position: -20% center; }
         }
         @keyframes dotPulse {
           0%, 100% { opacity: 0.4; transform: scale(1); }
@@ -197,7 +196,6 @@ export default function Footer() {
         .footer-inner.visible {
           animation: footerFadeUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
         }
-        /* Stagger social icons */
         .footer-inner.visible .social-icon-0 { animation: iconIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.35s both; }
         .footer-inner.visible .social-icon-1 { animation: iconIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.45s both; }
         .footer-inner.visible .social-icon-2 { animation: iconIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.55s both; }

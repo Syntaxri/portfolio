@@ -6,8 +6,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { featuredProjects } from '../../lib/data/Developerprojects';
+import { featuredProjects } from '../../lib/data/developerProjects';
 import { FadeUp, FadeIn, SlideLeft, SlideRight, ScaleIn, Stagger } from '../Motion';
+import LogoCarousel from '../LogoCarousel';
 
 const ParticleNetwork = dynamic(() => import('../ParticleNetwork'), { ssr: false });
 
@@ -113,6 +114,15 @@ export default function DevSection({ content }) {
           </div>
         </div>
       </section>
+
+      {/* ── Tech Stack Carousel ── */}
+      <div style={{
+        borderTop: '1px solid var(--border)',
+        borderBottom: '1px solid var(--border)',
+        background: 'rgba(11,20,38,0.4)',
+      }}>
+        <LogoCarousel />
+      </div>
 
       {/* ── Featured Projects ── */}
       <section id="projects" style={{ padding:'8rem 2rem', maxWidth:'960px', margin:'0 auto' }}>

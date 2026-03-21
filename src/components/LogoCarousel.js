@@ -53,6 +53,7 @@ const SKILLS_ROW_2 = [
 // ── Single skill pill ─────────────────────────────────────────────────────
 function SkillPill({ label, icon, color }) {
   const [hovered, setHovered] = useState(false);
+  const rgb = hexToRgb(color);
 
   return (
     <div
@@ -62,59 +63,63 @@ function SkillPill({ label, icon, color }) {
         display: 'inline-flex',
         alignItems: 'center',
         gap: '8px',
-        padding: '10px 20px',
+        padding: '12px 20px',
         borderRadius: '8px',
-        border: `1px solid ${hovered ? color + '60' : 'rgba(255,255,255,0.08)'}`,
-        background: hovered
-          ? `rgba(${hexToRgb(color)}, 0.08)`
-          : 'rgba(11,20,38,0.6)',
+        /* Always show brand color border — dim at rest, vivid on hover */
+        border: `1px solid rgba(${rgb}, ${hovered ? 0.7 : 0.22})`,
+        /* Always show brand color bg — very subtle at rest, richer on hover */
+        background: `rgba(${rgb}, ${hovered ? 0.14 : 0.06})`,
         backdropFilter: 'blur(6px)',
         whiteSpace: 'nowrap',
         cursor: 'default',
         transition: 'border-color 0.3s ease, background 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease',
-        transform: hovered ? 'translateY(-3px) scale(1.04)' : 'translateY(0) scale(1)',
-        boxShadow: hovered ? `0 8px 24px ${color}25` : 'none',
+        transform: hovered ? 'translateY(-4px) scale(1.06)' : 'translateY(0) scale(1)',
+        boxShadow: hovered
+          ? `0 8px 28px rgba(${rgb}, 0.35), 0 0 0 1px rgba(${rgb}, 0.2)`
+          : `0 2px 8px rgba(${rgb}, 0.08)`,
         flexShrink: 0,
         userSelect: 'none',
       }}
     >
-      {/* Icon */}
+      {/* Icon — always brand colored, brighter on hover */}
       <span style={{
         fontSize: '1rem',
         lineHeight: 1,
-        color: hovered ? color : 'var(--muted)',
+        color: `rgba(${rgb}, ${hovered ? 1 : 0.65})`,
         transition: 'color 0.25s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
         display: 'inline-block',
-        transform: hovered ? 'scale(1.2)' : 'scale(1)',
+        transform: hovered ? 'scale(1.25)' : 'scale(1)',
         fontStyle: 'normal',
         minWidth: '1.2rem',
         textAlign: 'center',
+        filter: hovered ? `drop-shadow(0 0 6px rgba(${rgb}, 0.8))` : 'none',
       }}>
         {icon}
       </span>
 
-      {/* Label */}
+      {/* Label — always brand colored, brighter on hover */}
       <span style={{
         fontFamily: 'DM Mono, monospace',
         fontSize: '0.72rem',
         letterSpacing: '0.08em',
         textTransform: 'uppercase',
-        color: hovered ? 'var(--white)' : 'var(--muted)',
+        color: `rgba(${rgb}, ${hovered ? 1 : 0.55})`,
         transition: 'color 0.25s ease',
         fontWeight: 400,
       }}>
         {label}
       </span>
 
-      {/* Active dot */}
+      {/* Glow dot — always visible dimly, bright on hover */}
       <span style={{
         width: '4px', height: '4px',
         borderRadius: '50%',
         background: color,
-        opacity: hovered ? 1 : 0,
-        transform: hovered ? 'scale(1)' : 'scale(0)',
+        opacity: hovered ? 1 : 0.3,
+        transform: hovered ? 'scale(1.3)' : 'scale(1)',
         transition: 'opacity 0.25s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
         flexShrink: 0,
+        boxShadow: hovered ? `0 0 6px ${color}` : 'none',
       }} />
     </div>
   );
@@ -143,9 +148,11 @@ function CarouselRow({ skills, direction = 'left', speed = 40, paused }) {
 
   return (
     <div style={{
-      overflow: 'hidden',
+      overflowX: 'hidden',
+      overflowY: 'visible',
       width: '100%',
-      // Edge fade masks — hides the hard ends
+      paddingTop: '6px',
+      paddingBottom: '6px',
       maskImage: 'linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%)',
       WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%)',
     }}>
@@ -219,7 +226,7 @@ export default function LogoCarousel() {
       </div>
 
       {/* Row 1 — scrolls left */}
-      <div style={{ marginBottom: '12px' }}>
+      <div style={{ marginBottom: '20px' }}>
         <CarouselRow
           skills={SKILLS_ROW_1}
           direction="left"

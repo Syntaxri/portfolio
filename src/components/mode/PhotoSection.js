@@ -8,6 +8,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { featuredPhotos, photographyCollections } from '../../lib/data/photographyGallery';
 import { FadeUp, FadeIn, SlideLeft, SlideRight, ScaleIn, Stagger } from '../Motion';
+import { PhotoGuy } from '../BuilderGuy';
 
 const ParticleNetwork = dynamic(() => import('../ParticleNetwork'), { ssr: false });
 
@@ -80,7 +81,21 @@ export default function PhotoSection({ content }) {
           <h1 className="animate-fade-up animate-delay-1" style={{ display:'flex', alignItems:'center', gap:'0.1em', marginBottom:'1.5rem', lineHeight:1 }}>
             <span style={{ fontSize:'clamp(8rem,22vw,16rem)', color:'var(--accent)', fontFamily:'Syne, sans-serif', fontWeight:800, lineHeight:0.85, letterSpacing:'-0.06em', flexShrink:0 }}>I</span>
             <span style={{ display:'flex', flexDirection:'column', gap:'0.08em' }}>
-              <span style={{ fontSize:'clamp(2rem,6.5vw,5.2rem)', color:'var(--white)', fontFamily:'Syne, sans-serif', fontWeight:800, letterSpacing:'-0.03em', lineHeight:1, marginLeft:'20px' }}>{hero.line1}</span>
+              {/* "Capture moments" with photographer guy sitting on the C */}
+              <span style={{ fontSize:'clamp(2rem,6.5vw,5.2rem)', color:'var(--white)', fontFamily:'Syne, sans-serif', fontWeight:800, letterSpacing:'-0.03em', lineHeight:1, marginLeft:'20px', position:'relative', display:'inline-block' }}>
+                {hero.line1}
+                <span style={{
+                  position: 'absolute',
+                  bottom: '100%',
+                  left: '-8px',
+                  pointerEvents: 'none',
+                  zIndex: 10,
+                  fontSize: 0,
+                  lineHeight: 0,
+                }}>
+                  <PhotoGuy />
+                </span>
+              </span>
               <span style={{ fontSize:'clamp(1.4rem,4.5vw,3.6rem)', color:'var(--accent)', fontFamily:'Syne, sans-serif', fontWeight:800, letterSpacing:'-0.03em', lineHeight:1.5, marginLeft:'20px' }}>{hero.line2}</span>
             </span>
           </h1>

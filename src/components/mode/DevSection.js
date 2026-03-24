@@ -107,11 +107,10 @@ export default function DevSection({ content }) {
                 {/* Guy sits on top of the B — positioned at left edge of the text */}
                 <span style={{
                   position: 'absolute',
-                  bottom: '100%',
+                  bottom: '60%',
                   left: '-8px',
                   pointerEvents: 'none',
                   zIndex: 10,
-                  /* Scale with font size */
                   fontSize: 0,
                   lineHeight: 0,
                 }}>

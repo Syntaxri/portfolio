@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Background -->
+  <rect width="64" height="64" rx="14" fill="#050a14"/>
+
+  <!-- Outer hexagon ring -->
+  <polygon
+    points="32,4 56,18 56,46 32,60 8,46 8,18"
+    fill="none"
+    stroke="#ff8c42"
+    stroke-width="1.5"
+    opacity="0.6"
+  />
+
+  <!-- Inner hexagon ring -->
+  <polygon
+    points="32,10 50,21 50,43 32,54 14,43 14,21"
+    fill="none"
+    stroke="#ff8c42"
+    stroke-width="0.8"
+    opacity="0.3"
+  />
+
+  <!-- A — white -->
+  <text
+    x="17"
+    y="42"
+    font-family="'Syne','Arial Black',sans-serif"
+    font-weight="800"
+    font-size="26"
+    fill="#f8fafc"
+    letter-spacing="-2"
+  >A</text>
+
+  <!-- R — orange accent -->
+  <text
+    x="36"
+    y="42"
+    font-family="'Syne','Arial Black',sans-serif"
+    font-weight="800"
+    font-size="26"
+    fill="#ff8c42"
+    letter-spacing="-2"
+  >R</text>
+</svg>

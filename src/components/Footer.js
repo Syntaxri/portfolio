@@ -25,7 +25,7 @@ const SOCIAL_LINKS = [
   },
   {
     label: 'Instagram',
-    href: 'https://instagram.com/akramography',
+    href: 'https://instagram.com/viaruq',
     color: '#e1306c',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

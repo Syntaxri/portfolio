@@ -1,7 +1,3 @@
-/**
- * DevSection.js — Developer homepage sections
- * Dynamically imported — only loaded when mode === 'developer'
- */
 "use client";
 import { useState } from 'react';
 import Link from 'next/link';
@@ -9,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { featuredProjects } from '../../lib/data/Developerprojects';
 import { FadeUp, FadeIn, SlideLeft, SlideRight, ScaleIn, Stagger } from '../Motion';
 import LogoCarousel from '../LogoCarousel';
+import ProjectCarousel from '../ProjectCarousel';
 
 const ParticleNetwork = dynamic(() => import('../ParticleNetwork'), { ssr: false });
 
@@ -137,20 +134,22 @@ export default function DevSection({ content }) {
       </div>
 
       {/* ── Featured Projects ── */}
-      <section id="projects" style={{ padding:'8rem 2rem', maxWidth:'960px', margin:'0 auto' }}>
-        <FadeUp style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'4rem', flexWrap:'wrap', gap:'1rem' }}>
+      <section id="projects" style={{ padding:'6rem 0 4rem' }}>
+        <FadeUp style={{ maxWidth:'960px', margin:'0 auto', padding:'0 2rem', display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'3rem', flexWrap:'wrap', gap:'1rem' }}>
           <div>
             <span style={{ fontFamily:'DM Mono, monospace', fontSize:'0.7rem', letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--accent)', display:'block', marginBottom:'0.75rem' }}>Selected work</span>
             <h2 style={{ fontSize:'clamp(2rem,5vw,3.5rem)', color:'var(--white)', lineHeight:1.05 }}>Get started with<br />Projects</h2>
           </div>
-          <Link href="/projects" style={{ fontFamily:'DM Mono, monospace', fontSize:'0.75rem', letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--accent)', textDecoration:'none', transition:'letter-spacing 0.3s ease' }}
+          <Link href="/projects" style={{ fontFamily:'DM Mono, monospace', fontSize:'0.75rem', letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--accent)', textDecoration:'none', transition:'letter-spacing 0.3s ease', marginRight:'2rem' }}
             onMouseEnter={e => e.currentTarget.style.letterSpacing='0.12em'}
             onMouseLeave={e => e.currentTarget.style.letterSpacing='0.06em'}
           >All projects →</Link>
         </FadeUp>
-        <Stagger baseDelay={0.1} staggerMs={80} style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(320px,1fr))', gap:'1.5rem' }}>
-          {featuredProjects.map(p => <ProjectCard key={p.id} project={p} />)}
-        </Stagger>
+
+        {/* Full-bleed carousel — no side padding so cards peek at edges */}
+        <FadeUp delay={0.15}>
+          <ProjectCarousel projects={featuredProjects} />
+        </FadeUp>
       </section>
 
       {/* ── CTA ── */}

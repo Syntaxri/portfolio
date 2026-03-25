@@ -9,7 +9,6 @@ import dynamic from 'next/dynamic';
 import { featuredProjects } from '../../lib/data/Developerprojects';
 import { FadeUp, FadeIn, SlideLeft, SlideRight, ScaleIn, Stagger } from '../Motion';
 import LogoCarousel from '../LogoCarousel';
-import { DevGuy } from '../BuilderGuy';
 
 const ParticleNetwork = dynamic(() => import('../ParticleNetwork'), { ssr: false });
 
@@ -101,10 +100,8 @@ export default function DevSection({ content }) {
           <h1 className="animate-fade-up animate-delay-1" style={{ display:'flex', alignItems:'center', gap:'0.1em', marginBottom:'1.5rem', lineHeight:1 }}>
             <span style={{ fontSize:'clamp(8rem,22vw,16rem)', color:'var(--accent)', fontFamily:'Syne, sans-serif', fontWeight:800, lineHeight:0.85, letterSpacing:'-0.06em', flexShrink:0 }}>I</span>
             <span style={{ display:'flex', flexDirection:'column', gap:'0.08em' }}>
-              {/* "Build things" with guy sitting on the B */}
               <span style={{ fontSize:'clamp(2rem,6.5vw,5.2rem)', color:'var(--white)', fontFamily:'Syne, sans-serif', fontWeight:800, letterSpacing:'-0.03em', lineHeight:1, marginLeft:'20px', position:'relative', display:'inline-block' }}>
                 {hero.line1}
-                {/* Guy sits on top of the B — positioned at left edge of the text */}
                 <span style={{
                   position: 'absolute',
                   bottom: '60%',
@@ -114,7 +111,6 @@ export default function DevSection({ content }) {
                   fontSize: 0,
                   lineHeight: 0,
                 }}>
-                  <DevGuy />
                 </span>
               </span>
               <span style={{ fontSize:'clamp(1.4rem,4.5vw,3.6rem)', color:'var(--muted)', fontFamily:'Syne, sans-serif', fontWeight:800, letterSpacing:'-0.03em', lineHeight:1.5, marginLeft:'20px' }}>{hero.line2}</span>
@@ -145,7 +141,7 @@ export default function DevSection({ content }) {
         <FadeUp style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'4rem', flexWrap:'wrap', gap:'1rem' }}>
           <div>
             <span style={{ fontFamily:'DM Mono, monospace', fontSize:'0.7rem', letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--accent)', display:'block', marginBottom:'0.75rem' }}>Selected work</span>
-            <h2 style={{ fontSize:'clamp(2rem,5vw,3.5rem)', color:'var(--white)', lineHeight:1.05 }}>Things I've<br />shipped</h2>
+            <h2 style={{ fontSize:'clamp(2rem,5vw,3.5rem)', color:'var(--white)', lineHeight:1.05 }}>Get started with<br />Projects</h2>
           </div>
           <Link href="/projects" style={{ fontFamily:'DM Mono, monospace', fontSize:'0.75rem', letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--accent)', textDecoration:'none', transition:'letter-spacing 0.3s ease' }}
             onMouseEnter={e => e.currentTarget.style.letterSpacing='0.12em'}

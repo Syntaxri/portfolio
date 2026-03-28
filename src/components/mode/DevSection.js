@@ -93,54 +93,38 @@ export default function DevSection({ content }) {
         <ParticleNetwork config={{ nodeCount:130, nodeColor:theme.particleColor, lineColor:theme.particleColor, cursorNodeColor:'#fff', maxLineDistance:150, cursorRadius:220, cursorStrength:0.018, lineBaseOpacity:0.18, speed:0.65 }} />
         <div aria-hidden="true" style={{ position:'absolute', inset:0, zIndex:1, pointerEvents:'none', background:'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, var(--bg) 100%)' }} />
 
-        {/* Two-column layout */}
-        <div style={{
-          position: 'relative', zIndex: 2,
-          padding: '0 2rem',
-          maxWidth: '1100px', margin: '0 auto', width: '100%',
-          display: 'flex', alignItems: 'center',
-          gap: 'clamp(2rem, 5vw, 4rem)',
-        }}>
+        {/* Navbar-aware padding: 100px top clears the fixed nav */}
+        <div style={{ position:'relative', zIndex:2, padding:'50px 2rem 2rem', maxWidth:'1100px', margin:'0 auto', width:'100%' }}>
+          <div className="hero-layout">
 
-          {/* ── LEFT: Profile card ── */}
-          <ProfileCard />
+            {/* ── LEFT: Profile card ── */}
+            <ProfileCard mode="developer" />
 
-          {/* ── RIGHT: Hero text ── */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="animate-fade-up">
-              <span style={{ fontFamily:'DM Mono, monospace', fontSize:'0.75rem', letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--accent)', display:'inline-flex', alignItems:'center', gap:'8px', marginBottom:'1.5rem'}}>
-                <span style={{ width:'6px', height:'6px', borderRadius:'50%', background:'var(--accent)', animation:'heroPulse 2s ease-in-out infinite' }} />
-                {hero.badge}
-              </span>
-            </div>
-            <h1 className="animate-fade-up animate-delay-1" style={{ display:'flex', alignItems:'center', gap:'0.1em', marginBottom:'1.5rem', lineHeight:1 }}>
-              <span style={{ fontSize:'clamp(5rem,14vw,12rem)', color:'var(--accent)', fontFamily:'Syne, sans-serif', fontWeight:800, lineHeight:0.85, letterSpacing:'-0.06em', flexShrink:0 }}>I</span>
-              <span style={{ display:'flex', flexDirection:'column', gap:'0.08em' }}>
-                {/* "Build things" with guy sitting on the B */}
-                <span style={{ fontSize:'clamp(1.6rem,4.5vw,3.8rem)', color:'var(--white)', fontFamily:'Syne, sans-serif', fontWeight:800, letterSpacing:'-0.03em', lineHeight:1, marginLeft:'16px', position:'relative', display:'inline-block' }}>
-                  {hero.line1}
-                  <span style={{
-                    position: 'absolute',
-                    bottom: '60%',
-                    left: '-8px',
-                    pointerEvents: 'none',
-                    zIndex: 10,
-                    fontSize: 0,
-                    lineHeight: 0,
-                  }}>
-                  </span>
+            {/* ── RIGHT: Hero text ── */}
+            <div className="hero-text-col">
+              <div className="animate-fade-up">
+                <span style={{ fontFamily:'DM Mono, monospace', fontSize:'0.75rem', letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--accent)', display:'inline-flex', alignItems:'center', gap:'8px', marginBottom:'1.5rem' }}>
+                  <span style={{ width:'6px', height:'6px', borderRadius:'50%', background:'var(--accent)', animation:'heroPulse 2s ease-in-out infinite' }} />
+                  {hero.badge}
                 </span>
-                <span style={{ fontSize:'clamp(1rem,3vw,2.6rem)', color:'var(--muted)', fontFamily:'Syne, sans-serif', fontWeight:800, letterSpacing:'-0.03em', lineHeight:1.5, marginLeft:'16px' }}>{hero.line2}</span>
-              </span>
-            </h1>
-            <p className="animate-fade-up animate-delay-2" style={{ maxWidth:'480px', color:'var(--muted)', fontSize:'0.95rem', lineHeight:1.8, marginBottom:'2.5rem' }}>{hero.sub}</p>
-            <div className="animate-fade-up animate-delay-3" style={{ display:'flex', gap:'1rem', flexWrap:'wrap' }}>
-              <Link href={hero.cta1.href} className="btn-primary">{hero.cta1.label}</Link>
-              <Link href={hero.cta2.href} className="btn-ghost">{hero.cta2.label}</Link>
+              </div>
+              <h1 className="animate-fade-up animate-delay-1" style={{ display:'flex', alignItems:'center', gap:'0.08em', marginBottom:'1.5rem', lineHeight:1 }}>
+                <span style={{ fontSize:'clamp(5rem,12vw,10rem)', color:'var(--accent)', fontFamily:'Syne, sans-serif', fontWeight:800, lineHeight:0.85, letterSpacing:'-0.06em', flexShrink:0 }}>I</span>
+                <span style={{ display:'flex', flexDirection:'column', gap:'0.08em' }}>
+                  <span style={{ fontSize:'clamp(1.5rem,4vw,3.5rem)', color:'var(--white)', fontFamily:'Syne, sans-serif', fontWeight:800, letterSpacing:'-0.03em', lineHeight:1, marginLeft:'12px' }}>{hero.line1}</span>
+                  <span style={{ fontSize:'clamp(1rem,2.8vw,2.4rem)', color:'var(--muted)', fontFamily:'Syne, sans-serif', fontWeight:800, letterSpacing:'-0.03em', lineHeight:1.4, marginLeft:'12px' }}>{hero.line2}</span>
+                </span>
+              </h1>
+              <p className="animate-fade-up animate-delay-2" style={{ maxWidth:'420px', color:'var(--muted)', fontSize:'0.92rem', lineHeight:1.8, marginBottom:'2.5rem' }}>{hero.sub}</p>
+              <div className="animate-fade-up animate-delay-3" style={{ display:'flex', gap:'1rem', flexWrap:'wrap' }}>
+                <Link href={hero.cta1.href} className="btn-primary">{hero.cta1.label}</Link>
+                <Link href={hero.cta2.href} className="btn-ghost">{hero.cta2.label}</Link>
+              </div>
+              <div className="animate-fade-up animate-delay-4" style={{ marginTop:'3.5rem', display:'flex', alignItems:'center', gap:'12px', color:'var(--muted)', fontSize:'0.68rem', letterSpacing:'0.1em', textTransform:'uppercase' }}>
+                <div style={{ width:'36px', height:'1px', background:'var(--border)' }} />Scroll to explore
+              </div>
             </div>
-            <div className="animate-fade-up animate-delay-4" style={{ marginTop:'4rem', display:'flex', alignItems:'center', gap:'12px', color:'var(--muted)', fontSize:'0.7rem', letterSpacing:'0.1em', textTransform:'uppercase' }}>
-              <div style={{ width:'40px', height:'1px', background:'var(--border)' }} />Scroll to explore
-            </div>
+
           </div>
         </div>
       </section>

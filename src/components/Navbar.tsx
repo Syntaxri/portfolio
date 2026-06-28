@@ -5,10 +5,48 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const NAV_ITEMS = [
-  { href: '/', label: 'Home' },
-  { href: '/projects', label: 'Projects' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
+  {
+    href: '/',
+    label: 'Home',
+    icon: () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" />
+        <polyline points="9 22 9 12 15 12 15 22" />
+      </svg>
+    ),
+  },
+  {
+    href: '/projects',
+    label: 'Projects',
+    icon: () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+      </svg>
+    ),
+  },
+  {
+    href: '/about',
+    label: 'About',
+    icon: () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+    ),
+  },
+  {
+    href: '/contact',
+    label: 'Contact',
+    icon: () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2" />
+        <path d="M22 4L12 13 2 4" />
+      </svg>
+    ),
+  },
 ]
 
 function NavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
@@ -30,83 +68,20 @@ function NavLink({ href, label, isActive }: { href: string; label: string; isAct
   )
 }
 
-function MobileMenu({
-  open,
-  onClose,
-}: {
-  open: boolean
-  onClose: () => void
-}) {
-  const pathname = usePathname()
-
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [open, onClose])
-
-  if (!open) return null
-
-  return (
-    <div className="fixed inset-0 z-[100] flex justify-end">
-      <div
-        onClick={onClose}
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"
-      />
-      <div className="relative w-[min(320px,85vw)] h-full bg-[#070a12]/95 backdrop-blur-2xl border-l border-white/10 flex flex-col px-8 py-16 shadow-2xl">
-        <p className="font-display font-bold text-xl tracking-wider text-white mb-12 flex items-center gap-1">
-          <span className="text-[var(--accent)]">{'{'}</span> AR{' '}
-          <span className="text-[var(--accent)]">{'}'}</span>
-        </p>
-
-        <nav className="flex-1 flex flex-col gap-5">
-          {NAV_ITEMS.map((link, i) => {
-            const isActive = pathname === link.href
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={onClose}
-                className={`flex items-center justify-between font-display text-2xl tracking-tight transition-all duration-300 ${
-                  isActive
-                    ? 'text-[var(--accent)] translate-x-2'
-                    : 'text-white hover:text-white/80 hover:translate-x-1'
-                }`}
-              >
-                {link.label}
-                <span className="font-mono text-[10px] tracking-widest text-white/20">
-                  0{i + 1}
-                </span>
-              </Link>
-            )
-          })}
-        </nav>
-      </div>
-    </div>
-  )
-}
-
 export function Navbar() {
   const pathname = usePathname()
-  const [mobileOpen, setMobileOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  useEffect(() => {
-    setMobileOpen(false)
-  }, [pathname])
-
   if (!mounted) return null
 
   return (
     <>
-      <header className="fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-[1200px] z-50">
+      {/* Desktop nav */}
+      <header className="fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-[1200px] z-50 hidden md:block">
         <div
           className="rounded-2xl px-5 py-2.5 flex items-center justify-between"
           style={{
@@ -137,7 +112,7 @@ export function Navbar() {
             </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
+          <nav className="flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
             {NAV_ITEMS.map((link) => (
               <NavLink
                 key={link.href}
@@ -148,44 +123,63 @@ export function Navbar() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
-            <a
-              href="mailto:akramrihanie@gmail.com"
-              className="hidden md:inline-flex glass-button glass-button-primary"
-            >
-              Hire me
-            </a>
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden w-9 h-9 rounded-lg flex flex-col justify-center items-center gap-[4px]"
-              style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
-              }}
-              aria-label="Toggle menu"
-            >
-              {[0, 1, 2].map((i) => (
-                <span
-                  key={i}
-                  className="block h-[1.5px] bg-white rounded transition-all duration-300"
-                  style={{
-                    width: i === 1 && mobileOpen ? '0px' : '16px',
-                    transform:
-                      mobileOpen && i === 0
-                        ? 'translateY(5.5px) rotate(45deg)'
-                        : mobileOpen && i === 2
-                          ? 'translateY(-5.5px) rotate(-45deg)'
-                          : 'none',
-                    opacity: mobileOpen && i === 1 ? 0 : 1,
-                  }}
-                />
-              ))}
-            </button>
-          </div>
+          <a
+            href="mailto:akramrihanie@gmail.com"
+            className="glass-button glass-button-primary"
+          >
+            Hire me
+          </a>
         </div>
       </header>
 
-      <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} />
+      {/* Mobile floating dock */}
+      <nav
+        className="fixed z-50 md:hidden"
+        style={{
+          bottom: 'max(1.25rem, calc(0.5rem + env(safe-area-inset-bottom)))',
+          left: '50%',
+          transform: 'translateX(-50%)',
+        }}
+      >
+        <div
+          className="flex items-center gap-1 px-3 py-2 rounded-2xl"
+          style={{
+            background: 'rgba(7,10,18,0.65)',
+            backdropFilter: 'blur(48px) saturate(200%)',
+            WebkitBackdropFilter: 'blur(48px) saturate(200%)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+          }}
+        >
+          {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+            const isActive = pathname === href
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-label={label}
+                className="relative flex items-center justify-center w-11 h-11 rounded-xl transition-all duration-300"
+                style={{
+                  color: isActive ? 'var(--accent)' : 'rgba(255,255,255,0.3)',
+                }}
+              >
+                {isActive && (
+                  <span
+                    className="absolute inset-0 rounded-xl transition-all duration-300"
+                    style={{
+                      background: 'rgba(var(--accent-rgb), 0.1)',
+                      boxShadow: '0 0 24px rgba(var(--accent-rgb), 0.15)',
+                    }}
+                  />
+                )}
+                <span className="relative flex items-center justify-center">
+                  <Icon />
+                </span>
+              </Link>
+            )
+          })}
+        </div>
+      </nav>
     </>
   )
 }

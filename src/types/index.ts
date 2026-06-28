@@ -33,6 +33,7 @@ export interface GitHubEvent {
   id: string
   type: string
   payload: {
+    size?: number
     commits?: { message: string }[]
     ref_type?: string
     action?: string

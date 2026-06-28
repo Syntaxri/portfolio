@@ -2,20 +2,30 @@ import type { GitHubEvent } from '@/types'
 
 const GITHUB_USERNAME = 'Syntaxri'
 
+async function fetchJson(url: string) {
+  const res = await fetch(url, {
+    next: { revalidate: 300 },
+    headers: {
+      Accept: 'application/vnd.github.v3+json',
+      'User-Agent': 'portfolio-app',
+    },
+  })
+  if (!res.ok) return null
+  return res.json()
+}
+
+async function getGitHubUser() {
+  try {
+    return await fetchJson(`https://api.github.com/users/${GITHUB_USERNAME}`) as { public_repos: number } | null
+  } catch {
+    return null
+  }
+}
+
 async function getGitHubEvents(): Promise<GitHubEvent[]> {
   try {
-    const res = await fetch(
-      `https://api.github.com/users/${GITHUB_USERNAME}/events?per_page=30`,
-      {
-        next: { revalidate: 300 },
-        headers: {
-          Accept: 'application/vnd.github.v3+json',
-          'User-Agent': 'portfolio-app',
-        },
-      }
-    )
-    if (!res.ok) return []
-    return await res.json()
+    const data = await fetchJson(`https://api.github.com/users/${GITHUB_USERNAME}/events?per_page=100`)
+    return Array.isArray(data) ? data : []
   } catch {
     return []
   }
@@ -24,8 +34,8 @@ async function getGitHubEvents(): Promise<GitHubEvent[]> {
 function getEventDescription(event: GitHubEvent): string {
   switch (event.type) {
     case 'PushEvent': {
-      const payload = event.payload as { commits?: { message: string }[] }
-      const count = payload.commits?.length ?? 0
+      const payload = event.payload as { size?: number; commits?: { message: string }[] }
+      const count = payload.size ?? payload.commits?.length ?? 0
       const msg = payload.commits?.[0]?.message ?? ''
       const shortMsg = msg.length > 50 ? msg.slice(0, 50) + '…' : msg
       return `${count} commit${count > 1 ? 's' : ''}${shortMsg ? `: ${shortMsg}` : ''}`
@@ -66,12 +76,16 @@ function timeAgo(dateString: string): string {
 }
 
 export async function GitHubActivity() {
-  const events = await getGitHubEvents()
+  const [user, events] = await Promise.all([getGitHubUser(), getGitHubEvents()])
 
-  const uniqueRepos = new Set(events.map((e) => e.repo.name))
-  const pushCount = events.filter((e) => e.type === 'PushEvent').length
+  const totalRepos = user?.public_repos ?? 0
+  const totalCommits = events
+    .filter((e) => e.type === 'PushEvent')
+    .reduce((sum, e) => {
+      const p = e.payload as { size?: number; commits?: { message: string }[] }
+      return sum + (p.size ?? p.commits?.length ?? 0)
+    }, 0)
   const prCount = events.filter((e) => e.type === 'PullRequestEvent').length
-  const issueCount = events.filter((e) => e.type === 'IssuesEvent').length
 
   return (
     <div className="panel p-5">
@@ -122,7 +136,7 @@ export async function GitHubActivity() {
                 className="font-display font-bold text-lg tracking-tight leading-none"
                 style={{ color: 'var(--accent)' }}
               >
-                {uniqueRepos.size}
+                {totalRepos}
               </p>
               <p className="font-mono text-[0.5rem] tracking-widest uppercase text-white/25 mt-1">
                 Repositories
@@ -139,10 +153,10 @@ export async function GitHubActivity() {
                 className="font-display font-bold text-lg tracking-tight leading-none"
                 style={{ color: 'var(--accent)' }}
               >
-                {pushCount + prCount + issueCount}
+                {totalCommits + prCount}
               </p>
               <p className="font-mono text-[0.5rem] tracking-widest uppercase text-white/25 mt-1">
-                Contributions
+                Recent Contributions
               </p>
             </div>
           </div>

@@ -34,9 +34,9 @@ async function getGitHubEvents(): Promise<GitHubEvent[]> {
 function getEventDescription(event: GitHubEvent): string {
   switch (event.type) {
     case 'PushEvent': {
-      const payload = event.payload as { size?: number; commits?: { message: string }[] }
-      const count = payload.size ?? payload.commits?.length ?? 0
-      const msg = payload.commits?.[0]?.message ?? ''
+      const p: any = event.payload
+      const count = p.size ?? p.distinct_size ?? p.commits?.length ?? 1
+      const msg = p.commits?.[0]?.message ?? ''
       const shortMsg = msg.length > 50 ? msg.slice(0, 50) + '…' : msg
       return `${count} commit${count > 1 ? 's' : ''}${shortMsg ? `: ${shortMsg}` : ''}`
     }
@@ -82,8 +82,8 @@ export async function GitHubActivity() {
   const totalCommits = events
     .filter((e) => e.type === 'PushEvent')
     .reduce((sum, e) => {
-      const p = e.payload as { size?: number; commits?: { message: string }[] }
-      return sum + (p.size ?? p.commits?.length ?? 0)
+      const p: any = e.payload
+      return sum + (p.size ?? p.distinct_size ?? p.commits?.length ?? 1)
     }, 0)
   const prCount = events.filter((e) => e.type === 'PullRequestEvent').length
 

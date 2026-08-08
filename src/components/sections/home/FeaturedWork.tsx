@@ -107,7 +107,7 @@ export function FeaturedWork() {
                   <div className="fw-cover-inner will-change-transform" style={{ transform: 'translateY(14%) scale(1.12)' }}>
                     <ProjectVisual project={project} className="aspect-[1905/990] w-full" />
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-black/55 via-black/20 to-transparent" />
 
                   <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4">
                     <div className="flex items-center gap-3">

@@ -68,7 +68,7 @@ export function ProjectsIndex({ projects }: { projects: Project[] }) {
                 <div className="proj-cover-inner aspect-[1905/990] will-change-transform">
                   <ProjectVisual project={project} className="aspect-[1905/990] w-full" />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-black/50 via-black/15 to-transparent" />
                 <div className="absolute bottom-4 left-5 flex items-center gap-3">
                   <span className="label text-white/70">{String(i + 1).padStart(2, '0')}</span>
                   <span className="h-px w-8 bg-white/25" />

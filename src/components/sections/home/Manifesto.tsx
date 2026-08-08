@@ -21,8 +21,8 @@ const STATEMENT = [
 
 /**
  * Cinematic scrollytelling — one master timeline, five stages:
- * 0 arrive (inherit the hero's compressed scale, resolve blur)
- * 1 words sharpen in sequence
+ * 0 the statement resolves up into place
+ * 1 words surface left to right
  * 2 accent words swell, supporting words recede
  * 3 the supporting sentence surfaces
  * 4 the statement recedes into the next chapter
@@ -50,48 +50,52 @@ export function Manifesto() {
         },
       })
 
-      /* stage 0 — the statement arrives from the hero's scale/blur */
+      /* stage 0 — the statement resolves up into place */
       tl.fromTo(
         '.ms-quote',
-        { scale: 0.9, opacity: 0.5 },
-        { scale: 1, opacity: 1, duration: 0.12 },
-        0
+        { y: 48, opacity: 0.85 },
+        { y: 0, opacity: 1, duration: 0.12, ease: 'power2.out' }
       )
 
-      /* stage 1 — words resolve left to right */
+      /* stage 1 — words surface left to right */
       tl.fromTo(
         words,
-        { opacity: 0.07, rotateX: 8 },
-        { opacity: 0.55, rotateX: 0, duration: 0.38, stagger: 0.028 },
+        { opacity: 0.1, y: 14 },
+        { opacity: 0.6, y: 0, duration: 0.34, stagger: 0.03 },
         0.08
       )
 
-      /* stage 2 — accent words dominate, supporting words recede */
+      /* stage 2 — accent words swell, supporting words recede */
+      tl.to(
+        words.filter((_, i) => STATEMENT[i].accent),
+        { opacity: 1, scale: 1.04, duration: 0.2 },
+        0.46
+      )
       tl.to(
         words.filter((_, i) => !STATEMENT[i].accent),
-        { opacity: 0.35, scale: 0.98, duration: 0.22 },
-        0.5
+        { opacity: 0.42, scale: 0.99, duration: 0.2 },
+        0.46
       )
 
       /* stage 3 — the supporting line surfaces under the statement */
       tl.fromTo(
         '.ms-support',
-        { y: 26, opacity: 0 },
+        { y: 24, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.16, ease: 'power2.out' },
-        0.68
+        0.62
       )
 
       /* stage 4 — statement recedes, the next chapter announces itself */
       tl.to(
         '.ms-quote',
-        { scale: 1.05, opacity: 0.25, duration: 0.14 },
-        0.88
+        { y: -36, opacity: 0.3, scale: 1.03, duration: 0.14 },
+        0.86
       )
       tl.fromTo(
         '.ms-coda',
         { y: 20, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.12, ease: 'power2.out' },
-        0.94
+        0.92
       )
     }, section)
 
@@ -106,29 +110,25 @@ export function Manifesto() {
       >
         <div className="mx-auto w-full max-w-shell">
 <div className="flex items-center justify-between">
-            <p className="label mb-8 text-accent-secondary">01 — Transmission</p>
-            <p className="label mb-8 hidden sm:block">Section 02 — 08</p>
-          </div>
+          <p className="label mb-8 text-accent-secondary">01 — Transmission</p>
+          <p className="label mb-8 hidden text-ink-tertiary sm:block">Scroll to focus</p>
+        </div>
 
-<p
-            className="ms-quote fluid-quote max-w-6xl font-extrabold leading-[1.08] tracking-tight text-ink [transform-style:preserve-3d]"
-            style={{ perspective: '800px' }}
-          >
-            {STATEMENT.map((word, i) => (
-              <span key={`${word.word}-${i}`} className="inline-block whitespace-nowrap">
-                <span
-                  ref={(n) => {
-                    if (n) wordRefs.current.set(i, n)
-                  }}
-                  className="inline-block will-change-transform"
-                  style={word.accent ? { color: 'var(--accent-secondary)' } : undefined}
-                >
-                  {word.word}
-                </span>
-                {i < STATEMENT.length - 1 ? ' ' : ''}
+        <p className="ms-quote fluid-quote max-w-6xl font-extrabold leading-[1.08] tracking-tight text-ink">
+          {STATEMENT.map((word, i) => (
+            <span key={`${word.word}-${i}`} className="mr-[0.26em] inline-block whitespace-nowrap">
+              <span
+                ref={(n) => {
+                  if (n) wordRefs.current.set(i, n)
+                }}
+                className="inline-block will-change-transform"
+                style={word.accent ? { color: 'var(--accent-secondary)' } : undefined}
+              >
+                {word.word}
               </span>
-            ))}
-          </p>
+            </span>
+          ))}
+        </p>
 
           <p className="ms-support mt-10 max-w-xl text-base leading-relaxed text-ink-secondary" style={{ opacity: 0 }}>
             From the backend domains that quietly hold a product together, to the

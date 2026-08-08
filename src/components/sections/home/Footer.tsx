@@ -66,6 +66,11 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <a href="/Akram-Rihani-CV.pdf" download className="link-underline text-sm text-ink-secondary hover:text-ink">
+                  Resume <span className="label">↗</span>
+                </a>
+              </li>
             </ul>
           </nav>
 

@@ -10,7 +10,6 @@ export function Preloader() {
   const rootRef = useRef<HTMLDivElement>(null)
   const numberRef = useRef<HTMLSpanElement>(null)
   const fillRef = useRef<HTMLDivElement>(null)
-  const [progress, setProgress] = useState(0)
   const [visible, setVisible] = useState(false)
   const [done, setDone] = useState(false)
   const reduced = useReducedMotion()
@@ -20,8 +19,7 @@ export function Preloader() {
       setDone(true)
       return
     }
-    const id = setTimeout(() => setVisible(true), 40)
-    return () => clearTimeout(id)
+    setVisible(true)
   }, [])
 
   useEffect(() => {
@@ -42,11 +40,11 @@ export function Preloader() {
       }
       tl.to(counter, {
         value: TOTAL,
-        duration: 1.05,
+        duration: 1.7,
         ease: 'power2.inOut',
         onUpdate: () => {
           const v = Math.round(counter.value)
-          setProgress(v)
+          if (numberRef.current) numberRef.current.textContent = `${v}%`
           if (fillRef.current) fillRef.current.style.transform = `scaleX(${v / TOTAL})`
         },
       })
@@ -79,7 +77,7 @@ export function Preloader() {
           className="font-display text-[clamp(3.5rem,10vw,7rem)] font-extrabold leading-none tabular-nums text-ink"
           style={{ letterSpacing: '-0.03em' }}
         >
-          {progress}%
+          0%
         </span>
       </div>
       <div className="h-px w-full bg-white/10">

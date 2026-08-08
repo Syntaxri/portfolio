@@ -108,6 +108,15 @@ export function ContactCta() {
           >
             {site.email}
           </a>
+          <a
+            href="/Akram-Rihani-CV.pdf"
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link-underline font-mono text-[0.65rem] uppercase tracking-widest text-ink-tertiary transition-colors hover:text-ink"
+          >
+            Resume ↗
+          </a>
         </div>
       </div>
     </section>

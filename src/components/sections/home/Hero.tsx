@@ -193,6 +193,16 @@ export function Hero() {
                   Let&apos;s work together
                 </Link>
               </Magnetic>
+              <a
+                href="/Akram-Rihani-CV.pdf"
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 border border-white/15 px-7 py-4 font-mono text-[0.65rem] uppercase tracking-widest text-ink-secondary transition-colors duration-300 hover:border-accent/50 hover:text-ink"
+              >
+                Resume
+                <span aria-hidden>↗</span>
+              </a>
             </div>
           </div>
         </div>

@@ -21,7 +21,7 @@ export function useQualityTier(): QualityTier {
 }
 
 export const qualityDefaults: Record<QualityTier, { dpr: [number, number]; particles: number; shadows: boolean }> = {
-  high: { dpr: [1, 2], particles: 1200, shadows: true },
-  medium: { dpr: [1, 1.5], particles: 600, shadows: false },
+  high: { dpr: [1, 1.75], particles: 900, shadows: true },
+  medium: { dpr: [1, 1.25], particles: 500, shadows: false },
   low: { dpr: [1, 1], particles: 250, shadows: false },
 }

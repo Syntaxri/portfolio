@@ -27,8 +27,17 @@ export function SectionRail() {
   const pathname = usePathname()
 
   useEffect(() => {
-    if (pathname !== '/') return
-    if (window.matchMedia('(min-width: 768px)').matches && !reduced) setEnabled(true)
+    /* the rail is a home-page feature: its chapter targets only exist in
+       the home sections, so any other route hides it entirely */
+    if (pathname !== '/') {
+      setEnabled(false)
+      return
+    }
+    if (window.matchMedia('(min-width: 768px)').matches && !reduced) {
+      setEnabled(true)
+    } else {
+      setEnabled(false)
+    }
   }, [reduced, pathname])
 
   useEffect(() => {

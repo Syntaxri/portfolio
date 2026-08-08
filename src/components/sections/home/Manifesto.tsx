@@ -38,59 +38,73 @@ export function Manifesto() {
     if (!section) return
     if (reduced) return
 
-    const ctx = gsap.context(() => {
-      const words = Array.from(wordRefs.current.values())
-      const tl = gsap.timeline({
-        defaults: { ease: 'none' },
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 0.6,
-        },
-      })
+    let ctx: gsap.Context | undefined
+    try {
+      ctx = gsap.context(() => {
+        const words = Array.from(wordRefs.current.values())
 
-      /* stage 0 — the statement resolves up into place */
-      tl.fromTo(
-        '.ms-quote',
-        { y: 48, opacity: 0.85 },
-        { y: 0, opacity: 1, duration: 0.18, ease: 'power2.out' }
-      )
+        /* stage start states — applied only when the timeline runs; the
+           default DOM state (no-JS / reduced motion) is fully visible */
+        gsap.set('.ms-quote', { y: 48, opacity: 0.85 })
+        gsap.set(words, { opacity: 0.1, y: 14 })
+        gsap.set('.ms-support', { y: 24, opacity: 0 })
+        gsap.set('.ms-coda', { y: 20, opacity: 0 })
 
-      /* stage 1 — words surface left to right */
-      tl.fromTo(words, { opacity: 0.1, y: 14 }, { opacity: 0.6, y: 0, duration: 0.4, stagger: 0.03 }, 0.08)
+        const tl = gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 0.6,
+          },
+        })
 
-      /* stage 2 — accent words swell, supporting words recede */
-      tl.to(
-        words.filter((_, i) => STATEMENT[i].accent),
-        { opacity: 1, scale: 1.04, duration: 0.18 },
-        0.5
-      )
-      tl.to(
-        words.filter((_, i) => !STATEMENT[i].accent),
-        { opacity: 0.42, scale: 0.99, duration: 0.18 },
-        0.5
-      )
+        /* stage 0 — the statement resolves up into place */
+        tl.fromTo(
+          '.ms-quote',
+          { y: 48, opacity: 0.85 },
+          { y: 0, opacity: 1, duration: 0.18, ease: 'power2.out' }
+        )
 
-      /* stage 3 — the supporting line surfaces under the statement */
-      tl.fromTo(
-        '.ms-support',
-        { y: 24, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.16, ease: 'power2.out' },
-        0.64
-      )
+        /* stage 1 — words surface left to right */
+        tl.fromTo(words, { opacity: 0.1, y: 14 }, { opacity: 0.6, y: 0, duration: 0.4, stagger: 0.03 }, 0.08)
 
-      /* stage 4 — statement recedes, the next chapter announces itself */
-      tl.to('.ms-quote', { y: -36, opacity: 0.3, scale: 1.03, duration: 0.16 }, 0.82)
-      tl.fromTo(
-        '.ms-coda',
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.12, ease: 'power2.out' },
-        0.9
-      )
-    }, section)
+        /* stage 2 — accent words swell, supporting words recede */
+        tl.to(
+          words.filter((_, i) => STATEMENT[i].accent),
+          { opacity: 1, scale: 1.04, duration: 0.18 },
+          0.5
+        )
+        tl.to(
+          words.filter((_, i) => !STATEMENT[i].accent),
+          { opacity: 0.42, scale: 0.99, duration: 0.18 },
+          0.5
+        )
 
-    return () => ctx.revert()
+        /* stage 3 — the supporting line surfaces under the statement */
+        tl.fromTo(
+          '.ms-support',
+          { y: 24, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.16, ease: 'power2.out' },
+          0.64
+        )
+
+        /* stage 4 — statement recedes, the next chapter announces itself */
+        tl.to('.ms-quote', { y: -36, opacity: 0.3, scale: 1.03, duration: 0.16 }, 0.82)
+        tl.fromTo(
+          '.ms-coda',
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.12, ease: 'power2.out' },
+          0.9
+        )
+      }, section)
+    } catch {
+      ctx?.revert()
+      return
+    }
+
+    return () => ctx?.revert()
   }, [reduced])
 
   return (
@@ -123,18 +137,13 @@ export function Manifesto() {
             ))}
           </p>
 
-          <p
-            className="ms-support mt-10 max-w-xl text-base leading-relaxed text-ink-secondary"
-            style={{ opacity: 0 }}
-          >
+          <p className="ms-support mt-10 max-w-xl text-base leading-relaxed text-ink-secondary">
             From the backend domains that quietly hold a product together, to the WebGL surfaces that open a
             story — I build the full journey, and care about the last 1% of craft: timing, typography,
             performance.
           </p>
 
-          <p className="ms-coda label mt-16" style={{ opacity: 0 }}>
-            Next — Capabilities
-          </p>
+          <p className="ms-coda label mt-16">Next — Capabilities</p>
         </div>
       </div>
     </section>

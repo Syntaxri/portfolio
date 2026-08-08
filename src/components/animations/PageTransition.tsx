@@ -33,6 +33,7 @@ export function PageTransition() {
     const el = overlayRef.current
     if (!el || reduced) return
 
+    gsap.killTweensOf(el)
     gsap.fromTo(
       el,
       { yPercent: 100 },

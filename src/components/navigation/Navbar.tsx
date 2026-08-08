@@ -49,6 +49,7 @@ export function Navbar() {
   useEffect(() => {
     const el = headerRef.current
     if (!el || reduced) return
+    gsap.killTweensOf(el)
     gsap.to(el, { yPercent: hidden ? -110 : 0, duration: 0.5, ease: 'power3.out', overwrite: 'auto' })
   }, [hidden, reduced])
 
@@ -58,6 +59,7 @@ export function Navbar() {
   useEffect(() => {
     const el = menuRef.current
     if (!el) return
+    gsap.killTweensOf(el)
     if (menuOpen) {
       document.body.style.overflow = 'hidden'
       if (reduced) {

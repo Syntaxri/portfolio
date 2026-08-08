@@ -86,6 +86,9 @@ export function FeaturedWork() {
     ctx.add(() => {
       el.removeEventListener('pointermove', onMove)
       el.removeEventListener('pointerleave', onLeave)
+      el.querySelectorAll<HTMLElement>('.fw-cover-inner').forEach((cover) => {
+        gsap.killTweensOf(cover)
+      })
     })
 
     return () => ctx.revert()
@@ -127,10 +130,7 @@ export function FeaturedWork() {
               >
                 {/* cover — always visible, the entry point of the case */}
                 <div className="relative overflow-hidden border border-white/[0.08] bg-white/[0.02]">
-                  <div
-                    className="fw-cover-inner will-change-transform"
-                    style={{ transform: 'translateY(14%) scale(1.12)' }}
-                  >
+                  <div className="fw-cover-inner will-change-transform">
                     <ProjectVisual project={project} className="aspect-[1905/990] w-full" />
                   </div>
                   <div className="absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-black/55 via-black/20 to-transparent" />

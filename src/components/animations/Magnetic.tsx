@@ -42,6 +42,7 @@ export function Magnetic({ children, strength = 0.35, className = '', as = 'div'
     return () => {
       el.removeEventListener('pointermove', onMove)
       el.removeEventListener('pointerleave', onLeave)
+      gsap.killTweensOf(el)
     }
   }, [reduced, isTouch, strength])
 

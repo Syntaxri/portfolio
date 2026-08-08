@@ -12,7 +12,7 @@ export default function NotFound() {
       <h1 className="font-display font-extrabold text-[clamp(2.5rem,6vw,4rem)] text-white tracking-tight leading-none mb-4">
         Page not found
       </h1>
-      <p className="text-sm text-white/40 max-w-[400px] mb-8">
+      <p className="text-sm text-white/50 max-w-[400px] mb-8">
         The page you&apos;re looking for doesn&apos;t exist or has been moved.
       </p>
       <Link href="/" className="glass-button glass-button-primary no-underline">

@@ -5,7 +5,7 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { MeshDistortMaterial, Sparkles, Float } from '@react-three/drei'
 import * as THREE from 'three'
 import { qualityDefaults, type QualityTier } from '@/hooks/useQuality'
-import { scrollState, pointerState } from '@/lib/animations/scrollState'
+import { scrollState } from '@/lib/animations/scrollState'
 import { auroraVertexShader, auroraFragmentShader, createAuroraUniforms } from './shaders'
 
 const SCALE_BY_TIER: Record<QualityTier, number> = { high: 1, medium: 0.85, low: 0.7 }
@@ -18,8 +18,6 @@ function Nebula({ tier }: { tier: QualityTier }) {
     const u = uniforms.current
     u.uTime.value = clock.elapsedTime
     u.uDetail.value = tier === 'medium' ? 0.5 : 1
-    u.uMouse.value.x = THREE.MathUtils.lerp(u.uMouse.value.x, pointerState.x + 0.5, 0.04)
-    u.uMouse.value.y = THREE.MathUtils.lerp(u.uMouse.value.y, -pointerState.y + 0.5, 0.04)
     u.uProgress.value = THREE.MathUtils.lerp(u.uProgress.value, scrollState.progress, 0.06)
 
     /* as the visitor leaves the hero the atmosphere sinks past the core
@@ -53,8 +51,6 @@ function Core({ tier }: { tier: QualityTier }) {
   const material = useRef<{ emissiveIntensity: number; opacity: number } | null>(null)
 
   useFrame(({ clock, camera }, delta) => {
-    camera.position.x = THREE.MathUtils.lerp(camera.position.x, pointerState.x * 0.3, 0.03)
-    camera.position.y = THREE.MathUtils.lerp(camera.position.y, pointerState.y * 0.15, 0.03)
     camera.lookAt(0, 0, 0)
 
     const g = group.current
@@ -80,6 +76,30 @@ function Core({ tier }: { tier: QualityTier }) {
     }
     g.visible = heroFade > 0.01
   })
+
+  if (tier === 'low') {
+    /* low tier — cheap material, no distort shader, no wireframe shell,
+       no Float wrapper: the visual identity stays, the cost drops */
+    return (
+      <group ref={group}>
+        <mesh>
+          <icosahedronGeometry args={[1.35, 2]} />
+          <meshStandardMaterial
+            ref={(m) => {
+              material.current = m as { emissiveIntensity: number; opacity: number } | null
+            }}
+            color="#8b85d8"
+            emissive="#5b21b6"
+            emissiveIntensity={0.55}
+            roughness={0.3}
+            metalness={0.55}
+            transparent
+            opacity={1}
+          />
+        </mesh>
+      </group>
+    )
+  }
 
   return (
     <group ref={group}>
@@ -126,24 +146,55 @@ function Dust({ tier }: { tier: QualityTier }) {
 interface HeroSceneProps {
   tier: QualityTier
   frameloop?: 'always' | 'never'
+  onContextLost?: () => void
 }
 
-export function HeroScene({ tier, frameloop = 'always' }: HeroSceneProps) {
+export function HeroScene({ tier, frameloop = 'always', onContextLost }: HeroSceneProps) {
+  const low = tier === 'low'
   return (
     <Canvas
       frameloop={frameloop}
       camera={{ position: [0, 0, 5.5], fov: 42 }}
       dpr={qualityDefaults[tier].dpr}
-      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+      gl={{ antialias: !low, alpha: true, powerPreference: 'high-performance' }}
       className="!absolute inset-0"
       style={{ pointerEvents: 'none' }}
+      onCreated={({ gl }) => {
+        onCanvasCreated(gl, () => onContextLost?.())
+      }}
     >
-      <ambientLight intensity={0.4} />
-      <pointLight position={[4, 3, 4]} intensity={2.4} color="#8b5cf6" />
-      <pointLight position={[-5, -2, 2]} intensity={1.8} color="#4338ca" />
+      <ambientLight intensity={low ? 2.2 : 0.4} />
+      {low ? null : (
+        <>
+          <pointLight position={[4, 3, 4]} intensity={2.4} color="#8b5cf6" />
+          <pointLight position={[-5, -2, 2]} intensity={1.8} color="#4338ca" />
+        </>
+      )}
       <Nebula tier={tier} />
       <Core tier={tier} />
       <Dust tier={tier} />
     </Canvas>
   )
+}
+
+/**
+ * Optional init hook for the canvas owner: a lost WebGL context is treated
+ * as a hard failure so the fallback path takes over (decorative, non-fatal).
+ */
+export function onCanvasCreated(
+  gl: THREE.WebGLRenderer,
+  onLost: () => void,
+  onRestored: () => void = () => undefined
+) {
+  const canvas = gl.domElement
+  const handleLost = (e: Event) => {
+    e.preventDefault()
+    onLost()
+  }
+  canvas.addEventListener('webglcontextlost', handleLost, false)
+  canvas.addEventListener('webglcontextrestored', onRestored, false)
+  return () => {
+    canvas.removeEventListener('webglcontextlost', handleLost, false)
+    canvas.removeEventListener('webglcontextrestored', onRestored, false)
+  }
 }

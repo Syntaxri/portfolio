@@ -5,7 +5,7 @@ Personal portfolio at [akramrihani.com](https://akramrihani.com): an expressive,
 ## Stack
 
 - **Next.js 14** (App Router, RSC + client islands)
-- **React 19**, strict TypeScript
+- **React 18**, strict TypeScript
 - **Tailwind CSS** (CSS-first theme in `src/app/globals.css`)
 - **Three.js / React Three Fiber / drei** — hero scene, quality tiers
 - **GSAP + ScrollTrigger + Lenis** — scroll choreography
@@ -53,10 +53,17 @@ returns `EMAIL_NOT_CONFIGURED` in production.
 
 ## Performance & accessibility
 
-- WebGL quality tiers (DPR cap, particle count) based on device hardware.
-- Transforms/opacity-only animation; blur effects only when not scrolling;
-  marquees pause offscreen via `IntersectionObserver`.
-- `prefers-reduced-motion` respected throughout.
+- WebGL quality tiers (DPR cap, particle count, shader/mesh complexity) based
+  on device hardware; coarse-pointer devices always render the low tier.
+- WebGL is a decorative enhancement, never a page dependency: renderer
+  failure, import errors or a lost context degrade to a static CSS gradient,
+  and the DOM content stays available in every case.
+- `prefers-reduced-motion` respected throughout: content is visible by
+  default and only animated as progressive enhancement, Lenis smooth
+  scrolling is never initialized, anchor navigation uses native instant
+  scrolling, and entrance/scroll choreography is skipped.
+- Transforms/opacity-only animation; marquees and the WebGL scene pause
+  offscreen via `IntersectionObserver`.
 - Mobile menu is a proper dialog (focus trap, ESC to close, aria attributes);
   form status is announced via `role="status"`.
 

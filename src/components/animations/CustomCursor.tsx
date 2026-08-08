@@ -89,6 +89,7 @@ export function CustomCursor() {
       window.removeEventListener('mousemove', move)
       document.removeEventListener('mouseover', onOver)
       document.documentElement.removeEventListener('mouseleave', onLeave)
+      gsap.killTweensOf([dot, ring, label])
     }
   }, [enabled, isTouch])
 

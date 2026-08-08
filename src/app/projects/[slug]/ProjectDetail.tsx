@@ -102,10 +102,10 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
           />
           <div className="absolute inset-y-0 left-1/2 w-px bg-white/[0.06]" />
           <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-2 pb-4">
-            <span className="label text-white/45">
+            <span className="label text-white/50">
               {project.title} — {project.category}
             </span>
-            <span className="label text-white/45">{project.year}</span>
+            <span className="label text-white/50">{project.year}</span>
           </div>
         </div>
       </header>

@@ -28,11 +28,13 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null)
   const reduced = useReducedMotion()
   const pathname = usePathname()
-  const reducedRef = useRef(reduced)
-  reducedRef.current = reduced
 
   useEffect(() => {
-    if (reducedRef.current) return
+    /* reduced motion — Lenis is never constructed */
+    if (reduced) {
+      lenisRef.current = null
+      return
+    }
 
     const lenis = new Lenis({
       duration: 1.15,
@@ -54,6 +56,9 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       lenis.raf(time * 1000)
     }
     gsap.ticker.add(raf)
+    /* intentional global tuning: Lenis drives the ticker, so lag-smoothing
+       would double-smooth input latency — do not restore per unmount, the
+       whole app either runs on Lenis or (reduced motion) never sets it */
     gsap.ticker.lagSmoothing(0)
 
     return () => {
@@ -61,7 +66,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       lenis.destroy()
       lenisRef.current = null
     }
-  }, [])
+  }, [reduced])
 
   /* stop/reposition on route change so anchors reset without warping */
   useEffect(() => {
@@ -77,8 +82,18 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   }, [pathname])
 
   const scrollTo = (target: string | number, opts: Record<string, unknown> = {}) => {
+    if (!lenisRef.current) {
+      /* reduced motion / no Lenis — native instant scroll to the target,
+         never an arbitrary jump to the page top */
+      if (typeof target === 'string') {
+        document.querySelector(target)?.scrollIntoView({ behavior: 'auto', block: 'start' })
+      } else {
+        window.scrollTo({ top: target, behavior: 'auto' })
+      }
+      return
+    }
     window.scrollTo({ top: 0, behavior: 'auto' })
-    lenisRef.current?.scrollTo(target as never, opts as never)
+    lenisRef.current.scrollTo(target as never, opts as never)
   }
 
   const stop = () => lenisRef.current?.stop()

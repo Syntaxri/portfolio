@@ -2,8 +2,15 @@
 
 import { useState, useEffect } from 'react'
 
+function prefersReducedMotion(): boolean {
+  if (typeof window === 'undefined') return false
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
 export function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false)
+  /* read synchronously on the client so the first render already reflects
+     the user's preference (no fake first frame that mounts Lenis/animation) */
+  const [reduced, setReduced] = useState(prefersReducedMotion)
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')

@@ -13,7 +13,7 @@ export default function Error({ reset }: { reset: () => void }) {
       <h1 className="mb-4 font-display text-[clamp(2rem,5vw,3rem)] font-extrabold leading-none tracking-tight text-white">
         An unexpected error occurred
       </h1>
-      <p className="mb-8 max-w-[400px] text-sm text-white/40">
+      <p className="mb-8 max-w-[400px] text-sm text-white/50">
         Please try again. If the problem persists, email me directly — the address is in the footer.
       </p>
       <button onClick={reset} className="glass-button glass-button-primary no-underline">

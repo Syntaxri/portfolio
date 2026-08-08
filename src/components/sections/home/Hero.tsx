@@ -24,16 +24,36 @@ export function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const ghostRef = useRef<HTMLSpanElement>(null)
+  const ctxRef = useRef<gsap.Context | null>(null)
+  const failSafeRef = useRef<ReturnType<typeof setTimeout>>(undefined)
   const reduced = useReducedMotion()
   const { scrollTo } = useLenis()
 
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
-    if (reduced) return
+
+    const teardown = () => {
+      clearTimeout(failSafeRef.current)
+      ctxRef.current?.revert()
+      ctxRef.current = null
+    }
+
+    /* reduced motion — no hidden states, content fully visible */
+    if (reduced) {
+      teardown()
+      return
+    }
 
     const start = () => {
+      if (ctxRef.current) return
+
       const ctx = gsap.context(() => {
+        /* entrance start states are applied only when animation actually
+           runs — the default DOM/CSS state is fully visible */
+        gsap.set('.hero-kicker, .hero-strapline, .hero-meta, .hero-rail, .hero-hint', { opacity: 0 })
+        gsap.set('.hero-name-line', { yPercent: 110 })
+
         const tl = gsap.timeline({ defaults: { ease: 'power4.out' } })
 
         tl.fromTo('.hero-kicker', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7 }, 0.05)
@@ -78,13 +98,31 @@ export function Hero() {
           },
         })
       }, el)
-      return () => ctx.revert()
+      ctxRef.current = ctx
+
+      /* fail-safe: if the timeline stalls for any reason, force content
+         visible so availability never depends on animation completing */
+      failSafeRef.current = setTimeout(() => {
+        gsap.to(el.querySelectorAll('.hero-kicker, .hero-strapline, .hero-meta, .hero-rail, .hero-hint'), {
+          opacity: 1,
+          duration: 0.4,
+          overwrite: 'auto',
+        })
+        gsap.to(el.querySelectorAll('.hero-name-line'), {
+          yPercent: 0,
+          duration: 0.4,
+          overwrite: 'auto',
+        })
+      }, 6000)
     }
 
     const alreadySeen = sessionStorage.getItem('ar-preloader')
     if (alreadySeen) {
       const id = setTimeout(() => start(), 100)
-      return () => clearTimeout(id)
+      return () => {
+        clearTimeout(id)
+        teardown()
+      }
     }
 
     const startAfterEntrance = () => start()
@@ -93,6 +131,7 @@ export function Hero() {
     return () => {
       window.removeEventListener(ENTRANCE_EVENT, startAfterEntrance)
       clearTimeout(fallback)
+      teardown()
     }
   }, [reduced])
 
@@ -110,7 +149,6 @@ export function Hero() {
         ref={ghostRef}
         aria-hidden
         className="hero-rail pointer-events-none absolute -right-6 top-[16%] z-[1] hidden select-none font-display text-[clamp(10rem,24vw,22rem)] font-extrabold leading-none tracking-tighter text-outline opacity-[0.07] xl:block"
-        style={{ opacity: 0 }}
       >
         AKRAM
       </span>
@@ -119,7 +157,6 @@ export function Hero() {
       <span
         aria-hidden
         className="hero-rail absolute right-8 top-1/2 z-[1] hidden origin-right -translate-y-1/2 rotate-90 font-mono text-[0.6rem] uppercase tracking-[0.34em] text-ink-tertiary xl:block"
-        style={{ opacity: 0 }}
       >
         3D — Motion — Engineering
       </span>
@@ -128,7 +165,7 @@ export function Hero() {
         ref={contentRef}
         className="relative z-10 mx-auto flex w-full max-w-shell flex-1 flex-col px-5 pt-[calc(var(--nav-h)+2.5rem)] sm:px-8"
       >
-        <div className="hero-kicker flex items-center justify-between" style={{ opacity: 0 }}>
+        <div className="hero-kicker flex items-center justify-between">
           <p className="label label-accent">
             {site.role} — {site.location}
           </p>
@@ -146,38 +183,24 @@ export function Hero() {
             <h1 className="font-extrabold leading-[0.9] tracking-tight">
               <SkewScroll>
                 <span className="block overflow-hidden pb-[0.09em]">
-                  <span
-                    className="hero-name-line inline-block will-change-transform"
-                    style={{ transform: 'translateY(110%)' }}
-                  >
-                    Akram
-                  </span>
+                  <span className="hero-name-line inline-block will-change-transform">Akram</span>
                 </span>
               </SkewScroll>
               <SkewScroll strength={0.008}>
                 <span className="block overflow-hidden pb-[0.12em]">
-                  <span
-                    className="hero-name-line text-outline-strong inline-block will-change-transform"
-                    style={{ transform: 'translateY(110%)' }}
-                  >
+                  <span className="hero-name-line text-outline-strong inline-block will-change-transform">
                     Rihani
                   </span>
                 </span>
               </SkewScroll>
             </h1>
 
-            <p
-              className="hero-strapline max-w-[21rem] text-sm leading-relaxed text-ink-secondary"
-              style={{ opacity: 0 }}
-            >
+            <p className="hero-strapline max-w-[21rem] text-sm leading-relaxed text-ink-secondary">
               {site.strapline}
             </p>
           </div>
 
-          <div
-            className="hero-meta mt-10 flex flex-wrap items-center justify-between gap-x-8 gap-y-5 border-t border-white/[0.08] pt-6"
-            style={{ opacity: 0 }}
-          >
+          <div className="hero-meta mt-10 flex flex-wrap items-center justify-between gap-x-8 gap-y-5 border-t border-white/[0.08] pt-6">
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-tertiary">
               Creative Development
               <span className="mx-3 text-accent">·</span>3D Web Experience
@@ -227,7 +250,6 @@ export function Hero() {
       <div
         className="hero-hint pointer-events-none absolute bottom-9 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-3 lg:flex"
         aria-hidden
-        style={{ opacity: 0 }}
       >
         <span className="label">Scroll</span>
         <span className="block h-12 w-px overflow-hidden bg-white/10">

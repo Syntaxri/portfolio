@@ -36,6 +36,9 @@ export const metadata: Metadata = {
     template: `%s — ${site.name}`,
   },
   description: site.strapline,
+  alternates: {
+    canonical: '/',
+  },
   keywords: [
     'creative developer',
     '3d web developer',

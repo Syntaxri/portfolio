@@ -86,7 +86,13 @@ export function ContactClient() {
   const emailDebounce = useRef<ReturnType<typeof setTimeout>>(undefined)
   const statusTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
-  useEffect(() => () => clearTimeout(statusTimer.current), [])
+  useEffect(
+    () => () => {
+      clearTimeout(statusTimer.current)
+      clearTimeout(emailDebounce.current)
+    },
+    []
+  )
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

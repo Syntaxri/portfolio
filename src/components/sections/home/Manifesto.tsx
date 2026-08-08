@@ -58,12 +58,7 @@ export function Manifesto() {
       )
 
       /* stage 1 — words surface left to right */
-      tl.fromTo(
-        words,
-        { opacity: 0.1, y: 14 },
-        { opacity: 0.6, y: 0, duration: 0.4, stagger: 0.03 },
-        0.08
-      )
+      tl.fromTo(words, { opacity: 0.1, y: 14 }, { opacity: 0.6, y: 0, duration: 0.4, stagger: 0.03 }, 0.08)
 
       /* stage 2 — accent words swell, supporting words recede */
       tl.to(
@@ -86,11 +81,7 @@ export function Manifesto() {
       )
 
       /* stage 4 — statement recedes, the next chapter announces itself */
-      tl.to(
-        '.ms-quote',
-        { y: -36, opacity: 0.3, scale: 1.03, duration: 0.16 },
-        0.82
-      )
+      tl.to('.ms-quote', { y: -36, opacity: 0.3, scale: 1.03, duration: 0.16 }, 0.82)
       tl.fromTo(
         '.ms-coda',
         { y: 20, opacity: 0 },
@@ -103,37 +94,42 @@ export function Manifesto() {
   }, [reduced])
 
   return (
-    <section ref={sectionRef} aria-label="About" className="relative overflow-hidden" style={{ height: '190vh' }}>
-      <div
-        ref={stickyRef}
-        className="sticky top-0 flex min-h-[100svh] flex-col justify-center px-5 sm:px-8"
-      >
+    <section
+      ref={sectionRef}
+      aria-label="About"
+      className="relative overflow-hidden"
+      style={{ height: '190vh' }}
+    >
+      <div ref={stickyRef} className="sticky top-0 flex min-h-[100svh] flex-col justify-center px-5 sm:px-8">
         <div className="mx-auto w-full max-w-shell">
-<div className="flex items-center justify-between">
-          <p className="label mb-8 text-accent-secondary">01 — Transmission</p>
-          <p className="label mb-8 hidden text-ink-tertiary sm:block">Scroll to focus</p>
-        </div>
+          <div className="flex items-center justify-between">
+            <p className="label mb-8 text-accent-secondary">01 — Transmission</p>
+            <p className="label mb-8 hidden text-ink-tertiary sm:block">Scroll to focus</p>
+          </div>
 
-        <p className="ms-quote fluid-quote max-w-5xl font-extrabold leading-[1.05] tracking-tight text-ink">
-          {STATEMENT.map((word, i) => (
-            <span key={`${word.word}-${i}`} className="mr-[0.22em] inline-block whitespace-nowrap">
-              <span
-                ref={(n) => {
-                  if (n) wordRefs.current.set(i, n)
-                }}
-                className="inline-block will-change-transform"
-                style={word.accent ? { color: 'var(--accent-secondary)' } : undefined}
-              >
-                {word.word}
+          <p className="ms-quote fluid-quote max-w-5xl font-extrabold leading-[1.05] tracking-tight text-ink">
+            {STATEMENT.map((word, i) => (
+              <span key={`${word.word}-${i}`} className="mr-[0.22em] inline-block whitespace-nowrap">
+                <span
+                  ref={(n) => {
+                    if (n) wordRefs.current.set(i, n)
+                  }}
+                  className="inline-block will-change-transform"
+                  style={word.accent ? { color: 'var(--accent-secondary)' } : undefined}
+                >
+                  {word.word}
+                </span>
               </span>
-            </span>
-          ))}
-        </p>
+            ))}
+          </p>
 
-          <p className="ms-support mt-10 max-w-xl text-base leading-relaxed text-ink-secondary" style={{ opacity: 0 }}>
-            From the backend domains that quietly hold a product together, to the
-            WebGL surfaces that open a story — I build the full journey, and care
-            about the last 1% of craft: timing, typography, performance.
+          <p
+            className="ms-support mt-10 max-w-xl text-base leading-relaxed text-ink-secondary"
+            style={{ opacity: 0 }}
+          >
+            From the backend domains that quietly hold a product together, to the WebGL surfaces that open a
+            story — I build the full journey, and care about the last 1% of craft: timing, typography,
+            performance.
           </p>
 
           <p className="ms-coda label mt-16" style={{ opacity: 0 }}>

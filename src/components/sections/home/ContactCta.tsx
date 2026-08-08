@@ -85,8 +85,8 @@ export function ContactCta() {
         </SkewScroll>
 
         <p className="mt-10 max-w-md text-sm leading-relaxed text-ink-secondary">
-          Always open to interesting projects, collaborative conversations, and
-          sharp challenges. Replies usually within 24 hours.
+          Always open to interesting projects, collaborative conversations, and sharp challenges. Replies
+          usually within 24 hours.
         </p>
 
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
@@ -97,7 +97,10 @@ export function ContactCta() {
               className="group inline-flex items-center gap-3 bg-ink px-9 py-5 font-display text-base font-bold tracking-tight text-[#05060a] transition-colors duration-300 hover:bg-accent"
             >
               Start a project
-              <span className="inline-block transition-transform duration-300 group-hover:translate-x-1" aria-hidden>
+              <span
+                className="inline-block transition-transform duration-300 group-hover:translate-x-1"
+                aria-hidden
+              >
                 →
               </span>
             </Link>

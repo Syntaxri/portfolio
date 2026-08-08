@@ -22,7 +22,14 @@ interface RevealTextProps {
  * Word-by-word masked text reveal on scroll into view.
  * Renders words server-side (no plugin, no flash) — JS only animates.
  */
-export function RevealText({ children, className = '', delay = 0, stagger = 0.045, blur = false, as = 'span' }: RevealTextProps) {
+export function RevealText({
+  children,
+  className = '',
+  delay = 0,
+  stagger = 0.045,
+  blur = false,
+  as = 'span',
+}: RevealTextProps) {
   const ref = useRef<HTMLElement>(null)
   const reduced = useReducedMotion()
 

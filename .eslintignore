@@ -1,0 +1,10 @@
+# Build artifacts and generated output
+/.next
+/out
+/coverage
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Publisher-agnostic lock of ignored dirs (keep source-only linting fast)
+public

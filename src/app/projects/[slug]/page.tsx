@@ -29,7 +29,5 @@ export default function ProjectPage({ params }: Props) {
 
   const nextProject = getNextProject(project.slug)
 
-  return (
-    <ProjectDetail project={project} nextProject={nextProject} key={project.slug} />
-  )
+  return <ProjectDetail project={project} nextProject={nextProject} key={project.slug} />
 }

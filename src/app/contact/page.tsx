@@ -3,8 +3,7 @@ import { ContactClient } from './ContactClient'
 
 export const metadata: Metadata = {
   title: 'Contact',
-  description:
-    'Get in touch with Akram Rihani — open to projects, collaborations, and conversations.',
+  description: 'Get in touch with Akram Rihani — open to projects, collaborations, and conversations.',
 }
 
 export default function ContactPage() {

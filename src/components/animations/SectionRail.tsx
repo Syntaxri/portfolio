@@ -82,7 +82,11 @@ export function SectionRail() {
       style={{ opacity: 0 }}
     >
       <div aria-hidden className="relative h-40 w-px overflow-hidden bg-white/[0.08]">
-        <div ref={fillRef} className="absolute inset-0 w-px origin-top bg-accent" style={{ transform: 'scaleY(0)' }} />
+        <div
+          ref={fillRef}
+          className="absolute inset-0 w-px origin-top bg-accent"
+          style={{ transform: 'scaleY(0)' }}
+        />
       </div>
 
       <ul className="flex flex-col gap-3.5" aria-label="Section navigation">

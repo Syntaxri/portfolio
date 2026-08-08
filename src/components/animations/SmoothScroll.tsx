@@ -84,9 +84,5 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const stop = () => lenisRef.current?.stop()
   const start = () => lenisRef.current?.start()
 
-  return (
-    <LenisContext.Provider value={{ scrollTo, stop, start }}>
-      {children}
-    </LenisContext.Provider>
-  )
+  return <LenisContext.Provider value={{ scrollTo, stop, start }}>{children}</LenisContext.Provider>
 }

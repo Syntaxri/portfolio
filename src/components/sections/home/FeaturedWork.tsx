@@ -29,14 +29,28 @@ export function FeaturedWork() {
       gsap.fromTo(
         el.querySelectorAll('.fw-row'),
         { y: 70, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.1, ease: 'power4.out', stagger: 0.14, scrollTrigger: { trigger: el, start: 'top 74%', once: true } }
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.1,
+          ease: 'power4.out',
+          stagger: 0.14,
+          scrollTrigger: { trigger: el, start: 'top 74%', once: true },
+        }
       )
 
       /* cover masks rise through their frame */
       gsap.fromTo(
         el.querySelectorAll('.fw-cover-inner'),
         { yPercent: 14, scale: 1.12 },
-        { yPercent: 0, scale: 1, duration: 1.4, ease: 'expo.out', stagger: 0.16, scrollTrigger: { trigger: el, start: 'top 78%', once: true } }
+        {
+          yPercent: 0,
+          scale: 1,
+          duration: 1.4,
+          ease: 'expo.out',
+          stagger: 0.16,
+          scrollTrigger: { trigger: el, start: 'top 78%', once: true },
+        }
       )
     }, el)
 
@@ -78,7 +92,12 @@ export function FeaturedWork() {
   }, [reduced])
 
   return (
-    <section ref={sectionRef} id="work" aria-label="Selected work" className="section-pad ambient-top relative">
+    <section
+      ref={sectionRef}
+      id="work"
+      aria-label="Selected work"
+      className="section-pad ambient-top relative"
+    >
       <div className="mx-auto max-w-shell px-5 sm:px-8">
         <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -87,7 +106,11 @@ export function FeaturedWork() {
               Case studies, <span className="text-outline">not cards</span>
             </h2>
           </div>
-          <Link href="/projects" data-cursor-text="Archive" className="link-underline label hidden text-ink-secondary md:block">
+          <Link
+            href="/projects"
+            data-cursor-text="Archive"
+            className="link-underline label hidden text-ink-secondary md:block"
+          >
             Full archive — {projects.length} featured
           </Link>
         </div>
@@ -104,7 +127,10 @@ export function FeaturedWork() {
               >
                 {/* cover — always visible, the entry point of the case */}
                 <div className="relative overflow-hidden border border-white/[0.08] bg-white/[0.02]">
-                  <div className="fw-cover-inner will-change-transform" style={{ transform: 'translateY(14%) scale(1.12)' }}>
+                  <div
+                    className="fw-cover-inner will-change-transform"
+                    style={{ transform: 'translateY(14%) scale(1.12)' }}
+                  >
                     <ProjectVisual project={project} className="aspect-[1905/990] w-full" />
                   </div>
                   <div className="absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-black/55 via-black/20 to-transparent" />
@@ -122,23 +148,30 @@ export function FeaturedWork() {
                 {/* editorial metadata */}
                 <div className={`mt-6 grid grid-cols-1 items-end gap-4 md:grid-cols-12 ${flip ? '' : ''}`}>
                   <div className="md:col-span-7">
-                        <h3 className="text-[clamp(2.5rem,6vw,5rem)] font-extrabold leading-[0.95] tracking-tight text-ink transition-transform duration-500 ease-out-expo ${flip ? 'group-hover:-translate-x-3' : 'group-hover:translate-x-3'}">
-                          {project.title}
-                        </h3>
-                      </div>
-                      <div className="md:col-span-4 md:col-start-9 md:justify-self-end">
-                        <p className="label mb-3 text-accent-secondary">{project.role}</p>
-                        <p className="max-w-sm text-sm leading-relaxed text-ink-secondary" style={{ opacity: 0.78 }}>
-                          {project.description}
-                        </p>
-                        <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1 md:justify-end">
-                          {project.tags.slice(0, 4).map((t) => (
-                            <span key={t} className="font-mono text-[0.55rem] uppercase tracking-widest text-ink-tertiary">
-                              {t}
-                            </span>
-                          ))}
-                        </div>
-                      </div>                </div>
+                    <h3 className="text-[clamp(2.5rem,6vw,5rem)] font-extrabold leading-[0.95] tracking-tight text-ink transition-transform duration-500 ease-out-expo ${flip ? 'group-hover:-translate-x-3' : 'group-hover:translate-x-3'}">
+                      {project.title}
+                    </h3>
+                  </div>
+                  <div className="md:col-span-4 md:col-start-9 md:justify-self-end">
+                    <p className="label mb-3 text-accent-secondary">{project.role}</p>
+                    <p
+                      className="max-w-sm text-sm leading-relaxed text-ink-secondary"
+                      style={{ opacity: 0.78 }}
+                    >
+                      {project.description}
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1 md:justify-end">
+                      {project.tags.slice(0, 4).map((t) => (
+                        <span
+                          key={t}
+                          className="font-mono text-[0.55rem] uppercase tracking-widest text-ink-tertiary"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>{' '}
+                </div>
               </Link>
             )
           })}

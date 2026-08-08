@@ -39,18 +39,3 @@ export interface GalleryImage {
   alt: string
   caption?: string
 }
-
-export interface GitHubEvent {
-  id: string
-  type: string
-  payload: {
-    size?: number
-    commits?: { message: string }[]
-    ref_type?: string
-    action?: string
-  }
-  repo: {
-    name: string
-  }
-  created_at: string
-}

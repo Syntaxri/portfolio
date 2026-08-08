@@ -146,26 +146,38 @@ export function Hero() {
             <h1 className="font-extrabold leading-[0.9] tracking-tight">
               <SkewScroll>
                 <span className="block overflow-hidden pb-[0.09em]">
-                  <span className="hero-name-line inline-block will-change-transform" style={{ transform: 'translateY(110%)' }}>
+                  <span
+                    className="hero-name-line inline-block will-change-transform"
+                    style={{ transform: 'translateY(110%)' }}
+                  >
                     Akram
                   </span>
                 </span>
               </SkewScroll>
               <SkewScroll strength={0.008}>
                 <span className="block overflow-hidden pb-[0.12em]">
-                  <span className="hero-name-line text-outline-strong inline-block will-change-transform" style={{ transform: 'translateY(110%)' }}>
+                  <span
+                    className="hero-name-line text-outline-strong inline-block will-change-transform"
+                    style={{ transform: 'translateY(110%)' }}
+                  >
                     Rihani
                   </span>
                 </span>
               </SkewScroll>
             </h1>
 
-            <p className="hero-strapline max-w-[21rem] text-sm leading-relaxed text-ink-secondary" style={{ opacity: 0 }}>
+            <p
+              className="hero-strapline max-w-[21rem] text-sm leading-relaxed text-ink-secondary"
+              style={{ opacity: 0 }}
+            >
               {site.strapline}
             </p>
           </div>
 
-          <div className="hero-meta mt-10 flex flex-wrap items-center justify-between gap-x-8 gap-y-5 border-t border-white/[0.08] pt-6" style={{ opacity: 0 }}>
+          <div
+            className="hero-meta mt-10 flex flex-wrap items-center justify-between gap-x-8 gap-y-5 border-t border-white/[0.08] pt-6"
+            style={{ opacity: 0 }}
+          >
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-tertiary">
               Creative Development
               <span className="mx-3 text-accent">·</span>3D Web Experience
@@ -180,7 +192,10 @@ export function Hero() {
                   className="group inline-flex items-center gap-3 bg-ink px-7 py-4 font-display text-sm font-bold tracking-tight text-[#05060a] transition-colors duration-300 hover:bg-accent"
                 >
                   View selected work
-                  <span className="inline-block transition-transform duration-300 group-hover:translate-y-0.5" aria-hidden>
+                  <span
+                    className="inline-block transition-transform duration-300 group-hover:translate-y-0.5"
+                    aria-hidden
+                  >
                     ↓
                   </span>
                 </button>

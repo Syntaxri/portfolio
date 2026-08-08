@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Akram Rihani — Portfolio
 
-## Getting Started
+Personal portfolio at [akramrihani.com](https://akramrihani.com): an expressive, WebGL-heavy React site documenting real project work (no fabricated clients, awards, or metrics).
 
-First, run the development server:
+## Stack
+
+- **Next.js 14** (App Router, RSC + client islands)
+- **React 19**, strict TypeScript
+- **Tailwind CSS** (CSS-first theme in `src/app/globals.css`)
+- **Three.js / React Three Fiber / drei** — hero scene, quality tiers
+- **GSAP + ScrollTrigger + Lenis** — scroll choreography
+- **Next fonts** (`Inter`, `DM Mono`, `Syne`), local cover JPGs in `public/work/<slug>/`
+
+## Scripts
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev        # development server
+npm run build      # production build
+npm start          # serve production build
+npm run lint       # eslint
+npm run typecheck  # tsc --noEmit
+npm test           # vitest (unit + component)
+npm run format     # prettier --write .
+npm run format:check
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Copy `.env.example` to `.env.local`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable         | Required | Purpose                              |
+| ---------------- | -------- | ------------------------------------ |
+| `RESEND_API_KEY` | prod yes | Sends contact-form emails via Resend |
+| `CONTACT_EMAIL`  | prod yes | Recipient for the contact form       |
 
-## Learn More
+Without a key, `next dev` logs submissions instead of emailing and the API
+returns `EMAIL_NOT_CONFIGURED` in production.
 
-To learn more about Next.js, take a look at the following resources:
+## Contact form pipeline
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`POST /api/contact`:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Validation** — server-side (`src/lib/validation/contact.ts`) mirrors the
+   client rules; input sanitized (tags stripped, length capped).
+2. **Honeypot** — hidden `website`/`phone` fields absorb bots.
+3. **Rate limit** — sliding window per IP (`src/lib/rateLimit`), pluggable
+   store; the in-memory default is best-effort on serverless — swap in a
+   Redis adapter by implementing `RateLimitStore`.
+4. **Email** — Resend with HTML-escaped values; failures return a generic
+   message and are logged server-side (never leaked to the client).
+5. **Security headers** — CSP (production), HSTS, Permissions-Policy and more
+   are applied in `next.config.mjs`.
 
-## Deploy on Vercel
+## Performance & accessibility
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- WebGL quality tiers (DPR cap, particle count) based on device hardware.
+- Transforms/opacity-only animation; blur effects only when not scrolling;
+  marquees pause offscreen via `IntersectionObserver`.
+- `prefers-reduced-motion` respected throughout.
+- Mobile menu is a proper dialog (focus trap, ESC to close, aria attributes);
+  form status is announced via `role="status"`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Testing
+
+Unit tests (`vitest`) cover validation, rate limiting, env handling, HTML
+escaping, IP extraction, the email gateway and the API route; component tests
+cover the navbar dialog and contact form. CI runs lint, typecheck, tests and a
+production build.
+
+## Deployment
+
+Deployed on Vercel from `main`. Pushed commits are auto-deployed to
+akramrihani.com.

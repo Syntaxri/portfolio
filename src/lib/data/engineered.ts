@@ -6,17 +6,20 @@ export const engineered = [
   {
     index: '01',
     title: 'Custom GLSL shaders',
-    detail: 'A hand-written 4-octave FBM aurora fragment shader drives the hero atmosphere — procedural, no textures.',
+    detail:
+      'A hand-written 4-octave FBM aurora fragment shader drives the hero atmosphere — procedural, no textures.',
   },
   {
     index: '02',
     title: 'Lazy WebGL engine',
-    detail: 'The Three.js chunk is fetched on demand, rendered at adaptive DPR, and freed the moment the hero leaves view.',
+    detail:
+      'The Three.js chunk is fetched on demand, rendered at adaptive DPR, and freed the moment the hero leaves view.',
   },
   {
     index: '03',
     title: 'Scroll-linked narrative',
-    detail: 'A single master timeline choreographs the manifesto — sharpening, emphasis, and exit are one motion.',
+    detail:
+      'A single master timeline choreographs the manifesto — sharpening, emphasis, and exit are one motion.',
   },
   {
     index: '04',

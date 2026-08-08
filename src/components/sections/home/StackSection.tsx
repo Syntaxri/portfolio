@@ -39,7 +39,11 @@ export function StackSection() {
   }, [reduced])
 
   return (
-    <section ref={sectionRef} aria-label="Technology" className="section-pad relative border-t border-white/[0.06]">
+    <section
+      ref={sectionRef}
+      aria-label="Technology"
+      className="section-pad relative border-t border-white/[0.06]"
+    >
       <div className="mx-auto max-w-shell px-5 sm:px-8">
         <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -49,8 +53,7 @@ export function StackSection() {
             </h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-ink-secondary">
-            Chosen for restraint, not collection — each one earns its place in
-            the stack.
+            Chosen for restraint, not collection — each one earns its place in the stack.
           </p>
         </div>
 

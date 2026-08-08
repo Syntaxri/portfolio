@@ -49,18 +49,20 @@ export function Process() {
   }, [reduced])
 
   return (
-    <section ref={sectionRef} id="process" aria-label="Process" className="section-pad ambient-top relative border-t border-white/[0.06]">
+    <section
+      ref={sectionRef}
+      id="process"
+      aria-label="Process"
+      className="section-pad ambient-top relative border-t border-white/[0.06]"
+    >
       <div className="mx-auto max-w-shell px-5 sm:px-8">
         <div className="mb-16 grid grid-cols-1 gap-6 md:grid-cols-2 md:items-end">
           <div>
             <p className="label label-accent mb-6">05 — Process</p>
-            <h2 className="fluid-h2 max-w-xl font-extrabold tracking-tight">
-              Seven stations, one arc
-            </h2>
+            <h2 className="fluid-h2 max-w-xl font-extrabold tracking-tight">Seven stations, one arc</h2>
           </div>
           <p className="max-w-md text-sm leading-relaxed text-ink-secondary md:justify-self-end">
-            A single through-line from first sketch to shipped site — each
-            station hands off to the next.
+            A single through-line from first sketch to shipped site — each station hands off to the next.
           </p>
         </div>
 

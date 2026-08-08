@@ -15,10 +15,7 @@ export default function NotFound() {
       <p className="text-sm text-white/40 max-w-[400px] mb-8">
         The page you&apos;re looking for doesn&apos;t exist or has been moved.
       </p>
-      <Link
-        href="/"
-        className="glass-button glass-button-primary no-underline"
-      >
+      <Link href="/" className="glass-button glass-button-primary no-underline">
         Back to home
       </Link>
     </div>

@@ -16,7 +16,16 @@ export function PageTransition() {
   const prevPath = useRef(pathname)
   const reduced = useReducedMotion()
 
-  const destination = pathname === '/' ? 'Home' : pathname.startsWith('/projects') ? (pathname === '/projects' ? 'Work' : 'Case study') : pathname === '/about' ? 'About' : 'Contact'
+  const destination =
+    pathname === '/'
+      ? 'Home'
+      : pathname.startsWith('/projects')
+        ? pathname === '/projects'
+          ? 'Work'
+          : 'Case study'
+        : pathname === '/about'
+          ? 'About'
+          : 'Contact'
 
   useEffect(() => {
     if (prevPath.current === pathname) return

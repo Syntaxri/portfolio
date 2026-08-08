@@ -26,18 +26,14 @@ export function Experience() {
     const ctx = gsap.context(() => {
       const rows = el.querySelectorAll('.exp-row')
 
-      gsap.fromTo(
-        rows,
-        { opacity: 0.35, scale: 0.94, y: 30 },
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          ease: 'none',
-          stagger: 0.12,
-          scrollTrigger: { trigger: el, start: 'top 78%', end: 'bottom 55%', scrub: 0.4 },
-        } as gsap.TweenVars
-      )
+      gsap.fromTo(rows, { opacity: 0.35, scale: 0.94, y: 30 }, {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        ease: 'none',
+        stagger: 0.12,
+        scrollTrigger: { trigger: el, start: 'top 78%', end: 'bottom 55%', scrub: 0.4 },
+      } as gsap.TweenVars)
 
       gsap.fromTo(
         lineRef.current,
@@ -80,15 +76,18 @@ export function Experience() {
             <h2 className="fluid-h2 max-w-xl font-extrabold tracking-tight">The road so far</h2>
           </div>
           <p className="max-w-md text-sm leading-relaxed text-ink-secondary md:justify-self-end">
-            Self-taught, then contract, then platform architecture — every role
-            informed the next.
+            Self-taught, then contract, then platform architecture — every role informed the next.
           </p>
         </div>
 
         <div className="relative grid grid-cols-[1.25rem_1fr] gap-x-5 sm:grid-cols-[4rem_1fr] sm:gap-x-8">
           <div className="relative">
             <div className="h-full w-px bg-white/[0.06]" />
-            <div ref={lineRef} className="absolute inset-y-0 left-0 w-px bg-white/70" style={{ transform: 'scaleY(0)' }} />
+            <div
+              ref={lineRef}
+              className="absolute inset-y-0 left-0 w-px bg-white/70"
+              style={{ transform: 'scaleY(0)' }}
+            />
             <span
               ref={nodeRef}
               aria-hidden
@@ -104,7 +103,10 @@ export function Experience() {
                     <p className="label text-ink-tertiary" aria-hidden>
                       {String(i + 1).padStart(2, '0')} — {item.company}
                     </p>
-                    <h3 className="text-6xl font-extrabold tracking-tight text-outline sm:mt-2 sm:text-7xl" aria-hidden>
+                    <h3
+                      className="text-6xl font-extrabold tracking-tight text-outline sm:mt-2 sm:text-7xl"
+                      aria-hidden
+                    >
                       {item.year}
                     </h3>
                   </div>

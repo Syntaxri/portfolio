@@ -11,7 +11,13 @@ function useMoroccoTime() {
   useEffect(() => {
     const update = () => {
       try {
-        setTime(new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Casablanca' }).format(new Date()))
+        setTime(
+          new Intl.DateTimeFormat('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Africa/Casablanca',
+          }).format(new Date())
+        )
       } catch {
         setTime('')
       }
@@ -67,7 +73,11 @@ export function Footer() {
                 </li>
               ))}
               <li>
-                <a href="/Akram-Rihani-CV.pdf" download className="link-underline text-sm text-ink-secondary hover:text-ink">
+                <a
+                  href="/Akram-Rihani-CV.pdf"
+                  download
+                  className="link-underline text-sm text-ink-secondary hover:text-ink"
+                >
                   Resume <span className="label">↗</span>
                 </a>
               </li>
@@ -79,7 +89,12 @@ export function Footer() {
             <ul className="space-y-2.5">
               {socials.map((s) => (
                 <li key={s.label}>
-                  <a href={s.href} target={s.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="link-underline text-sm text-ink-secondary hover:text-ink">
+                  <a
+                    href={s.href}
+                    target={s.href.startsWith('http') ? '_blank' : undefined}
+                    rel="noopener noreferrer"
+                    className="link-underline text-sm text-ink-secondary hover:text-ink"
+                  >
                     {s.label} <span className="label">↗</span>
                   </a>
                 </li>
@@ -88,7 +103,10 @@ export function Footer() {
           </div>
 
           <div className="flex flex-col items-start gap-2.5 md:items-end">
-            <a href={`mailto:${site.email}`} className="link-underline font-mono text-xs tracking-widest text-ink-secondary hover:text-ink">
+            <a
+              href={`mailto:${site.email}`}
+              className="link-underline font-mono text-xs tracking-widest text-ink-secondary hover:text-ink"
+            >
               {site.email}
             </a>
             <p className="label flex items-center gap-2">
@@ -104,10 +122,18 @@ export function Footer() {
 
       <div className="border-t border-white/[0.06]">
         <div className="mx-auto flex max-w-shell flex-wrap items-center justify-between gap-4 px-5 py-6 sm:px-8">
-          <p className="label">© {new Date().getFullYear()} {site.name}</p>
-          <p className="label hidden sm:block">Designed &amp; built by {site.name} — every section, by hand</p>
+          <p className="label">
+            © {new Date().getFullYear()} {site.name}
+          </p>
+          <p className="label hidden sm:block">
+            Designed &amp; built by {site.name} — every section, by hand
+          </p>
           <p className="label flex items-center gap-2">
-            {time && <span>{site.location} · {time}</span>}
+            {time && (
+              <span>
+                {site.location} · {time}
+              </span>
+            )}
             <span className="h-px w-6 bg-white/15" />
             <span>viaruq.dev</span>
           </p>

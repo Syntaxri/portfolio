@@ -37,7 +37,17 @@ function validate(form: { name: string; email: string; message: string }) {
   return errors
 }
 
-function ContactListItem({ icon, label, value, href }: { icon: string; label: string; value: string; href: string }) {
+function ContactListItem({
+  icon,
+  label,
+  value,
+  href,
+}: {
+  icon: string
+  label: string
+  value: string
+  href: string
+}) {
   return (
     <a
       href={href}
@@ -52,7 +62,10 @@ function ContactListItem({ icon, label, value, href }: { icon: string; label: st
         <span className="label block">{label}</span>
         <span className="mt-0.5 block font-mono text-xs tracking-wide text-ink-secondary">{value}</span>
       </span>
-      <span className="label ml-auto transition-transform duration-300 group-hover:-translate-x-1 group-hover:text-accent-secondary" aria-hidden>
+      <span
+        className="label ml-auto transition-transform duration-300 group-hover:-translate-x-1 group-hover:text-accent-secondary"
+        aria-hidden
+      >
         ↗
       </span>
     </a>
@@ -94,15 +107,12 @@ export function ContactClient() {
     [touched]
   )
 
-  const handleBlur = useCallback(
-    (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target
-      setTouched((prev) => ({ ...prev, [name]: true }))
-      clearTimeout(emailDebounce.current)
-      setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }))
-    },
-    []
-  )
+  const handleBlur = useCallback((e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setTouched((prev) => ({ ...prev, [name]: true }))
+    clearTimeout(emailDebounce.current)
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }))
+  }, [])
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -163,14 +173,19 @@ export function ContactClient() {
         </h1>
 
         <p className="mt-8 max-w-md text-base leading-relaxed text-ink-secondary">
-          Open to full-time roles, freelance projects, and interesting
-          collaborations. Response time is usually within 24 hours.
+          Open to full-time roles, freelance projects, and interesting collaborations. Response time is
+          usually within 24 hours.
         </p>
 
         <div className="mt-10 max-w-md">
           <ContactListItem icon="✉" label="Email" value={site.email} href={`mailto:${site.email}`} />
           <ContactListItem icon="⌥" label="GitHub" value="github.com/Syntaxri" href={site.github} />
-          <ContactListItem icon="◈" label="LinkedIn" value="linkedin.com/in/riihaniakram" href={site.linkedin} />
+          <ContactListItem
+            icon="◈"
+            label="LinkedIn"
+            value="linkedin.com/in/riihaniakram"
+            href={site.linkedin}
+          />
         </div>
 
         <div className="mt-8 inline-flex items-center gap-2.5">
@@ -185,6 +200,11 @@ export function ContactClient() {
       {/* Form */}
       <div className="relative h-fit border border-white/[0.08] bg-white/[0.015] p-8 sm:p-10">
         <form onSubmit={handleSubmit} noValidate className="space-y-8" aria-label="Contact form">
+          <p role="status" className="sr-only">
+            {status === 'loading' && 'Sending your message…'}
+            {status === 'success' && 'Message sent successfully.'}
+            {status === 'error' && 'Sending failed. Please try again.'}
+          </p>
           <div>
             <label htmlFor="name" className="label mb-2 block">
               Your name
@@ -203,7 +223,11 @@ export function ContactClient() {
               className={inputClass(errors.name, touched.name)}
             />
             {errors.name && touched.name && (
-              <p id="name-error" role="alert" className="mt-2 font-mono text-[0.6rem] uppercase tracking-widest text-red-400">
+              <p
+                id="name-error"
+                role="alert"
+                className="mt-2 font-mono text-[0.6rem] uppercase tracking-widest text-red-400"
+              >
                 {errors.name}
               </p>
             )}
@@ -228,7 +252,11 @@ export function ContactClient() {
               className={inputClass(errors.email, touched.email)}
             />
             {errors.email && touched.email && (
-              <p id="email-error" role="alert" className="mt-2 font-mono text-[0.6rem] uppercase tracking-widest text-red-400">
+              <p
+                id="email-error"
+                role="alert"
+                className="mt-2 font-mono text-[0.6rem] uppercase tracking-widest text-red-400"
+              >
                 {errors.email}
               </p>
             )}
@@ -252,7 +280,11 @@ export function ContactClient() {
               className={`${inputClass(errors.message, touched.message)} resize-none`}
             />
             {errors.message && touched.message && (
-              <p id="message-error" role="alert" className="mt-2 font-mono text-[0.6rem] uppercase tracking-widest text-red-400">
+              <p
+                id="message-error"
+                role="alert"
+                className="mt-2 font-mono text-[0.6rem] uppercase tracking-widest text-red-400"
+              >
                 {errors.message}
               </p>
             )}
@@ -268,7 +300,10 @@ export function ContactClient() {
             >
               {status === 'loading' && (
                 <>
-                  <span className="inline-block h-4 w-4 animate-spin-slow rounded-full border-2 border-current border-t-transparent" aria-hidden />
+                  <span
+                    className="inline-block h-4 w-4 animate-spin-slow rounded-full border-2 border-current border-t-transparent"
+                    aria-hidden
+                  />
                   Sending…
                 </>
               )}
@@ -277,7 +312,10 @@ export function ContactClient() {
               {status === 'idle' && (
                 <>
                   Send message
-                  <span className="inline-block transition-transform duration-300 group-hover:translate-x-1" aria-hidden>
+                  <span
+                    className="inline-block transition-transform duration-300 group-hover:translate-x-1"
+                    aria-hidden
+                  >
                     →
                   </span>
                 </>

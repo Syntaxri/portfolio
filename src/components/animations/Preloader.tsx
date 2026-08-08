@@ -81,7 +81,11 @@ export function Preloader() {
         </span>
       </div>
       <div className="h-px w-full bg-white/10">
-        <div ref={fillRef} className="h-full w-full origin-left bg-accent" style={{ transform: 'scaleX(0)' }} />
+        <div
+          ref={fillRef}
+          className="h-full w-full origin-left bg-accent"
+          style={{ transform: 'scaleX(0)' }}
+        />
       </div>
     </div>
   )

@@ -1,11 +1,11 @@
 {
   "name": "Akram Rihani — Portfolio",
   "short_name": "AR",
-  "description": "Full-stack developer & photographer",
+  "description": "Creative developer crafting expressive interfaces, 3D web experiences and full-stack products.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#050a14",
-  "theme_color": "#ff8c42",
+  "background_color": "#05060a",
+  "theme_color": "#05060a",
   "icons": [
     { "src": "/icon-192x192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }

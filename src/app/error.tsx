@@ -1,30 +1,22 @@
 'use client'
 
-export default function Error({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string }
-  reset: () => void
-}) {
+/**
+ * Root error boundary. Visitors see a generic, safe message — internal
+ * error details are logged only (never rendered).
+ */
+export default function Error({ reset }: { reset: () => void }) {
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 text-center">
-      <span
-        className="font-mono text-[0.6rem] tracking-widest uppercase block mb-6"
-        style={{ color: 'var(--accent)' }}
-      >
+    <div className="flex min-h-[70vh] flex-col items-center justify-center px-4 text-center">
+      <span className="label mb-6 block" style={{ color: 'var(--accent)' }}>
         Something went wrong
       </span>
-      <h1 className="font-display font-extrabold text-[clamp(2rem,5vw,3rem)] text-white tracking-tight leading-none mb-4">
+      <h1 className="mb-4 font-display text-[clamp(2rem,5vw,3rem)] font-extrabold leading-none tracking-tight text-white">
         An unexpected error occurred
       </h1>
-      <p className="text-sm text-white/40 max-w-[400px] mb-8">
-        {error.message || 'Please try again.'}
+      <p className="mb-8 max-w-[400px] text-sm text-white/40">
+        Please try again. If the problem persists, email me directly — the address is in the footer.
       </p>
-      <button
-        onClick={reset}
-        className="glass-button glass-button-primary no-underline"
-      >
+      <button onClick={reset} className="glass-button glass-button-primary no-underline">
         Try again
       </button>
     </div>

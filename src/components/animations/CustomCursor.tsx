@@ -25,7 +25,7 @@ export function CustomCursor() {
     setEnabled(true)
   }, [reduced])
 
-useEffect(() => {
+  useEffect(() => {
     if (!enabled || isTouch) return
 
     const dot = dotRef.current

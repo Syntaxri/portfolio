@@ -38,7 +38,11 @@ export function Engineered() {
   }, [reduced])
 
   return (
-    <section ref={sectionRef} aria-label="Engineering" className="section-pad relative border-t border-white/[0.06]">
+    <section
+      ref={sectionRef}
+      aria-label="Engineering"
+      className="section-pad relative border-t border-white/[0.06]"
+    >
       <div className="mx-auto max-w-shell px-5 sm:px-8">
         <p className="label label-accent mb-6">07 — Under the hood</p>
         <h2 className="fluid-h2 max-w-3xl font-extrabold tracking-tight">
@@ -63,7 +67,8 @@ export function Engineered() {
         </div>
 
         <p className="label mt-10 text-ink-tertiary">
-          Every claim above is verifiable in this repository — run the build, inspect the shader, toggle reduced motion.
+          Every claim above is verifiable in this repository — run the build, inspect the shader, toggle
+          reduced motion.
         </p>
       </div>
     </section>

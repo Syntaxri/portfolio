@@ -73,7 +73,10 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
 
             <div className="flex flex-wrap content-end gap-2 md:col-span-4 md:justify-end">
               {project.tags.map((t) => (
-                <span key={t} className="tag border border-white/10 px-3 py-1 font-mono text-[0.55rem] uppercase tracking-widest text-ink-tertiary">
+                <span
+                  key={t}
+                  className="tag border border-white/10 px-3 py-1 font-mono text-[0.55rem] uppercase tracking-widest text-ink-tertiary"
+                >
                   {t}
                 </span>
               ))}
@@ -94,11 +97,14 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
           />
           <ProjectVisual
             project={project}
-            className="absolute inset-x-0 top-1/2 h-full w-full scale-[1.04] -translate-y-1/2 object-cover opacity-80 blur-[1.5px] mix-blend-screen"
+            priority
+            className="absolute inset-x-0 top-1/2 h-full w-full scale-[1.04] -translate-y-1/2 opacity-80 blur-[1.5px] mix-blend-screen"
           />
           <div className="absolute inset-y-0 left-1/2 w-px bg-white/[0.06]" />
           <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-2 pb-4">
-            <span className="label text-white/45">{project.title} — {project.category}</span>
+            <span className="label text-white/45">
+              {project.title} — {project.category}
+            </span>
             <span className="label text-white/45">{project.year}</span>
           </div>
         </div>
@@ -207,7 +213,10 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
 
       {/* Bottom bar */}
       <div className="mx-auto flex max-w-shell flex-wrap items-center justify-between gap-6 px-5 py-10 sm:px-8">
-        <Link href="/projects" className="link-underline label text-ink-tertiary transition-colors hover:text-ink">
+        <Link
+          href="/projects"
+          className="link-underline label text-ink-tertiary transition-colors hover:text-ink"
+        >
           ← All projects
         </Link>
         {project.liveUrl ? (

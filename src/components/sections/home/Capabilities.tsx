@@ -36,7 +36,12 @@ function CapabilityMotive({ variant, color }: { variant: CapabilityPreview; colo
             <span
               key={i}
               className="motive-scan w-[3px]"
-              style={{ height: h, background: color, opacity: 0.35 + (i % 3) * 0.2, animationDelay: `${i * 90}ms` }}
+              style={{
+                height: h,
+                background: color,
+                opacity: 0.35 + (i % 3) * 0.2,
+                animationDelay: `${i * 90}ms`,
+              }}
             />
           ))}
         </div>
@@ -68,7 +73,10 @@ function CapabilityMotive({ variant, color }: { variant: CapabilityPreview; colo
       {variant === 'aura' && (
         <div className="absolute inset-x-4 top-6 space-y-[7px]">
           {['success — trees shake', 'pass — 624 checks', 'deploy · edge', 'gzip 98%'].map((line, i) => (
-            <p key={line} className={`font-mono text-[0.55rem] uppercase tracking-[0.18em] ${i === 3 ? 'text-white/55' : 'text-white/26'}`}>
+            <p
+              key={line}
+              className={`font-mono text-[0.55rem] uppercase tracking-[0.18em] ${i === 3 ? 'text-white/55' : 'text-white/26'}`}
+            >
               <span className={i === 3 ? 'text-emerald-400' : 'text-white/30'}>▸ </span>
               {line}
             </p>
@@ -105,7 +113,12 @@ export function Capabilities() {
   }, [reduced])
 
   return (
-    <section ref={sectionRef} id="capabilities" aria-label="Capabilities" className="section-pad ambient-aura relative">
+    <section
+      ref={sectionRef}
+      id="capabilities"
+      aria-label="Capabilities"
+      className="section-pad ambient-aura relative"
+    >
       <div className="mx-auto max-w-shell px-5 sm:px-8">
         <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -115,8 +128,7 @@ export function Capabilities() {
             </h2>
           </div>
           <p className="max-w-md text-sm leading-relaxed text-ink-secondary">
-            From the creative surface to the systems underneath — each discipline
-            is practised, not listed.
+            From the creative surface to the systems underneath — each discipline is practised, not listed.
           </p>
         </div>
 
@@ -133,14 +145,14 @@ export function Capabilities() {
                 <h3 className="fluid-h2 font-extrabold tracking-tight text-ink transition-transform duration-500 ease-out-expo md:group-hover:translate-x-3">
                   {c.title}
                 </h3>
-                <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-secondary">
-                  {c.description}
-                </p>
+                <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-secondary">{c.description}</p>
                 <p className="mt-5 font-mono text-[0.58rem] uppercase tracking-[0.2em] text-ink-tertiary">
                   {c.skills.map((s, i) => (
                     <span key={s}>
                       {i > 0 && <span className="mx-2 text-white/20">/</span>}
-                      <span className="transition-colors duration-300 group-hover:text-ink-secondary">{s}</span>
+                      <span className="transition-colors duration-300 group-hover:text-ink-secondary">
+                        {s}
+                      </span>
                     </span>
                   ))}
                 </p>

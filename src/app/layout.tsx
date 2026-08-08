@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     'spring boot',
     'typescript',
     'portfolio',
-    'ankara',
+    'morocco',
   ],
   authors: [{ name: site.name }],
   creator: site.name,
@@ -83,11 +83,7 @@ export const viewport: Viewport = {
   colorScheme: 'dark',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} ${dmMono.variable} ${syne.variable} antialiased`}>
@@ -100,7 +96,16 @@ export default function RootLayout({
               name: site.name,
               url: `https://${site.domain}`,
               email: `mailto:${site.email}`,
-              knowsAbout: ['Creative Development', 'WebGL', 'Three.js', 'React', 'Next.js', 'GSAP', 'Java', 'Spring Boot'],
+              knowsAbout: [
+                'Creative Development',
+                'WebGL',
+                'Three.js',
+                'React',
+                'Next.js',
+                'GSAP',
+                'Java',
+                'Spring Boot',
+              ],
               sameAs: [site.github, site.linkedin],
             }),
           }}

@@ -53,15 +53,13 @@ export function AboutClient({ experience }: { experience: ExperienceEntry[] }) {
         <div className="mt-16 grid grid-cols-1 gap-12 pb-24 md:grid-cols-12">
           <div className="md:col-span-6">
             <p className="text-base leading-relaxed text-ink md:text-lg">
-              I&apos;m {site.name} — a developer whose roots run through backend
-              architecture and whose obsessions run through interface craft. I
-              speak fluent Java, Spring Boot and API design, and equally fluent
-              React, TypeScript and WebGL.
+              I&apos;m {site.name} — a developer whose roots run through backend architecture and whose
+              obsessions run through interface craft. I speak fluent Java, Spring Boot and API design, and
+              equally fluent React, TypeScript and WebGL.
             </p>
             <p className="mt-6 text-base leading-relaxed text-ink-secondary">
-              That&apos;s an unusual combination for a reason: the best digital
-              experiences feel effortless because the system underneath is
-              boring-efficient. I build both halves.
+              That&apos;s an unusual combination for a reason: the best digital experiences feel effortless
+              because the system underneath is boring-efficient. I build both halves.
             </p>
           </div>
 
@@ -75,13 +73,18 @@ export function AboutClient({ experience }: { experience: ExperienceEntry[] }) {
                 </span>
                 <span className="text-sm text-ink">{site.availability}</span>
               </li>
-              <li className="text-sm text-ink-secondary">{site.location} · {site.email}</li>
+              <li className="text-sm text-ink-secondary">
+                {site.location} · {site.email}
+              </li>
             </ul>
             <div className="mt-10 border-t border-white/[0.08] pt-8">
               <p className="label mb-4">Stack</p>
               <div className="flex flex-wrap gap-2">
                 {stack.slice(0, 8).map((entry) => (
-                  <span key={entry.tech} className="font-mono text-[0.58rem] uppercase tracking-[0.2em] text-ink-tertiary">
+                  <span
+                    key={entry.tech}
+                    className="font-mono text-[0.58rem] uppercase tracking-[0.2em] text-ink-tertiary"
+                  >
                     {entry.tech}
                   </span>
                 ))}
@@ -98,7 +101,10 @@ export function AboutClient({ experience }: { experience: ExperienceEntry[] }) {
           <div className="grid grid-cols-1 gap-x-16 gap-y-14 md:grid-cols-2">
             {experience.map((item) => (
               <article key={item.year} className="about-reveal">
-                <p className="text-outline-strong font-display text-7xl font-extrabold leading-none tracking-tight" aria-hidden>
+                <p
+                  className="text-outline-strong font-display text-7xl font-extrabold leading-none tracking-tight"
+                  aria-hidden
+                >
                   {item.year}
                 </p>
                 <h2 className="mt-4 font-display text-2xl font-extrabold tracking-tight">{item.role}</h2>
@@ -115,9 +121,7 @@ export function AboutClient({ experience }: { experience: ExperienceEntry[] }) {
         <div className="mx-auto flex max-w-shell flex-col items-start justify-between gap-10 px-5 py-24 sm:px-8 md:flex-row md:items-center">
           <div>
             <p className="label label-accent mb-6">Next</p>
-            <h2 className="fluid-h2 max-w-xl font-extrabold tracking-tight">
-              Have a project in mind?
-            </h2>
+            <h2 className="fluid-h2 max-w-xl font-extrabold tracking-tight">Have a project in mind?</h2>
           </div>
           <Magnetic strength={0.35}>
             <Link
@@ -125,7 +129,10 @@ export function AboutClient({ experience }: { experience: ExperienceEntry[] }) {
               className="group inline-flex items-center gap-3 bg-ink px-8 py-4 font-display text-base font-bold tracking-tight text-[#05060a] transition-colors duration-300 hover:bg-accent"
             >
               Let&apos;s talk
-              <span className="inline-block transition-transform duration-300 group-hover:translate-x-1" aria-hidden>
+              <span
+                className="inline-block transition-transform duration-300 group-hover:translate-x-1"
+                aria-hidden
+              >
                 →
               </span>
             </Link>

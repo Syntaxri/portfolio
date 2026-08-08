@@ -1,14 +1,34 @@
+import Image from 'next/image'
 import type { Project } from '@/types'
 
 /**
  * Cover visual for a project — renders the real screenshot when one exists,
  * otherwise falls back to procedural SVG art so no slot is ever empty.
  */
-export function ProjectVisual({ project, className = '' }: { project: Project; className?: string }) {
+export function ProjectVisual({
+  project,
+  className = '',
+  priority = false,
+}: {
+  project: Project
+  className?: string
+  priority?: boolean
+}) {
   if (project.cover) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element -- static local covers, aspect handled by the frame
-      <img src={project.cover} alt={`${project.title} — cover`} loading="lazy" decoding="async" fetchPriority="low" className={`h-full w-full object-cover ${className}`} draggable={false} />
+      <div className={`relative overflow-hidden ${className}`}>
+        <Image
+          src={project.cover}
+          alt={`${project.title} — cover`}
+          fill
+          sizes="(max-width: 1280px) 100vw, 1100px"
+          priority={priority}
+          fetchPriority={priority ? 'high' : 'low'}
+          quality={82}
+          draggable={false}
+          className="object-cover"
+        />
+      </div>
     )
   }
   const c = project.color
@@ -84,8 +104,26 @@ export function ProjectVisual({ project, className = '' }: { project: Project; c
 
       {v === 'aurora' && (
         <>
-          <ellipse cx="150" cy="120" rx="300" ry="170" fill={`url(#pv-aur-${project.slug})`} opacity="0.5" filter={`url(#pv-blur-${project.slug})`} transform="rotate(-18 320 240)" />
-          <ellipse cx="470" cy="320" rx="260" ry="140" fill="#8b85d8" opacity="0.4" filter={`url(#pv-blur-${project.slug})`} transform="rotate(14 320 240)" />
+          <ellipse
+            cx="150"
+            cy="120"
+            rx="300"
+            ry="170"
+            fill={`url(#pv-aur-${project.slug})`}
+            opacity="0.5"
+            filter={`url(#pv-blur-${project.slug})`}
+            transform="rotate(-18 320 240)"
+          />
+          <ellipse
+            cx="470"
+            cy="320"
+            rx="260"
+            ry="140"
+            fill="#8b85d8"
+            opacity="0.4"
+            filter={`url(#pv-blur-${project.slug})`}
+            transform="rotate(14 320 240)"
+          />
           <circle cx="495" cy="150" r="96" fill="none" stroke={c} strokeOpacity="0.5" strokeWidth="1" />
           <circle cx="495" cy="150" r="138" fill="none" stroke={c} strokeOpacity="0.22" strokeWidth="1" />
         </>
@@ -95,8 +133,26 @@ export function ProjectVisual({ project, className = '' }: { project: Project; c
         <>
           <rect width="640" height="480" fill={`url(#pv-grid-${project.slug})`} />
           <g transform="translate(320 240)">
-            <ellipse cx="0" cy="0" rx="170" ry="170" fill="none" stroke={c} strokeOpacity="0.55" strokeWidth="1.2" />
-            <ellipse cx="0" cy="0" rx="120" ry="120" fill="none" stroke={c} strokeOpacity="0.3" strokeWidth="1" />
+            <ellipse
+              cx="0"
+              cy="0"
+              rx="170"
+              ry="170"
+              fill="none"
+              stroke={c}
+              strokeOpacity="0.55"
+              strokeWidth="1.2"
+            />
+            <ellipse
+              cx="0"
+              cy="0"
+              rx="120"
+              ry="120"
+              fill="none"
+              stroke={c}
+              strokeOpacity="0.3"
+              strokeWidth="1"
+            />
             <circle cx="0" cy="0" r="58" fill={c} fillOpacity="0.22" />
           </g>
         </>
@@ -104,8 +160,20 @@ export function ProjectVisual({ project, className = '' }: { project: Project; c
 
       {v === 'signal' && (
         <>
-          <path d="M 0 240 Q 170 120 320 216 T 640 200" fill="none" stroke={`url(#pv-sig-${project.slug})`} strokeWidth="2.5" filter={`url(#pv-soft-${project.slug})`} />
-          <path d="M 0 320 Q 170 210 340 300 T 640 292" fill="none" stroke={c} strokeOpacity="0.5" strokeWidth="1.4" />
+          <path
+            d="M 0 240 Q 170 120 320 216 T 640 200"
+            fill="none"
+            stroke={`url(#pv-sig-${project.slug})`}
+            strokeWidth="2.5"
+            filter={`url(#pv-soft-${project.slug})`}
+          />
+          <path
+            d="M 0 320 Q 170 210 340 300 T 640 292"
+            fill="none"
+            stroke={c}
+            strokeOpacity="0.5"
+            strokeWidth="1.4"
+          />
           <g fill={c}>
             <circle cx="320" cy="216" r="4" />
             <circle cx="520" cy="268" r="3" fillOpacity="0.6" />
@@ -122,10 +190,27 @@ export function ProjectVisual({ project, className = '' }: { project: Project; c
         </>
       )}
 
-      <text x="36" y="386" fontFamily="DM Mono, monospace" fontSize="13" letterSpacing="0.22em" fill="#ffffff" fillOpacity="0.34">
+      <text
+        x="36"
+        y="386"
+        fontFamily="DM Mono, monospace"
+        fontSize="13"
+        letterSpacing="0.22em"
+        fill="#ffffff"
+        fillOpacity="0.34"
+      >
         {project.category?.toUpperCase() ?? 'PROJECT'} — {project.year}
       </text>
-      <text x="640" y="386" textAnchor="end" fontFamily="DM Mono, monospace" fontSize="13" letterSpacing="0.22em" fill={c} fillOpacity="0.7">
+      <text
+        x="640"
+        y="386"
+        textAnchor="end"
+        fontFamily="DM Mono, monospace"
+        fontSize="13"
+        letterSpacing="0.22em"
+        fill={c}
+        fillOpacity="0.7"
+      >
         AR
       </text>
 

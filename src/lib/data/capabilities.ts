@@ -59,11 +59,31 @@ export const stack = [
 ]
 
 export const processSteps = [
-  { index: '01', title: 'Discover', description: 'Goals, constraints, content and the one thing this experience must communicate.' },
-  { index: '02', title: 'Design', description: 'Art direction, typography, a motion language, and clear visual hierarchy.' },
-  { index: '03', title: 'Prototype', description: 'Interactive prototypes that prove the interaction model early.' },
+  {
+    index: '01',
+    title: 'Discover',
+    description: 'Goals, constraints, content and the one thing this experience must communicate.',
+  },
+  {
+    index: '02',
+    title: 'Design',
+    description: 'Art direction, typography, a motion language, and clear visual hierarchy.',
+  },
+  {
+    index: '03',
+    title: 'Prototype',
+    description: 'Interactive prototypes that prove the interaction model early.',
+  },
   { index: '04', title: 'Develop', description: 'Component architecture, APIs, and the experience in code.' },
-  { index: '05', title: 'Animate', description: 'Scroll choreography, transitions, micro-interactions — sequenced, not scattered.' },
-  { index: '06', title: 'Optimize', description: 'Bundle budgets, 60fps, reduced motion, and honest performance.' },
+  {
+    index: '05',
+    title: 'Animate',
+    description: 'Scroll choreography, transitions, micro-interactions — sequenced, not scattered.',
+  },
+  {
+    index: '06',
+    title: 'Optimize',
+    description: 'Bundle budgets, 60fps, reduced motion, and honest performance.',
+  },
   { index: '07', title: 'Deploy', description: 'Review, test across devices, ship, and iterate.' },
 ]

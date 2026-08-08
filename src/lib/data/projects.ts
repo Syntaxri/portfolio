@@ -10,7 +10,18 @@ export const projects: Project[] = [
       'A Moroccan palace hotel website where the guest journey is told with parallax and 3D scroll choreography — sticky scenes, scrubbed motion, reservation paths and a contact flow wired through API route handlers.',
     longDescription:
       'Palais Amghass is a hotel website built around one idea: scrolling through the property should feel like walking through it. The experience is choreographed with GSAP 3 + ScrollTrigger + Lenis — parallax layers, scrubbed scenes and 3D scroll effects — with reveals, the menu and the carousels handled by Motion (Framer) and an Embla-powered testimonials carousel. The frontend runs on Next.js 16 App Router (Server Components/SSG, Turbopack) with React 19, strict TypeScript and a Tailwind CSS v4 theme (CSS-first, no config file). Booking, contact and newsletter forms are validated with react-hook-form + Zod and handled by Next route handlers (/api/booking, /api/contact, /api/newsletter) — validation and logging only, no database attached. A Sanity schema set was written and the GROQ queries prepared but never connected to a live project; email goes out through Resend.',
-    tags: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind v4', 'GSAP', 'ScrollTrigger', 'Lenis', 'react-hook-form', 'Zod', 'Embla'],
+    tags: [
+      'Next.js 16',
+      'React 19',
+      'TypeScript',
+      'Tailwind v4',
+      'GSAP',
+      'ScrollTrigger',
+      'Lenis',
+      'react-hook-form',
+      'Zod',
+      'Embla',
+    ],
     icon: 'P',
     color: '#d4a95c',
     year: '2025',
@@ -42,12 +53,36 @@ export const projects: Project[] = [
       },
     ],
     gallery: [
-      { src: '/work/palais-amghass/PalaisAmghassChambres.jpg', alt: 'Palais Amghass — rooms section', caption: 'Rooms — parallax scene' },
-      { src: '/work/palais-amghass/PalaisAmghassExperiences.jpg', alt: 'Palais Amghass — experiences section', caption: 'Experiences' },
-      { src: '/work/palais-amghass/PalaisAmghasBIEN-ETRE-HAMAM.jpg', alt: 'Palais Amghass — wellness and hammam', caption: 'Wellness & hammam' },
-      { src: '/work/palais-amghass/PalaisAmghassTables.jpg', alt: 'Palais Amghass — dining', caption: 'Dining' },
-      { src: '/work/palais-amghass/PalaisAmghassReservations.jpg', alt: 'Palais Amghass — reservation form', caption: 'Reservation flow' },
-      { src: '/work/palais-amghass/PalaisAmghassTestimonials.jpg', alt: 'Palais Amghass — testimonials carousel', caption: 'Testimonials carousel' },
+      {
+        src: '/work/palais-amghass/PalaisAmghassChambres.jpg',
+        alt: 'Palais Amghass — rooms section',
+        caption: 'Rooms — parallax scene',
+      },
+      {
+        src: '/work/palais-amghass/PalaisAmghassExperiences.jpg',
+        alt: 'Palais Amghass — experiences section',
+        caption: 'Experiences',
+      },
+      {
+        src: '/work/palais-amghass/PalaisAmghasBIEN-ETRE-HAMAM.jpg',
+        alt: 'Palais Amghass — wellness and hammam',
+        caption: 'Wellness & hammam',
+      },
+      {
+        src: '/work/palais-amghass/PalaisAmghassTables.jpg',
+        alt: 'Palais Amghass — dining',
+        caption: 'Dining',
+      },
+      {
+        src: '/work/palais-amghass/PalaisAmghassReservations.jpg',
+        alt: 'Palais Amghass — reservation form',
+        caption: 'Reservation flow',
+      },
+      {
+        src: '/work/palais-amghass/PalaisAmghassTestimonials.jpg',
+        alt: 'Palais Amghass — testimonials carousel',
+        caption: 'Testimonials carousel',
+      },
     ],
   },
   {
@@ -96,14 +131,46 @@ export const projects: Project[] = [
       { label: 'Test Coverage', value: '92%' },
     ],
     gallery: [
-      { src: '/work/wisla-platform/WislaLightMode.jpg', alt: 'WISLA platform — light mode dashboard', caption: 'Platform — light mode' },
-      { src: '/work/wisla-platform/WislaDarkMode.jpg', alt: 'WISLA platform — dark mode dashboard', caption: 'Platform — dark mode' },
-      { src: '/work/wisla-platform/WislaStudentDashboard.jpg', alt: 'WISLA — student dashboard', caption: 'Student dashboard' },
-      { src: '/work/wisla-platform/WislaFacultyDahsboard.jpg', alt: 'WISLA — faculty dashboard', caption: 'Faculty dashboard' },
-      { src: '/work/wisla-platform/WislaCompanyDashboard.jpg', alt: 'WISLA — company dashboard', caption: 'Company dashboard' },
-      { src: '/work/wisla-platform/WislaCompanyStudentsApplications.jpg', alt: 'WISLA — company student applications', caption: 'Company — student applications' },
-      { src: '/work/wisla-platform/WislaFacultyStudents.jpg', alt: 'WISLA — faculty students view', caption: 'Faculty — students' },
-      { src: '/work/wisla-platform/WislaStudentsDisponibleOffers.jpg', alt: 'WISLA — available offers for students', caption: 'Students — available offers' },
+      {
+        src: '/work/wisla-platform/WislaLightMode.jpg',
+        alt: 'WISLA platform — light mode dashboard',
+        caption: 'Platform — light mode',
+      },
+      {
+        src: '/work/wisla-platform/WislaDarkMode.jpg',
+        alt: 'WISLA platform — dark mode dashboard',
+        caption: 'Platform — dark mode',
+      },
+      {
+        src: '/work/wisla-platform/WislaStudentDashboard.jpg',
+        alt: 'WISLA — student dashboard',
+        caption: 'Student dashboard',
+      },
+      {
+        src: '/work/wisla-platform/WislaFacultyDahsboard.jpg',
+        alt: 'WISLA — faculty dashboard',
+        caption: 'Faculty dashboard',
+      },
+      {
+        src: '/work/wisla-platform/WislaCompanyDashboard.jpg',
+        alt: 'WISLA — company dashboard',
+        caption: 'Company dashboard',
+      },
+      {
+        src: '/work/wisla-platform/WislaCompanyStudentsApplications.jpg',
+        alt: 'WISLA — company student applications',
+        caption: 'Company — student applications',
+      },
+      {
+        src: '/work/wisla-platform/WislaFacultyStudents.jpg',
+        alt: 'WISLA — faculty students view',
+        caption: 'Faculty — students',
+      },
+      {
+        src: '/work/wisla-platform/WislaStudentsDisponibleOffers.jpg',
+        alt: 'WISLA — available offers for students',
+        caption: 'Students — available offers',
+      },
     ],
   },
   {
@@ -145,9 +212,21 @@ export const projects: Project[] = [
       { label: 'Pages with 95+ Score', value: 'All' },
     ],
     gallery: [
-      { src: '/work/interactive-portfolio/PortfoliosHomePage.jpg', alt: 'Interactive portfolio — home page', caption: 'Home — WebGL hero' },
-      { src: '/work/interactive-portfolio/PortfolioAboutPage.jpg', alt: 'Interactive portfolio — about page', caption: 'About' },
-      { src: '/work/interactive-portfolio/PortfolioCapabilities.jpg', alt: 'Interactive portfolio — capabilities section', caption: 'Capabilities' },
+      {
+        src: '/work/interactive-portfolio/PortfoliosHomePage.jpg',
+        alt: 'Interactive portfolio — home page',
+        caption: 'Home — WebGL hero',
+      },
+      {
+        src: '/work/interactive-portfolio/PortfolioAboutPage.jpg',
+        alt: 'Interactive portfolio — about page',
+        caption: 'About',
+      },
+      {
+        src: '/work/interactive-portfolio/PortfolioCapabilities.jpg',
+        alt: 'Interactive portfolio — capabilities section',
+        caption: 'Capabilities',
+      },
     ],
   },
   {
@@ -177,7 +256,11 @@ export const projects: Project[] = [
     ],
     gallery: [
       { src: '/work/atlas-club/AtlasClubHomePage.jpg', alt: 'Atlas Club — home page', caption: 'Home' },
-      { src: '/work/atlas-club/AtlasClubWeb3WalletConnect.jpg', alt: 'Atlas Club — wallet connection', caption: 'Wallet connect' },
+      {
+        src: '/work/atlas-club/AtlasClubWeb3WalletConnect.jpg',
+        alt: 'Atlas Club — wallet connection',
+        caption: 'Wallet connect',
+      },
       { src: '/work/atlas-club/AtlasClubShop.jpg', alt: 'Atlas Club — shop', caption: 'Shop' },
       { src: '/work/atlas-club/AtlasClubItem.jpg', alt: 'Atlas Club — item view', caption: 'Item view' },
     ],
@@ -199,11 +282,31 @@ export const projects: Project[] = [
     liveUrl: 'https://nexthobby.vercel.app/',
     coverVariant: 'orb',
     gallery: [
-      { src: '/work/nexthobby/NextHobbyHomePage.jpg', alt: 'NextHobby — home page', caption: 'Home — discovery' },
-      { src: '/work/nexthobby/NextHobbyExploreEquuipment.jpg', alt: 'NextHobby — equipment exploration', caption: 'Explore equipment' },
-      { src: '/work/nexthobby/NextHobbyItemRent.jpg', alt: 'NextHobby — rent an item', caption: 'Rent an item' },
-      { src: '/work/nexthobby/NextHobbyFormInfos.jpg', alt: 'NextHobby — booking form', caption: 'Booking form' },
-      { src: '/work/nexthobby/NextHobbyPaymentsMethods.jpg', alt: 'NextHobby — payment methods', caption: 'Payment methods' },
+      {
+        src: '/work/nexthobby/NextHobbyHomePage.jpg',
+        alt: 'NextHobby — home page',
+        caption: 'Home — discovery',
+      },
+      {
+        src: '/work/nexthobby/NextHobbyExploreEquuipment.jpg',
+        alt: 'NextHobby — equipment exploration',
+        caption: 'Explore equipment',
+      },
+      {
+        src: '/work/nexthobby/NextHobbyItemRent.jpg',
+        alt: 'NextHobby — rent an item',
+        caption: 'Rent an item',
+      },
+      {
+        src: '/work/nexthobby/NextHobbyFormInfos.jpg',
+        alt: 'NextHobby — booking form',
+        caption: 'Booking form',
+      },
+      {
+        src: '/work/nexthobby/NextHobbyPaymentsMethods.jpg',
+        alt: 'NextHobby — payment methods',
+        caption: 'Payment methods',
+      },
     ],
   },
 ]

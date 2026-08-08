@@ -41,7 +41,8 @@
     scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
   }
 
-  html.lenis, html.lenis body {
+  html.lenis,
+  html.lenis body {
     height: auto;
   }
 
@@ -59,7 +60,11 @@
     font-family: var(--font-body);
     font-size: 0.9375rem;
     line-height: 1.6;
-    font-feature-settings: "kern" 1, "cv02" 1, "cv05" 1, "ss01" 1;
+    font-feature-settings:
+      'kern' 1,
+      'cv02' 1,
+      'cv05' 1,
+      'ss01' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
@@ -70,21 +75,31 @@
     color: white;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
     font-weight: 700;
     letter-spacing: -0.02em;
     color: var(--text);
   }
 
-  p { margin: 0; }
+  p {
+    margin: 0;
+  }
 
   a {
     color: inherit;
     text-decoration: none;
   }
 
-  img, svg, video, canvas {
+  img,
+  svg,
+  video,
+  canvas {
     max-width: 100%;
     height: auto;
   }
@@ -104,9 +119,17 @@
     scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
   }
 
-  *::-webkit-scrollbar { width: 4px; height: 4px; }
-  *::-webkit-scrollbar-track { background: transparent; }
-  *::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 2px; }
+  *::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+  }
 }
 
 @layer components {
@@ -177,8 +200,7 @@
 
   /* Chapter boundary ambience — cheap CSS atmosphere behind sections */
   .ambient-top {
-    background:
-      radial-gradient(70% 55% at 50% 0%, rgba(var(--accent-rgb), 0.07), transparent 62%);
+    background: radial-gradient(70% 55% at 50% 0%, rgba(var(--accent-rgb), 0.07), transparent 62%);
   }
 
   .ambient-aura {
@@ -241,64 +263,128 @@
 }
 
 @keyframes scroll-cue {
-  0% { transform: translateY(-100%); }
-  55% { transform: translateY(0); }
-  65% { transform: translateY(0); }
-  100% { transform: translateY(100%); }
+  0% {
+    transform: translateY(-100%);
+  }
+  55% {
+    transform: translateY(0);
+  }
+  65% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100%);
+  }
 }
 
 @keyframes grain-shift {
-  0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-2%, -3%); }
-  20% { transform: translate(3%, 1%); }
-  30% { transform: translate(-1%, 4%); }
-  40% { transform: translate(4%, -2%); }
-  50% { transform: translate(-3%, 1%); }
-  60% { transform: translate(2%, 3%); }
-  70% { transform: translate(-4%, -2%); }
-  80% { transform: translate(1%, -4%); }
-  90% { transform: translate(3%, 2%); }
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-2%, -3%);
+  }
+  20% {
+    transform: translate(3%, 1%);
+  }
+  30% {
+    transform: translate(-1%, 4%);
+  }
+  40% {
+    transform: translate(4%, -2%);
+  }
+  50% {
+    transform: translate(-3%, 1%);
+  }
+  60% {
+    transform: translate(2%, 3%);
+  }
+  70% {
+    transform: translate(-4%, -2%);
+  }
+  80% {
+    transform: translate(1%, -4%);
+  }
+  90% {
+    transform: translate(3%, 2%);
+  }
 }
 
 /* capability motives — abstract animated proofs, CSS only */
 @keyframes motive-scan {
-  0% { transform: translateX(-120%); }
-  100% { transform: translateX(320%); }
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
 }
 
 @keyframes motive-pulse {
-  0%, 100% { opacity: 0.25; transform: scale(0.92); }
-  50% { opacity: 1; transform: scale(1.06); }
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
 }
 
 @keyframes motive-drift {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  50% { transform: translate(10px, -12px) rotate(6deg); }
-  100% { transform: translate(0, 0) rotate(0deg); }
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(10px, -12px) rotate(6deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
 }
 
 @keyframes motive-trace {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(64px, 0); }
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(64px, 0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .motive-scan, .motive-pulse, .motive-drift, .motive-trace {
+  .motive-scan,
+  .motive-pulse,
+  .motive-drift,
+  .motive-trace {
     animation: none;
   }
 }
 
 @keyframes status-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.45; transform: scale(0.9); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
 }
 
 @keyframes spin-slow {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

@@ -34,7 +34,14 @@ export function ProjectsIndex({ projects }: { projects: Project[] }) {
       gsap.fromTo(
         el.querySelectorAll('.proj-cover-inner'),
         { yPercent: 12, scale: 1.08 },
-        { yPercent: 0, scale: 1, duration: 1.2, ease: 'expo.out', stagger: 0.12, scrollTrigger: { trigger: el, start: 'top 80%', once: true } }
+        {
+          yPercent: 0,
+          scale: 1,
+          duration: 1.2,
+          ease: 'expo.out',
+          stagger: 0.12,
+          scrollTrigger: { trigger: el, start: 'top 80%', once: true },
+        }
       )
     }, el)
     return () => ctx.revert()
@@ -49,8 +56,8 @@ export function ProjectsIndex({ projects }: { projects: Project[] }) {
           <RevealText className="text-outline">experiences that stay.</RevealText>
         </h1>
         <p className="mt-6 max-w-xl text-sm leading-relaxed text-ink-secondary">
-          A selection from backend platforms to immersive 3D web experiences —
-          each one chosen for what it demanded technically.
+          A selection from backend platforms to immersive 3D web experiences — each one chosen for what it
+          demanded technically.
         </p>
       </header>
 
@@ -83,14 +90,22 @@ export function ProjectsIndex({ projects }: { projects: Project[] }) {
                     {project.title}
                   </h2>
                 </div>
-                <div className={`md:col-span-5 md:col-start-8 ${flip ? 'md:order-1 md:col-start-7 md:justify-self-end md:text-right' : 'md:justify-self-end'}`}>
+                <div
+                  className={`md:col-span-5 md:col-start-8 ${flip ? 'md:order-1 md:col-start-7 md:justify-self-end md:text-right' : 'md:justify-self-end'}`}
+                >
                   <p className="label text-accent-secondary">{project.role}</p>
-                  <p className="mt-3 max-w-md text-sm leading-relaxed text-ink-secondary" style={{ opacity: 0.75 }}>
+                  <p
+                    className="mt-3 max-w-md text-sm leading-relaxed text-ink-secondary"
+                    style={{ opacity: 0.75 }}
+                  >
                     {project.description}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 md:justify-end">
                     {project.tags.slice(0, 4).map((t) => (
-                      <span key={t} className="font-mono text-[0.55rem] uppercase tracking-widest text-ink-tertiary">
+                      <span
+                        key={t}
+                        className="font-mono text-[0.55rem] uppercase tracking-widest text-ink-tertiary"
+                      >
                         {t}
                       </span>
                     ))}

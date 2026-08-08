@@ -8,7 +8,7 @@ export function ProjectVisual({ project, className = '' }: { project: Project; c
   if (project.cover) {
     return (
       // eslint-disable-next-line @next/next/no-img-element -- static local covers, aspect handled by the frame
-      <img src={project.cover} alt={`${project.title} — cover`} loading="lazy" className={`h-full w-full object-cover ${className}`} draggable={false} />
+      <img src={project.cover} alt={`${project.title} — cover`} loading="lazy" decoding="async" fetchPriority="low" className={`h-full w-full object-cover ${className}`} draggable={false} />
     )
   }
   const c = project.color

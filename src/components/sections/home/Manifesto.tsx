@@ -53,16 +53,16 @@ export function Manifesto() {
       /* stage 0 — the statement arrives from the hero's scale/blur */
       tl.fromTo(
         '.ms-quote',
-        { scale: 0.9, filter: 'blur(16px)', opacity: 0.5 },
-        { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 0.12 },
+        { scale: 0.9, opacity: 0.5 },
+        { scale: 1, opacity: 1, duration: 0.12 },
         0
       )
 
       /* stage 1 — words resolve left to right */
       tl.fromTo(
         words,
-        { opacity: 0.07, rotateX: 8, filter: 'blur(7px)' },
-        { opacity: 0.55, rotateX: 0, filter: 'blur(0px)', clearProps: 'filter', duration: 0.38, stagger: 0.028 },
+        { opacity: 0.07, rotateX: 8 },
+        { opacity: 0.55, rotateX: 0, duration: 0.38, stagger: 0.028 },
         0.08
       )
 
@@ -84,7 +84,7 @@ export function Manifesto() {
       /* stage 4 — statement recedes, the next chapter announces itself */
       tl.to(
         '.ms-quote',
-        { scale: 1.05, opacity: 0.25, filter: 'blur(8px)', duration: 0.14 },
+        { scale: 1.05, opacity: 0.25, duration: 0.14 },
         0.88
       )
       tl.fromTo(
@@ -99,7 +99,7 @@ export function Manifesto() {
   }, [reduced])
 
   return (
-    <section ref={sectionRef} aria-label="About" className="relative overflow-hidden" style={{ height: '280vh' }}>
+    <section ref={sectionRef} aria-label="About" className="relative overflow-hidden" style={{ height: '240vh' }}>
       <div
         ref={stickyRef}
         className="sticky top-0 flex min-h-[100svh] flex-col justify-center px-5 sm:px-8"

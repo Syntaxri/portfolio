@@ -42,13 +42,18 @@ export function SkewScroll({ children, className = '', strength = 0.012, max = 5
     )
     io.observe(el)
 
+    let lastActive = 0
     const tick = () => {
       raf = 0
       if (!inView) return
+      const now = performance.now()
+      if (now - lastActive < 120) return
       const v = Math.max(-max, Math.min(max, scrollState.velocity * strength))
       setSkew(v)
     }
     const onFrame = () => {
+      const vel = scrollState.velocity
+      if (Math.abs(vel) > 0.5) lastActive = performance.now()
       if (raf) return
       raf = requestAnimationFrame(tick)
     }

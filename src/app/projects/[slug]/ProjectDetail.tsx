@@ -177,6 +177,7 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
                     src={img.src}
                     alt={img.alt}
                     loading="lazy"
+                    decoding="async"
                     style={{ width: '100%', height: 'auto' }}
                   />
                   {img.caption && <figcaption className="label mt-3">{img.caption}</figcaption>}

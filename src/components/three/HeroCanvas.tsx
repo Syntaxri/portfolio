@@ -42,8 +42,8 @@ export function HeroCanvas() {
 
   return (
     <div ref={ref} className="pointer-events-none absolute inset-0 z-0" aria-hidden>
-      {Scene && !isPaused ? (
-        <Scene tier={tier} frameloop="always" />
+      {Scene ? (
+        <Scene tier={tier} frameloop={isPaused ? 'never' : 'always'} />
       ) : (
         <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_0%,rgba(139,92,246,0.16),transparent_55%)]" />
       )}

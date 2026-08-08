@@ -48,7 +48,6 @@ export function Hero() {
           scale: 0.94,
           y: -60,
           opacity: 0.3,
-          filter: 'blur(3px)',
           ease: 'none',
           scrollTrigger: {
             trigger: el,

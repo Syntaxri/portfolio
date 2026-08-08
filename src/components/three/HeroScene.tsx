@@ -17,6 +17,7 @@ function Nebula({ tier }: { tier: QualityTier }) {
   useFrame(({ clock }) => {
     const u = uniforms.current
     u.uTime.value = clock.elapsedTime
+    u.uDetail.value = tier === 'medium' ? 0.5 : 1
     u.uMouse.value.x = THREE.MathUtils.lerp(u.uMouse.value.x, pointerState.x + 0.5, 0.04)
     u.uMouse.value.y = THREE.MathUtils.lerp(u.uMouse.value.y, -pointerState.y + 0.5, 0.04)
     u.uProgress.value = THREE.MathUtils.lerp(u.uProgress.value, scrollState.progress, 0.06)

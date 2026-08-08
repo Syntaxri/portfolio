@@ -21,6 +21,7 @@ export const auroraFragmentShader = /* glsl */ `
   uniform vec3 uColorA;
   uniform vec3 uColorB;
   uniform float uProgress;
+  uniform float uDetail;
 
   float hash(vec2 p) {
     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
@@ -41,7 +42,9 @@ export const auroraFragmentShader = /* glsl */ `
     float v = 0.0;
     float amp = 0.55;
     mat2 rot = mat2(0.8, 0.6, -0.6, 0.8);
+    int iters = uDetail > 0.5 ? 4 : 3;
     for (int i = 0; i < 4; i++) {
+      if (i >= iters) break;
       v += amp * noise(p);
       p = rot * p * 2.03 + vec2(1.7, 9.2) + uTime * 0.012;
       amp *= 0.5;
@@ -83,5 +86,6 @@ export function createAuroraUniforms() {
     uColorA: { value: new THREE.Color('#8b5cf6') },
     uColorB: { value: new THREE.Color('#241248') },
     uProgress: { value: 0 },
+    uDetail: { value: 1 },
   }
 }

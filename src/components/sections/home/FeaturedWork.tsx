@@ -39,16 +39,17 @@ export function FeaturedWork() {
         }
       )
 
-      /* cover masks rise through their frame */
+      /* cover frames fade/lift into place — the image itself never zooms
+         or moves inside the frame, so it can't look cropped or distorted */
       gsap.fromTo(
         el.querySelectorAll('.fw-cover-inner'),
-        { yPercent: 14, scale: 1.12 },
+        { y: 36, opacity: 0 },
         {
-          yPercent: 0,
-          scale: 1,
-          duration: 1.4,
-          ease: 'expo.out',
-          stagger: 0.16,
+          y: 0,
+          opacity: 1,
+          duration: 1.2,
+          ease: 'power3.out',
+          stagger: 0.14,
           scrollTrigger: { trigger: el, start: 'top 78%', once: true },
         }
       )

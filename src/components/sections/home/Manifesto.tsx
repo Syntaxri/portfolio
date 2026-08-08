@@ -54,27 +54,27 @@ export function Manifesto() {
       tl.fromTo(
         '.ms-quote',
         { y: 48, opacity: 0.85 },
-        { y: 0, opacity: 1, duration: 0.12, ease: 'power2.out' }
+        { y: 0, opacity: 1, duration: 0.18, ease: 'power2.out' }
       )
 
       /* stage 1 — words surface left to right */
       tl.fromTo(
         words,
         { opacity: 0.1, y: 14 },
-        { opacity: 0.6, y: 0, duration: 0.34, stagger: 0.03 },
+        { opacity: 0.6, y: 0, duration: 0.4, stagger: 0.03 },
         0.08
       )
 
       /* stage 2 — accent words swell, supporting words recede */
       tl.to(
         words.filter((_, i) => STATEMENT[i].accent),
-        { opacity: 1, scale: 1.04, duration: 0.2 },
-        0.46
+        { opacity: 1, scale: 1.04, duration: 0.18 },
+        0.5
       )
       tl.to(
         words.filter((_, i) => !STATEMENT[i].accent),
-        { opacity: 0.42, scale: 0.99, duration: 0.2 },
-        0.46
+        { opacity: 0.42, scale: 0.99, duration: 0.18 },
+        0.5
       )
 
       /* stage 3 — the supporting line surfaces under the statement */
@@ -82,20 +82,20 @@ export function Manifesto() {
         '.ms-support',
         { y: 24, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.16, ease: 'power2.out' },
-        0.62
+        0.64
       )
 
       /* stage 4 — statement recedes, the next chapter announces itself */
       tl.to(
         '.ms-quote',
-        { y: -36, opacity: 0.3, scale: 1.03, duration: 0.14 },
-        0.86
+        { y: -36, opacity: 0.3, scale: 1.03, duration: 0.16 },
+        0.82
       )
       tl.fromTo(
         '.ms-coda',
         { y: 20, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.12, ease: 'power2.out' },
-        0.92
+        0.9
       )
     }, section)
 
@@ -103,7 +103,7 @@ export function Manifesto() {
   }, [reduced])
 
   return (
-    <section ref={sectionRef} aria-label="About" className="relative overflow-hidden" style={{ height: '240vh' }}>
+    <section ref={sectionRef} aria-label="About" className="relative overflow-hidden" style={{ height: '190vh' }}>
       <div
         ref={stickyRef}
         className="sticky top-0 flex min-h-[100svh] flex-col justify-center px-5 sm:px-8"
@@ -114,9 +114,9 @@ export function Manifesto() {
           <p className="label mb-8 hidden text-ink-tertiary sm:block">Scroll to focus</p>
         </div>
 
-        <p className="ms-quote fluid-quote max-w-6xl font-extrabold leading-[1.08] tracking-tight text-ink">
+        <p className="ms-quote fluid-quote max-w-5xl font-extrabold leading-[1.05] tracking-tight text-ink">
           {STATEMENT.map((word, i) => (
-            <span key={`${word.word}-${i}`} className="mr-[0.26em] inline-block whitespace-nowrap">
+            <span key={`${word.word}-${i}`} className="mr-[0.22em] inline-block whitespace-nowrap">
               <span
                 ref={(n) => {
                   if (n) wordRefs.current.set(i, n)

@@ -23,9 +23,12 @@ const STATEMENT = [
  * Cinematic scrollytelling — one master timeline, five stages:
  * 0 the statement resolves up into place
  * 1 words surface left to right
- * 2 accent words swell, supporting words recede
+ * 2 accent words swell, supporting words recede slightly
  * 3 the supporting sentence surfaces
- * 4 the statement recedes into the next chapter
+ * 4 the statement recedes gently into the next chapter.
+ *
+ * Every stage keeps a legibility floor — at no scroll position does the
+ * message drop below readable contrast; reduced motion shows it fully.
  */
 export function Manifesto() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -45,10 +48,10 @@ export function Manifesto() {
 
         /* stage start states — applied only when the timeline runs; the
            default DOM state (no-JS / reduced motion) is fully visible */
-        gsap.set('.ms-quote', { y: 48, opacity: 0.85 })
-        gsap.set(words, { opacity: 0.1, y: 14 })
-        gsap.set('.ms-support', { y: 24, opacity: 0 })
-        gsap.set('.ms-coda', { y: 20, opacity: 0 })
+        gsap.set('.ms-quote', { y: 40, opacity: 0.9 })
+        gsap.set(words, { opacity: 0.55, y: 10 })
+        gsap.set('.ms-support', { y: 20, opacity: 0 })
+        gsap.set('.ms-coda', { y: 14, opacity: 0 })
 
         const tl = gsap.timeline({
           defaults: { ease: 'none' },
@@ -60,43 +63,49 @@ export function Manifesto() {
           },
         })
 
-        /* stage 0 — the statement resolves up into place */
+        /* the statement resolves up into place */
         tl.fromTo(
           '.ms-quote',
-          { y: 48, opacity: 0.85 },
-          { y: 0, opacity: 1, duration: 0.18, ease: 'power2.out' }
+          { y: 40, opacity: 0.9 },
+          { y: 0, opacity: 1, duration: 0.14, ease: 'power2.out' }
         )
 
-        /* stage 1 — words surface left to right */
-        tl.fromTo(words, { opacity: 0.1, y: 14 }, { opacity: 0.6, y: 0, duration: 0.4, stagger: 0.03 }, 0.08)
+        /* words surface left to right — kept well above the legibility floor */
+        tl.fromTo(
+          words,
+          { opacity: 0.55, y: 10 },
+          { opacity: 0.9, y: 0, duration: 0.26, stagger: 0.02 },
+          0.02
+        )
 
-        /* stage 2 — accent words swell, supporting words recede */
+        /* accent words swell, supporting words recede — but never dim
+           below a readable level at any scroll position */
         tl.to(
           words.filter((_, i) => STATEMENT[i].accent),
-          { opacity: 1, scale: 1.04, duration: 0.18 },
-          0.5
+          { opacity: 1, scale: 1.03, duration: 0.2 },
+          0.4
         )
         tl.to(
           words.filter((_, i) => !STATEMENT[i].accent),
-          { opacity: 0.42, scale: 0.99, duration: 0.18 },
-          0.5
+          { opacity: 0.62, scale: 0.995, duration: 0.2 },
+          0.4
         )
 
-        /* stage 3 — the supporting line surfaces under the statement */
+        /* the supporting line surfaces and stays on stage */
         tl.fromTo(
           '.ms-support',
-          { y: 24, opacity: 0 },
+          { y: 20, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.16, ease: 'power2.out' },
-          0.64
+          0.55
         )
 
-        /* stage 4 — statement recedes, the next chapter announces itself */
-        tl.to('.ms-quote', { y: -36, opacity: 0.3, scale: 1.03, duration: 0.16 }, 0.82)
+        /* the statement recedes only gently — the message stays readable */
+        tl.to('.ms-quote', { y: -24, opacity: 0.8, scale: 1.02, duration: 0.16 }, 0.72)
         tl.fromTo(
           '.ms-coda',
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.12, ease: 'power2.out' },
-          0.9
+          { y: 14, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.14, ease: 'power2.out' },
+          0.8
         )
       }, section)
     } catch {

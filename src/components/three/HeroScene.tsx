@@ -11,6 +11,7 @@ import { auroraVertexShader, auroraFragmentShader, createAuroraUniforms } from '
 const SCALE_BY_TIER: Record<QualityTier, number> = { high: 1, medium: 0.85, low: 0.7 }
 
 function Nebula({ tier }: { tier: QualityTier }) {
+  const mesh = useRef<THREE.Mesh>(null)
   const uniforms = useRef(createAuroraUniforms())
 
   useFrame(({ clock }) => {
@@ -19,12 +20,20 @@ function Nebula({ tier }: { tier: QualityTier }) {
     u.uMouse.value.x = THREE.MathUtils.lerp(u.uMouse.value.x, pointerState.x + 0.5, 0.04)
     u.uMouse.value.y = THREE.MathUtils.lerp(u.uMouse.value.y, -pointerState.y + 0.5, 0.04)
     u.uProgress.value = THREE.MathUtils.lerp(u.uProgress.value, scrollState.progress, 0.06)
+
+    /* as the visitor leaves the hero the atmosphere sinks past the core
+       and flattens — the pages keeps one continuous sky */
+    if (mesh.current) {
+      const s = scrollState.progress
+      mesh.current.position.y = 0.4 + s * 2.6
+      mesh.current.rotation.z = s * 0.16
+    }
   })
 
   if (tier === 'low') return null
 
   return (
-    <mesh position={[0, 0.4, -16]}>
+    <mesh ref={mesh} position={[0, 0.4, -16]}>
       <planeGeometry args={[22, 11]} />
       <shaderMaterial
         vertexShader={auroraVertexShader}
@@ -40,28 +49,32 @@ function Nebula({ tier }: { tier: QualityTier }) {
 
 function Core({ tier }: { tier: QualityTier }) {
   const group = useRef<THREE.Group>(null)
-  /* DistortMaterialImpl inherits MeshStandardMaterial; only the two
-     properties below are driven from the render loop. */
   const material = useRef<{ emissiveIntensity: number; opacity: number } | null>(null)
 
-  useFrame(({ clock }, delta) => {
+  useFrame(({ clock, camera }, delta) => {
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, pointerState.x * 0.3, 0.03)
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, pointerState.y * 0.15, 0.03)
+    camera.lookAt(0, 0, 0)
+
     const g = group.current
     if (!g) return
     const t = clock.elapsedTime
     const s = scrollState.progress
+    const v = THREE.MathUtils.clamp(Math.abs(scrollState.velocity) * 0.012, 0, 1)
 
-    /* smooth dissolve as the visitor scrolls past the hero */
-    const heroFade = THREE.MathUtils.clamp(1 - s * 3.4, 0, 1)
+    /* dissolve + drift off-axis as the manifesto takes over */
+    const heroFade = THREE.MathUtils.clamp(1 - s * 3.2, 0, 1)
 
-    g.position.y = Math.sin(t * 0.35) * 0.18 - s * 1.2
-    g.rotation.y += delta * 0.12
-    g.rotation.x = Math.sin(t * 0.22) * 0.08
+    g.position.x = 1.35 - s * 1.1
+    g.position.y = Math.sin(t * 0.32) * 0.16 + s * 0.5
+    g.rotation.y += delta * (0.12 + v * 1.6)
+    g.rotation.x = Math.sin(t * 0.2) * 0.07
 
-    const scale = 1.15 * SCALE_BY_TIER[tier] * (1 + s * 0.55)
+    const scale = 1.05 * SCALE_BY_TIER[tier] * (1 + s * 0.5)
     g.scale.setScalar(scale)
 
     if (material.current) {
-      material.current.emissiveIntensity = (0.45 + s * 0.35) * heroFade
+      material.current.emissiveIntensity = (0.42 + s * 0.3) * heroFade
       material.current.opacity = heroFade
     }
     g.visible = heroFade > 0.01

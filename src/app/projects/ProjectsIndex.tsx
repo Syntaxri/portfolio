@@ -5,6 +5,7 @@ import Link from 'next/link'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { RevealText } from '@/components/animations/RevealText'
+import { ProjectVisual } from '@/components/projects/ProjectVisual'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import type { Project } from '@/types'
 
@@ -30,6 +31,11 @@ export function ProjectsIndex({ projects }: { projects: Project[] }) {
           scrollTrigger: { trigger: el, start: 'top 78%', once: true },
         }
       )
+      gsap.fromTo(
+        el.querySelectorAll('.proj-cover-inner'),
+        { yPercent: 12, scale: 1.08 },
+        { yPercent: 0, scale: 1, duration: 1.2, ease: 'expo.out', stagger: 0.12, scrollTrigger: { trigger: el, start: 'top 80%', once: true } }
+      )
     }, el)
     return () => ctx.revert()
   }, [reduced])
@@ -48,43 +54,52 @@ export function ProjectsIndex({ projects }: { projects: Project[] }) {
         </p>
       </header>
 
-      <div ref={listRef} className="border-t border-white/[0.08]">
-        {projects.map((project, i) => (
-          <Link
-            key={project.slug}
-            href={`/projects/${project.slug}`}
-            data-cursor-text="Open"
-            className="proj-row group block border-b border-white/[0.08] py-9 transition-colors duration-500 hover:bg-white/[0.015] sm:py-11"
-          >
-            <div className="grid grid-cols-1 items-end gap-6 md:grid-cols-12">
-              <span className="label self-start pt-3 md:col-span-1" style={{ opacity: 0.45 }}>
-                {String(i + 1).padStart(2, '0')}
-              </span>
-
-              <h2 className="text-[clamp(2.25rem,5vw,4.25rem)] font-extrabold leading-none tracking-tight transition-transform duration-500 ease-out-expo group-hover:translate-x-4 md:col-span-6">
-                {project.title}
-              </h2>
-
-              <div className="md:col-span-5 md:justify-self-end">
-                <div className="flex items-center gap-3 md:justify-end">
-                  <span className="label text-accent-secondary">{project.category}</span>
-                  <span className="h-px w-8 bg-white/15" />
-                  <span className="label">{project.role}</span>
+      <div ref={listRef} className="flex flex-col gap-14 md:gap-16">
+        {projects.map((project, i) => {
+          const flip = i % 2 === 1
+          return (
+            <Link
+              key={project.slug}
+              href={`/projects/${project.slug}`}
+              data-cursor-text="Open"
+              className={`proj-row group block ${flip ? 'md:ml-auto' : ''} md:w-[calc(100%-4rem)]`}
+            >
+              <div className="relative overflow-hidden border border-white/[0.08] bg-white/[0.02]">
+                <div className="proj-cover-inner aspect-[1905/990] will-change-transform">
+                  <ProjectVisual project={project} className="aspect-[1905/990] w-full" />
                 </div>
-                <p className="mt-3 max-w-md text-sm leading-relaxed text-ink-secondary" style={{ opacity: 0.72 }}>
-                  {project.description}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2 md:justify-end">
-                  {project.tags.slice(0, 4).map((t) => (
-                    <span key={t} className="tag border border-white/10 px-3 py-1 font-mono text-[0.55rem] uppercase tracking-widest text-ink-tertiary">
-                      {t}
-                    </span>
-                  ))}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-5 flex items-center gap-3">
+                  <span className="label text-white/70">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="h-px w-8 bg-white/25" />
+                  <span className="label label-accent">{project.category}</span>
+                  <span className="label text-white/50">{project.year}</span>
                 </div>
               </div>
-            </div>
-          </Link>
-        ))}
+
+              <div className="mt-5 grid grid-cols-1 items-end gap-4 md:grid-cols-12">
+                <div className={`md:col-span-6 ${flip ? 'md:order-2' : ''}`}>
+                  <h2 className="text-[clamp(2.25rem,5vw,4.25rem)] font-extrabold leading-[0.95] tracking-tight transition-transform duration-500 ease-out-expo group-hover:translate-x-3">
+                    {project.title}
+                  </h2>
+                </div>
+                <div className={`md:col-span-5 md:col-start-8 ${flip ? 'md:order-1 md:col-start-7 md:justify-self-end md:text-right' : 'md:justify-self-end'}`}>
+                  <p className="label text-accent-secondary">{project.role}</p>
+                  <p className="mt-3 max-w-md text-sm leading-relaxed text-ink-secondary" style={{ opacity: 0.75 }}>
+                    {project.description}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 md:justify-end">
+                    {project.tags.slice(0, 4).map((t) => (
+                      <span key={t} className="font-mono text-[0.55rem] uppercase tracking-widest text-ink-tertiary">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Link>
+          )
+        })}
       </div>
     </div>
   )

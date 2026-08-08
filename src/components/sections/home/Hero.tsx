@@ -3,42 +3,71 @@
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { HeroCanvas } from '@/components/three/HeroCanvas'
 import { Magnetic } from '@/components/animations/Magnetic'
+import { SkewScroll } from '@/components/animations/SkewScroll'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { useLenis } from '@/components/animations/SmoothScroll'
 import { site } from '@/lib/data/site'
 
+gsap.registerPlugin(ScrollTrigger)
+
 const ENTRANCE_EVENT = 'ar:entrance-ready'
 
+/**
+ * Hero — asymmetric editorial composition. The WebGL core sits off-axis,
+ * the name owns the left column, and the whole block compresses and
+ * recedes as the manifesto takes over (one continuous descent).
+ */
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
-  const nameWrapRef = useRef<HTMLDivElement>(null)
-  const rolesRef = useRef<HTMLParagraphElement>(null)
-  const kickerRef = useRef<HTMLParagraphElement>(null)
-  const ctasRef = useRef<HTMLDivElement>(null)
-  const scrollHintRef = useRef<HTMLDivElement>(null)
+  const ghostRef = useRef<HTMLSpanElement>(null)
   const reduced = useReducedMotion()
   const { scrollTo } = useLenis()
 
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
-
     if (reduced) return
 
     const start = () => {
       const ctx = gsap.context(() => {
-        const words = el.querySelectorAll<HTMLElement>('.hero-name-line')
         const tl = gsap.timeline({ defaults: { ease: 'power4.out' } })
-        tl.to(kickerRef.current, { y: 0, opacity: 1, duration: 0.7 }, 0)
-          .to(words, { yPercent: 0, duration: 1.05, stagger: 0.12 }, 0.05)
-        tl.to(rolesRef.current, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, 0.7)
-          .to(ctasRef.current, { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, 0.8)
-          .to(scrollHintRef.current, { opacity: 1, duration: 0.6 }, 1.1)
 
-        /* gentle parallax drift as the hero scrolls away */
+        tl.fromTo('.hero-kicker', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7 }, 0.05)
+          .fromTo('.hero-name-line', { yPercent: 110 }, { yPercent: 0, duration: 1.1, stagger: 0.14 }, 0.12)
+          .fromTo('.hero-strapline', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8 }, 0.55)
+          .fromTo('.hero-meta', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8 }, 0.7)
+          .fromTo('.hero-rail', { opacity: 0 }, { opacity: 1, duration: 1 }, 0.8)
+          .fromTo('.hero-hint', { opacity: 0 }, { opacity: 1, duration: 0.7 }, 1.0)
+
+        /* scroll-out: the hero physically recedes into the manifesto */
+        gsap.to('.hero-compress', {
+          scale: 0.94,
+          y: -60,
+          opacity: 0.3,
+          filter: 'blur(3px)',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top top',
+            end: '90% top',
+            scrub: true,
+          },
+        })
+        gsap.to(ghostRef.current, {
+          xPercent: 7,
+          yPercent: -12,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+          },
+        })
         gsap.to(contentRef.current, {
           y: -70,
           ease: 'none',
@@ -59,10 +88,9 @@ export function Hero() {
       return () => clearTimeout(id)
     }
 
-    let fallback = 0
     const startAfterEntrance = () => start()
     window.addEventListener(ENTRANCE_EVENT, startAfterEntrance, { once: true })
-    fallback = window.setTimeout(startAfterEntrance, 3200)
+    const fallback = window.setTimeout(startAfterEntrance, 3200)
     return () => {
       window.removeEventListener(ENTRANCE_EVENT, startAfterEntrance)
       clearTimeout(fallback)
@@ -70,74 +98,113 @@ export function Hero() {
   }, [reduced])
 
   return (
-    <section ref={sectionRef} aria-label="Introduction" className="relative flex min-h-[100svh] flex-col overflow-hidden">
+    <section
+      ref={sectionRef}
+      id="hero"
+      aria-label="Introduction"
+      className="relative flex min-h-[100svh] flex-col overflow-hidden"
+    >
       <HeroCanvas />
 
-      <div ref={contentRef} className="relative z-10 mx-auto flex w-full max-w-shell flex-1 flex-col justify-end px-5 pb-10 pt-[calc(var(--nav-h)+4rem)] sm:px-8 sm:pb-14">
-        <div className="flex items-center justify-between gap-6">
-          <div className="min-w-0 flex-1">
-            <p ref={kickerRef} className="label label-accent mb-6" style={{ opacity: 0 }}>
-              {site.role} — {site.location}
-            </p>
+      {/* ghost word — scale difference behind the composition */}
+      <span
+        ref={ghostRef}
+        aria-hidden
+        className="hero-rail pointer-events-none absolute -right-6 top-[16%] z-[1] hidden select-none font-display text-[clamp(10rem,24vw,22rem)] font-extrabold leading-none tracking-tighter text-outline opacity-[0.07] xl:block"
+        style={{ opacity: 0 }}
+      >
+        AKRAM
+      </span>
 
-            <h1 className="fluid-display font-extrabold leading-none tracking-tight">
-              <span className="block overflow-hidden pb-[0.08em]">
-                <span className="hero-name-line inline-block will-change-transform" style={{ transform: 'translateY(110%)' }}>
-                  Akram
+      {/* vertical rail — editorial annotation */}
+      <span
+        aria-hidden
+        className="hero-rail absolute right-8 top-1/2 z-[1] hidden origin-right -translate-y-1/2 rotate-90 font-mono text-[0.6rem] uppercase tracking-[0.34em] text-ink-tertiary xl:block"
+        style={{ opacity: 0 }}
+      >
+        3D — Motion — Engineering
+      </span>
+
+      <div
+        ref={contentRef}
+        className="relative z-10 mx-auto flex w-full max-w-shell flex-1 flex-col px-5 pt-[calc(var(--nav-h)+2.5rem)] sm:px-8"
+      >
+        <div className="hero-kicker flex items-center justify-between" style={{ opacity: 0 }}>
+          <p className="label label-accent">
+            {site.role} — {site.location}
+          </p>
+          <p className="label hidden items-center gap-2 sm:flex">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            </span>
+            {site.availability}
+          </p>
+        </div>
+
+        <div className="hero-compress mt-auto pb-12 sm:pb-16">
+          <div className="flex flex-col justify-between gap-10 md:flex-row md:items-end">
+            <h1 className="font-extrabold leading-[0.9] tracking-tight">
+              <SkewScroll>
+                <span className="block overflow-hidden pb-[0.09em]">
+                  <span className="hero-name-line inline-block will-change-transform" style={{ transform: 'translateY(110%)' }}>
+                    Akram
+                  </span>
                 </span>
-              </span>
-              <span className="block overflow-hidden pb-[0.08em]">
-                <span className="hero-name-line inline-block will-change-transform" style={{ transform: 'translateY(110%)' }}>
-                  Rihani
+              </SkewScroll>
+              <SkewScroll strength={0.008}>
+                <span className="block overflow-hidden pb-[0.12em]">
+                  <span className="hero-name-line text-outline-strong inline-block will-change-transform" style={{ transform: 'translateY(110%)' }}>
+                    Rihani
+                  </span>
                 </span>
-              </span>
+              </SkewScroll>
             </h1>
 
-            <p ref={rolesRef} className="mt-6 font-mono text-sm uppercase tracking-[0.18em] text-ink-tertiary" style={{ opacity: 0 }}>
+            <p className="hero-strapline max-w-[21rem] text-sm leading-relaxed text-ink-secondary" style={{ opacity: 0 }}>
+              {site.strapline}
+            </p>
+          </div>
+
+          <div className="hero-meta mt-10 flex flex-wrap items-center justify-between gap-x-8 gap-y-5 border-t border-white/[0.08] pt-6" style={{ opacity: 0 }}>
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-ink-tertiary">
               Creative Development
               <span className="mx-3 text-accent">·</span>3D Web Experience
               <span className="mx-3 text-accent">·</span>Full-Stack Engineering
             </p>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <Magnetic strength={0.35}>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('#work')}
+                  className="group inline-flex items-center gap-3 bg-ink px-7 py-4 font-display text-sm font-bold tracking-tight text-[#05060a] transition-colors duration-300 hover:bg-accent"
+                >
+                  View selected work
+                  <span className="inline-block transition-transform duration-300 group-hover:translate-y-0.5" aria-hidden>
+                    ↓
+                  </span>
+                </button>
+              </Magnetic>
+              <Magnetic strength={0.25}>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-3 border border-white/15 px-7 py-4 font-mono text-[0.65rem] uppercase tracking-widest text-ink-secondary transition-colors duration-300 hover:border-accent/50 hover:text-ink"
+                >
+                  Let&apos;s work together
+                </Link>
+              </Magnetic>
+            </div>
           </div>
-
-          <p className="hidden max-w-[22rem] text-sm leading-relaxed text-ink-secondary md:block">
-            {site.strapline}
-          </p>
-        </div>
-
-        <div ref={ctasRef} className="mt-12 flex flex-wrap items-center gap-4" style={{ opacity: 0 }}>
-          <Magnetic strength={0.3}>
-            <button
-              type="button"
-              onClick={() => scrollTo('#work')}
-              className="group inline-flex items-center gap-3 bg-ink px-6 py-3.5 font-display text-sm font-bold tracking-tight text-[#05060a] transition-colors duration-300 hover:bg-accent"
-            >
-              View selected work
-              <span className="inline-block transition-transform duration-300 group-hover:translate-y-0.5" aria-hidden>
-                ↓
-              </span>
-            </button>
-          </Magnetic>
-          <Magnetic strength={0.3}>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-3 border border-white/15 px-6 py-3.5 font-mono text-[0.65rem] uppercase tracking-widest text-ink-secondary transition-colors duration-300 hover:border-accent/50 hover:text-ink"
-            >
-              Let&apos;s work together
-            </Link>
-          </Magnetic>
-          <span className="ml-auto flex items-center gap-3 self-end">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-            </span>
-            <span className="label hidden sm:inline">{site.availability}</span>
-          </span>
         </div>
       </div>
 
       {/* scroll cue */}
-      <div ref={scrollHintRef} className="pointer-events-none absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-3 lg:flex" aria-hidden style={{ opacity: 0 }}>
+      <div
+        className="hero-hint pointer-events-none absolute bottom-9 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-3 lg:flex"
+        aria-hidden
+        style={{ opacity: 0 }}
+      >
         <span className="label">Scroll</span>
         <span className="block h-12 w-px overflow-hidden bg-white/10">
           <span className="block h-1/2 w-px animate-[scroll-cue_1.8s_ease-in-out_infinite] bg-accent" />

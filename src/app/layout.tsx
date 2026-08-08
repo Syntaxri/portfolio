@@ -5,7 +5,7 @@ import { Navbar } from '../components/navigation/Navbar'
 import { Preloader } from '../components/animations/Preloader'
 import { PageTransition } from '../components/animations/PageTransition'
 import { CustomCursor } from '../components/animations/CustomCursor'
-import { ScrollProgress } from '../components/animations/ScrollProgress'
+import { SectionRail } from '../components/animations/SectionRail'
 import { site } from '@/lib/data/site'
 import './globals.css'
 
@@ -60,11 +60,13 @@ export const metadata: Metadata = {
     siteName: site.name,
     title: `${site.name} — Creative Developer`,
     description: site.strapline,
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: `${site.name} — portfolio` }],
   },
   twitter: {
     card: 'summary_large_image',
     title: `${site.name} — Creative Developer`,
     description: site.strapline,
+    images: ['/og.png'],
   },
   robots: {
     index: true,
@@ -110,7 +112,7 @@ export default function RootLayout({
           >
             Skip to content
           </a>
-          <ScrollProgress />
+          <SectionRail />
           <Navbar />
           <main id="main" className="relative z-10">
             {children}

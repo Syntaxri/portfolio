@@ -1,3 +1,5 @@
+export type CoverVariant = 'aurora' | 'orb' | 'grid' | 'mesh' | 'signal'
+
 export interface Project {
   title: string
   slug: string
@@ -6,6 +8,13 @@ export interface Project {
   tags: string[]
   icon: string
   color: string
+  /** kept deliberately minimal — cover art is an abstract placeholder, never a fabricated screenshot */
+  year: string
+  coverVariant?: CoverVariant
+  /** path to the real cover screenshot inside /public/work/<slug>/ */
+  cover?: string
+  /** live deployment of the project, if one exists */
+  liveUrl?: string
   category?: string
   role?: string
   featured?: boolean

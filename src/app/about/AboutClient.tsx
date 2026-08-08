@@ -5,6 +5,7 @@ import Link from 'next/link'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { RevealText } from '@/components/animations/RevealText'
+import { SkewScroll } from '@/components/animations/SkewScroll'
 import { Magnetic } from '@/components/animations/Magnetic'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { site } from '@/lib/data/site'
@@ -42,10 +43,12 @@ export function AboutClient({ experience }: { experience: ExperienceEntry[] }) {
     <div ref={rootRef} className="pt-[calc(var(--nav-h)+2.5rem)]">
       <section className="mx-auto max-w-shell px-5 sm:px-8">
         <p className="label label-accent mb-8">About</p>
-        <h1 className="fluid-display max-w-5xl font-extrabold leading-[1.02] tracking-tight">
-          <RevealText>Engineering,</RevealText>
-          <RevealText className="block text-outline">with taste.</RevealText>
-        </h1>
+        <SkewScroll>
+          <h1 className="fluid-display max-w-5xl font-extrabold leading-[1.02] tracking-tight">
+            <RevealText>Engineering,</RevealText>
+            <RevealText className="block text-outline">with taste.</RevealText>
+          </h1>
+        </SkewScroll>
 
         <div className="mt-16 grid grid-cols-1 gap-12 pb-24 md:grid-cols-12">
           <div className="md:col-span-6">
@@ -77,9 +80,9 @@ export function AboutClient({ experience }: { experience: ExperienceEntry[] }) {
             <div className="mt-10 border-t border-white/[0.08] pt-8">
               <p className="label mb-4">Stack</p>
               <div className="flex flex-wrap gap-2">
-                {stack.slice(0, 8).map((s) => (
-                  <span key={s} className="tag border border-white/10 px-3 py-1 font-mono text-[0.55rem] uppercase tracking-widest text-ink-tertiary">
-                    {s}
+                {stack.slice(0, 8).map((entry) => (
+                  <span key={entry.tech} className="font-mono text-[0.58rem] uppercase tracking-[0.2em] text-ink-tertiary">
+                    {entry.tech}
                   </span>
                 ))}
               </div>

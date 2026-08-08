@@ -174,6 +174,18 @@
     -webkit-text-stroke: 1px rgba(255, 255, 255, 0.45);
   }
 
+  /* Chapter boundary ambience — cheap CSS atmosphere behind sections */
+  .ambient-top {
+    background:
+      radial-gradient(70% 55% at 50% 0%, rgba(var(--accent-rgb), 0.07), transparent 62%);
+  }
+
+  .ambient-aura {
+    background:
+      radial-gradient(55% 45% at 75% 8%, rgba(var(--accent-rgb), 0.05), transparent 60%),
+      radial-gradient(45% 40% at 12% 92%, rgba(56, 189, 248, 0.05), transparent 60%);
+  }
+
   .no-cursor {
     cursor: none;
   }
@@ -245,6 +257,34 @@
   70% { transform: translate(-4%, -2%); }
   80% { transform: translate(1%, -4%); }
   90% { transform: translate(3%, 2%); }
+}
+
+/* capability motives — abstract animated proofs, CSS only */
+@keyframes motive-scan {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(320%); }
+}
+
+@keyframes motive-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(0.92); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+@keyframes motive-drift {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(10px, -12px) rotate(6deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes motive-trace {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(64px, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motive-scan, .motive-pulse, .motive-drift, .motive-trace {
+    animation: none;
+  }
 }
 
 @keyframes status-pulse {

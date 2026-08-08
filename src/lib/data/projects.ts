@@ -2,6 +2,55 @@ import type { Project } from '@/types'
 
 export const projects: Project[] = [
   {
+    title: 'Palais Amghass',
+    slug: 'palais-amghass',
+    category: 'Hotel Experience',
+    role: 'Frontend + Motion',
+    description:
+      'A Moroccan palace hotel website where the guest journey is told with parallax and 3D scroll choreography — sticky scenes, scrubbed motion, reservation paths and a contact flow wired through API route handlers.',
+    longDescription:
+      'Palais Amghass is a hotel website built around one idea: scrolling through the property should feel like walking through it. The experience is choreographed with GSAP 3 + ScrollTrigger + Lenis — parallax layers, scrubbed scenes and 3D scroll effects — with reveals, the menu and the carousels handled by Motion (Framer) and an Embla-powered testimonials carousel. The frontend runs on Next.js 16 App Router (Server Components/SSG, Turbopack) with React 19, strict TypeScript and a Tailwind CSS v4 theme (CSS-first, no config file). Booking, contact and newsletter forms are validated with react-hook-form + Zod and handled by Next route handlers (/api/booking, /api/contact, /api/newsletter) — validation and logging only, no database attached. A Sanity schema set was written and the GROQ queries prepared but never connected to a live project; email goes out through Resend.',
+    tags: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind v4', 'GSAP', 'ScrollTrigger', 'Lenis', 'react-hook-form', 'Zod', 'Embla'],
+    icon: 'P',
+    color: '#d4a95c',
+    year: '2025',
+    cover: '/work/palais-amghass/PalaisAmghassHomePage.jpg',
+    liveUrl: 'https://palais-amghass.vercel.app/',
+    coverVariant: 'grid',
+    featured: true,
+    challenges: [
+      {
+        title: 'Scroll storytelling without jank',
+        description:
+          'Parallax and 3D scroll effects over long sections can stutter on mid-range devices when images and filters fight the compositor.',
+        solution:
+          'Everything critical was driven by GSAP scrubbed tweens over transform/opacity only, on top of Lenis smoothing. Layers are flattened into single composites, images pre-loaded into CSS transforms, and the heavy choreography steps down to static stacking under prefers-reduced-motion and coarse pointers.',
+      },
+      {
+        title: 'Forms with no database',
+        description:
+          'Booking, contact and newsletter flows needed to work immediately — without provisioning a backend or a data store.',
+        solution:
+          'All three flows run as Next.js route handlers with react-hook-form + Zod validation on both ends. Inputs are validated, rate-limited and logged server-side; contact email is delivered through Resend. The handlers are designed so a real database can be attached later without touching the client code.',
+      },
+      {
+        title: 'Cutting the WebGL hero',
+        description:
+          'An early Three.js + R3F + postprocessing hero was prototyped and tested — and it threatened the hotel site\u2019s load budget.',
+        solution:
+          'The WebGL scene was removed from the shipped site. The depth it promised was rebuilt with layered CSS parallax, scroll choreography and GSAP — the same feeling, at a fraction of the payload, and honest about what the page actually ships.',
+      },
+    ],
+    gallery: [
+      { src: '/work/palais-amghass/PalaisAmghassChambres.jpg', alt: 'Palais Amghass — rooms section', caption: 'Rooms — parallax scene' },
+      { src: '/work/palais-amghass/PalaisAmghassExperiences.jpg', alt: 'Palais Amghass — experiences section', caption: 'Experiences' },
+      { src: '/work/palais-amghass/PalaisAmghasBIEN-ETRE-HAMAM.jpg', alt: 'Palais Amghass — wellness and hammam', caption: 'Wellness & hammam' },
+      { src: '/work/palais-amghass/PalaisAmghassTables.jpg', alt: 'Palais Amghass — dining', caption: 'Dining' },
+      { src: '/work/palais-amghass/PalaisAmghassReservations.jpg', alt: 'Palais Amghass — reservation form', caption: 'Reservation flow' },
+      { src: '/work/palais-amghass/PalaisAmghassTestimonials.jpg', alt: 'Palais Amghass — testimonials carousel', caption: 'Testimonials carousel' },
+    ],
+  },
+  {
     title: 'WISLA',
     slug: 'wisla-platform',
     category: 'Web Platform',
@@ -13,6 +62,9 @@ export const projects: Project[] = [
     tags: ['Java 17', 'Spring Boot 3', 'Spring Security 6', 'MySQL', 'JPA/Hibernate', 'REST APIs'],
     icon: 'W',
     color: '#22c55e',
+    year: '2024',
+    cover: '/work/wisla-platform/WislaLightMode.jpg',
+    coverVariant: 'grid',
     featured: true,
     challenges: [
       {
@@ -43,6 +95,16 @@ export const projects: Project[] = [
       { label: 'Tenants', value: '15+' },
       { label: 'Test Coverage', value: '92%' },
     ],
+    gallery: [
+      { src: '/work/wisla-platform/WislaLightMode.jpg', alt: 'WISLA platform — light mode dashboard', caption: 'Platform — light mode' },
+      { src: '/work/wisla-platform/WislaDarkMode.jpg', alt: 'WISLA platform — dark mode dashboard', caption: 'Platform — dark mode' },
+      { src: '/work/wisla-platform/WislaStudentDashboard.jpg', alt: 'WISLA — student dashboard', caption: 'Student dashboard' },
+      { src: '/work/wisla-platform/WislaFacultyDahsboard.jpg', alt: 'WISLA — faculty dashboard', caption: 'Faculty dashboard' },
+      { src: '/work/wisla-platform/WislaCompanyDashboard.jpg', alt: 'WISLA — company dashboard', caption: 'Company dashboard' },
+      { src: '/work/wisla-platform/WislaCompanyStudentsApplications.jpg', alt: 'WISLA — company student applications', caption: 'Company — student applications' },
+      { src: '/work/wisla-platform/WislaFacultyStudents.jpg', alt: 'WISLA — faculty students view', caption: 'Faculty — students' },
+      { src: '/work/wisla-platform/WislaStudentsDisponibleOffers.jpg', alt: 'WISLA — available offers for students', caption: 'Students — available offers' },
+    ],
   },
   {
     title: 'Interactive Portfolio',
@@ -56,6 +118,10 @@ export const projects: Project[] = [
     tags: ['Next.js 14', 'TypeScript', 'Three.js', 'CSS Custom Properties', 'App Router'],
     icon: 'P',
     color: '#a855f7',
+    year: '2023',
+    cover: '/work/interactive-portfolio/PortfoliosHomePage.jpg',
+    liveUrl: 'https://akramrihani.vercel.app/',
+    coverVariant: 'aurora',
     featured: true,
     challenges: [
       {
@@ -78,6 +144,11 @@ export const projects: Project[] = [
       { label: 'Bundle JS (shared)', value: '86.9 kB' },
       { label: 'Pages with 95+ Score', value: 'All' },
     ],
+    gallery: [
+      { src: '/work/interactive-portfolio/PortfoliosHomePage.jpg', alt: 'Interactive portfolio — home page', caption: 'Home — WebGL hero' },
+      { src: '/work/interactive-portfolio/PortfolioAboutPage.jpg', alt: 'Interactive portfolio — about page', caption: 'About' },
+      { src: '/work/interactive-portfolio/PortfolioCapabilities.jpg', alt: 'Interactive portfolio — capabilities section', caption: 'Capabilities' },
+    ],
   },
   {
     title: 'Atlas Club',
@@ -91,21 +162,49 @@ export const projects: Project[] = [
     tags: ['JavaScript', 'Ethereum', 'Solidity', 'Web3.js', 'Smart Contracts'],
     icon: 'A',
     color: '#f59e0b',
-    gallery: [],
+    year: '2022',
+    cover: '/work/atlas-club/AtlasClubHomePage.jpg',
+    liveUrl: 'https://syntaxri.github.io/AtlasClub/',
+    coverVariant: 'signal',
+    challenges: [
+      {
+        title: 'Token-gated access without a backend',
+        description:
+          'Member-only content had to be protected client-side with nothing but the blockchain as the source of truth.',
+        solution:
+          'Membership is verified in the browser by checking ERC-721 ownership of the club token against the deployed contract, then signing the session with a wallet signature. The gating logic lives in a small, audited module so no server round-trip is needed to prove membership.',
+      },
+    ],
+    gallery: [
+      { src: '/work/atlas-club/AtlasClubHomePage.jpg', alt: 'Atlas Club — home page', caption: 'Home' },
+      { src: '/work/atlas-club/AtlasClubWeb3WalletConnect.jpg', alt: 'Atlas Club — wallet connection', caption: 'Wallet connect' },
+      { src: '/work/atlas-club/AtlasClubShop.jpg', alt: 'Atlas Club — shop', caption: 'Shop' },
+      { src: '/work/atlas-club/AtlasClubItem.jpg', alt: 'Atlas Club — item view', caption: 'Item view' },
+    ],
   },
   {
-    title: 'HobbyVerse',
-    slug: 'hobbyverse',
+    title: 'NextHobby',
+    slug: 'nexthobby',
     category: '3D Web Experience',
     role: 'Frontend & 3D',
     description:
-      'A hobby discovery platform with immersive 3D visualisations, built from scratch in Next.js with Three.js and animated transitions.',
+      'A hobby equipment rental and discovery platform — browse activities, explore gear in 3D, rent in a few taps.',
     longDescription:
-      'HobbyVerse connects people with new hobbies through an interactive discovery experience. The platform uses Three.js-powered 3D scenes to preview activities before committing, with smooth page transitions via Next.js App Router. Users can browse hobbies by category, view interactive demonstrations, and connect with local groups. The entire frontend was built from scratch using Next.js 14, TypeScript, and a component-driven architecture emphasising reusability and animation.',
+      'NextHobby connects people with new hobbies through an interactive discovery and rental experience. The platform uses Three.js-powered 3D scenes to preview equipment before committing, with smooth page transitions via the Next.js App Router. Users can explore hobbies by category, inspect equipment in interactive demonstrations, compare rental options and complete the booking flow with payment methods attached. The entire frontend was built from scratch using Next.js 14, TypeScript, and a component-driven architecture emphasising reusability and animation.',
     tags: ['Next.js 14', 'TypeScript', 'Three.js', 'CSS Animations'],
-    icon: 'H',
+    icon: 'N',
     color: '#3b82f6',
-    gallery: [],
+    year: '2022',
+    cover: '/work/nexthobby/NextHobbyHomePage.jpg',
+    liveUrl: 'https://nexthobby.vercel.app/',
+    coverVariant: 'orb',
+    gallery: [
+      { src: '/work/nexthobby/NextHobbyHomePage.jpg', alt: 'NextHobby — home page', caption: 'Home — discovery' },
+      { src: '/work/nexthobby/NextHobbyExploreEquuipment.jpg', alt: 'NextHobby — equipment exploration', caption: 'Explore equipment' },
+      { src: '/work/nexthobby/NextHobbyItemRent.jpg', alt: 'NextHobby — rent an item', caption: 'Rent an item' },
+      { src: '/work/nexthobby/NextHobbyFormInfos.jpg', alt: 'NextHobby — booking form', caption: 'Booking form' },
+      { src: '/work/nexthobby/NextHobbyPaymentsMethods.jpg', alt: 'NextHobby — payment methods', caption: 'Payment methods' },
+    ],
   },
 ]
 

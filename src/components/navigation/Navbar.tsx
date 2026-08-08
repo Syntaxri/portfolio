@@ -22,16 +22,35 @@ function isActive(pathname: string, item: (typeof NAV_ITEMS)[number]) {
 export function Navbar() {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const headerRef = useRef<HTMLElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+  const lastY = useRef(0)
   const reduced = useReducedMotion()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const onScroll = () => {
+      const y = window.scrollY
+      setScrolled(y > 24)
+      const dir = y > lastY.current ? 'down' : 'up'
+      lastY.current = y
+      if (reduced || menuOpen) {
+        setHidden(false)
+        return
+      }
+      setHidden(y > 320 && dir === 'down')
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [pathname])
+  }, [reduced, menuOpen, pathname])
+
+  useEffect(() => {
+    const el = headerRef.current
+    if (!el || reduced) return
+    gsap.to(el, { yPercent: hidden ? -110 : 0, duration: 0.5, ease: 'power3.out', overwrite: 'auto' })
+  }, [hidden, reduced])
 
   /* close menu on navigation */
   useEffect(() => setMenuOpen(false), [pathname])
@@ -64,7 +83,8 @@ export function Navbar() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-[120] transition-all duration-500 ${
+        ref={headerRef}
+        className={`fixed inset-x-0 top-0 z-[120] transition-[background-color,border-color,backdrop-filter] duration-500 ${
           scrolled ? 'border-b border-white/[0.06] bg-base/70 backdrop-blur-xl' : 'border-b border-transparent'
         }`}
       >

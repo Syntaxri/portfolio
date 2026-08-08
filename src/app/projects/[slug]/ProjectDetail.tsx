@@ -6,6 +6,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { RevealText } from '@/components/animations/RevealText'
 import { Magnetic } from '@/components/animations/Magnetic'
+import { ProjectVisual } from '@/components/projects/ProjectVisual'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import type { Project } from '@/types'
 
@@ -80,9 +81,9 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
           </div>
         </div>
 
-        {/* Visual band */}
+        {/* Visual band — the project cover, framed at the source ratio */}
         <div
-          className="relative mx-auto mb-14 flex h-[34vh] max-w-shell items-center justify-center overflow-hidden px-5 sm:px-8 md:h-[52vh]"
+          className="relative mx-auto mb-14 flex h-[38vh] max-w-shell items-center justify-center overflow-hidden px-5 sm:px-8 md:h-auto md:aspect-[1905/990]"
           aria-hidden
         >
           <div
@@ -91,13 +92,15 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
               background: `radial-gradient(90% 120% at 50% 100%, ${project.color}26 0%, ${project.color}0a 45%, transparent 70%)`,
             }}
           />
+          <ProjectVisual
+            project={project}
+            className="absolute inset-x-0 top-1/2 h-full w-full scale-[1.04] -translate-y-1/2 object-cover opacity-80 blur-[1.5px] mix-blend-screen"
+          />
           <div className="absolute inset-y-0 left-1/2 w-px bg-white/[0.06]" />
-          <span
-            className="select-none font-display text-[clamp(7rem,20vw,16rem)] font-extrabold leading-none tracking-tight"
-            style={{ color: `${project.color}`, opacity: 0.14 }}
-          >
-            {project.icon}
-          </span>
+          <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-2 pb-4">
+            <span className="label text-white/45">{project.title} — {project.category}</span>
+            <span className="label text-white/45">{project.year}</span>
+          </div>
         </div>
       </header>
 
@@ -206,14 +209,18 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
         <Link href="/projects" className="link-underline label text-ink-tertiary transition-colors hover:text-ink">
           ← All projects
         </Link>
-        <a
-          href={`https://github.com/Syntaxri/${project.slug}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="link-underline label text-accent-secondary"
-        >
-          View on GitHub ↗
-        </a>
+        {project.liveUrl ? (
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link-underline label text-accent-secondary"
+          >
+            Visit live site ↗
+          </a>
+        ) : (
+          <span className="label text-ink-tertiary">Private project — no live link</span>
+        )}
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}

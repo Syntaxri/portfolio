@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
+import { site } from '@/lib/data/site'
 import gsap from 'gsap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 
@@ -14,6 +15,8 @@ export function PageTransition() {
   const pathname = usePathname()
   const prevPath = useRef(pathname)
   const reduced = useReducedMotion()
+
+  const destination = pathname === '/' ? 'Home' : pathname.startsWith('/projects') ? (pathname === '/projects' ? 'Work' : 'Case study') : pathname === '/about' ? 'About' : 'Contact'
 
   useEffect(() => {
     if (prevPath.current === pathname) return
@@ -45,8 +48,9 @@ export function PageTransition() {
       className="pointer-events-none fixed inset-0 z-[150] hidden bg-elevated"
       style={{ background: 'var(--bg-elevated)' }}
     >
-      <div className="flex h-full items-center justify-center">
-        <span className="label">Akram Rihani</span>
+      <div className="flex h-full flex-col items-center justify-center gap-3">
+        <span className="font-display text-3xl font-extrabold tracking-tight">{site.name}</span>
+        <span className="label">Entering — {destination}</span>
       </div>
     </div>
   )

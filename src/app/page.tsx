@@ -5,6 +5,7 @@ import { FeaturedWork } from '@/components/sections/home/FeaturedWork'
 import { Experience } from '@/components/sections/home/Experience'
 import { Process } from '@/components/sections/home/Process'
 import { StackSection } from '@/components/sections/home/StackSection'
+import { Engineered } from '@/components/sections/home/Engineered'
 import { ContactCta } from '@/components/sections/home/ContactCta'
 import { Footer } from '@/components/sections/home/Footer'
 
@@ -18,6 +19,7 @@ export default function Home() {
       <Experience />
       <Process />
       <StackSection />
+      <Engineered />
       <ContactCta />
       <Footer />
     </>

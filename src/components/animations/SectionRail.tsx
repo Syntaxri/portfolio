@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useLenis } from '@/components/animations/SmoothScroll'
@@ -12,6 +13,9 @@ gsap.registerPlugin(ScrollTrigger)
 /**
  * Right-edge chapter rail — a piece with scroll position, not a scrollbar:
  * the active chapter expands, older chapters recede, and clicking scrolls.
+ *
+ * Only exists on the home page — the chapters are home sections, so on any
+ * other route the targets don't exist and the rail would no-op.
  */
 export function SectionRail() {
   const railRef = useRef<HTMLDivElement>(null)
@@ -20,10 +24,12 @@ export function SectionRail() {
   const [enabled, setEnabled] = useState(false)
   const reduced = useReducedMotion()
   const { scrollTo } = useLenis()
+  const pathname = usePathname()
 
   useEffect(() => {
+    if (pathname !== '/') return
     if (window.matchMedia('(min-width: 768px)').matches && !reduced) setEnabled(true)
-  }, [reduced])
+  }, [reduced, pathname])
 
   useEffect(() => {
     if (!enabled) return

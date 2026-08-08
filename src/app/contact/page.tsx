@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="max-w-[960px] mx-auto px-4 sm:px-6 pt-8">
+    <div className="mx-auto max-w-shell px-5 pt-[calc(var(--nav-h)+2.5rem)] sm:px-8">
       <ContactClient />
     </div>
   )

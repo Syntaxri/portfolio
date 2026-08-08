@@ -6,6 +6,8 @@ export interface Project {
   tags: string[]
   icon: string
   color: string
+  category?: string
+  role?: string
   featured?: boolean
   challenges?: Challenge[]
   metrics?: PerfMetric[]

@@ -4,6 +4,8 @@ export const projects: Project[] = [
   {
     title: 'WISLA',
     slug: 'wisla-platform',
+    category: 'Web Platform',
+    role: 'Backend Architecture',
     description:
       'A modular athlete management platform built with Java 17 and Spring Boot 3, serving 20K+ daily users across multiple sports organisations.',
     longDescription:
@@ -45,6 +47,8 @@ export const projects: Project[] = [
   {
     title: 'Interactive Portfolio',
     slug: 'interactive-portfolio',
+    category: 'Web Experience',
+    role: 'Design + Development',
     description:
       'A high-performance Next.js portfolio featuring 3D WebGL visualisations, dynamic theming, and sub-100 Lighthouse scores across all routes.',
     longDescription:
@@ -62,13 +66,6 @@ export const projects: Project[] = [
           'Implemented adaptive quality scaling based on device capability detection. The renderer uses a low-poly fallback for mobile devices, throttles frame rate to 30fps on battery power, and dynamically reduces particle count when frame drops are detected via performance observers.',
       },
       {
-        title: 'Dynamic accent colour system',
-        description:
-          'The site supports user-selectable accent colours that must propagate across 60+ components without a CSS-in-JS runtime cost.',
-        solution:
-          'Used CSS custom properties scoped to document.documentElement, updated via a React context that writes to a style tag in the document head. Colour transformations (brightness, opacity variants) are computed with CSS calc() and color-mix(), avoiding JavaScript colour math entirely.',
-      },
-      {
         title: 'Zero-layout-shift image loading',
         description:
           'Project gallery images with unknown aspect ratios needed to load without causing cumulative layout shift.',
@@ -79,13 +76,14 @@ export const projects: Project[] = [
     metrics: [
       { label: 'Lighthouse Performance', value: '98' },
       { label: 'Bundle JS (shared)', value: '86.9 kB' },
-      { label: 'Static Routes', value: '17' },
       { label: 'Pages with 95+ Score', value: 'All' },
     ],
   },
   {
     title: 'Atlas Club',
     slug: 'atlas-club',
+    category: 'Web3 Platform',
+    role: 'Frontend & Contracts',
     description:
       'A Web3-enabled community platform with token-gated content, built with vanilla JavaScript and Ethereum smart contracts.',
     longDescription:
@@ -98,11 +96,13 @@ export const projects: Project[] = [
   {
     title: 'HobbyVerse',
     slug: 'hobbyverse',
+    category: '3D Web Experience',
+    role: 'Frontend & 3D',
     description:
       'A hobby discovery platform with immersive 3D visualisations, built from scratch in Next.js with Three.js and animated transitions.',
     longDescription:
-      'HobbyVerse connects people with new hobbies through an interactive discovery experience. The platform uses Three.js-powered 3D scenes to preview activities before committing, with smooth page transitions via Next.js App Router and Framer Motion. Users can browse hobbies by category, view interactive demonstrations, and connect with local groups. The entire frontend was built from scratch using Next.js 14, TypeScript, and a component-driven architecture emphasising reusability and animation.',
-    tags: ['Next.js 14', 'TypeScript', 'Three.js', 'Framer Motion', 'CSS Animations'],
+      'HobbyVerse connects people with new hobbies through an interactive discovery experience. The platform uses Three.js-powered 3D scenes to preview activities before committing, with smooth page transitions via Next.js App Router. Users can browse hobbies by category, view interactive demonstrations, and connect with local groups. The entire frontend was built from scratch using Next.js 14, TypeScript, and a component-driven architecture emphasising reusability and animation.',
+    tags: ['Next.js 14', 'TypeScript', 'Three.js', 'CSS Animations'],
     icon: 'H',
     color: '#3b82f6',
     gallery: [],
@@ -115,4 +115,10 @@ export function getProject(slug: string): Project | undefined {
 
 export function getFeaturedProjects(): Project[] {
   return projects.filter((p) => p.featured)
+}
+
+export function getNextProject(slug: string): Project | undefined {
+  const index = projects.findIndex((p) => p.slug === slug)
+  if (index === -1) return undefined
+  return projects[(index + 1) % projects.length]
 }

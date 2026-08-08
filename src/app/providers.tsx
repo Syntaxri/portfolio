@@ -1,7 +1,7 @@
 'use client'
 
-import { ModeProvider } from '../context/ModeContext'
+import { SmoothScrollProvider } from '@/components/animations/SmoothScroll'
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <ModeProvider>{children}</ModeProvider>
+  return <SmoothScrollProvider>{children}</SmoothScrollProvider>
 }

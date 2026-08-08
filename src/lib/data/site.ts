@@ -6,7 +6,7 @@ export const site = {
   email: 'akramrihanie@gmail.com',
   location: 'Morocco',
   availability: 'Available for work',
-  domain: 'viaruq.dev',
+  domain: 'www.akramrihani.com',
   github: 'https://github.com/Syntaxri',
   githubUsername: 'Syntaxri',
   linkedin: 'https://linkedin.com/in/riihaniakram',

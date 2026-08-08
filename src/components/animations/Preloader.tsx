@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { site } from '@/lib/data/site'
 
 const TOTAL = 100
 
@@ -71,7 +72,7 @@ export function Preloader() {
   return (
     <div ref={rootRef} aria-hidden className="fixed inset-0 z-[200] flex flex-col justify-end bg-base">
       <div className="flex items-end justify-between px-6 pb-6 sm:px-10">
-        <span className="label">viaruq.dev — Akram Rihani</span>
+        <span className="label">{site.domain} — Akram Rihani</span>
         <span
           ref={numberRef}
           className="font-display text-[clamp(3.5rem,10vw,7rem)] font-extrabold leading-none tabular-nums text-ink"

@@ -135,7 +135,7 @@ export function Footer() {
               </span>
             )}
             <span className="h-px w-6 bg-white/15" />
-            <span>viaruq.dev</span>
+            <span>{site.domain}</span>
           </p>
         </div>
       </div>

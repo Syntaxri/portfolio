@@ -1,8 +1,9 @@
 import type { MetadataRoute } from 'next'
 import { projects } from '@/lib/data/projects'
+import { site } from '@/lib/data/site'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://viaruq.dev'
+  const base = `https://${site.domain}`
   const now = new Date()
 
   const staticPages = [

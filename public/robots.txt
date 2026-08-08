@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://viaruq.dev/sitemap.xml
+Sitemap: https://www.akramrihani.com/sitemap.xml

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { MeshDistortMaterial, Sparkles, Float } from '@react-three/drei'
 import * as THREE from 'three'
@@ -12,10 +12,12 @@ const SCALE_BY_TIER: Record<QualityTier, number> = { high: 1, medium: 0.85, low:
 
 function Nebula({ tier }: { tier: QualityTier }) {
   const mesh = useRef<THREE.Mesh>(null)
-  const uniforms = useRef(createAuroraUniforms())
+  const uniforms = useMemo(() => createAuroraUniforms(), [])
 
+/* eslint-disable react-hooks/immutability -- uniforms are three.js mutable
+     state, mutated every frame by the render loop by design */
   useFrame(({ clock }) => {
-    const u = uniforms.current
+    const u = uniforms
     u.uTime.value = clock.elapsedTime
     u.uDetail.value = tier === 'medium' ? 0.5 : 1
     u.uProgress.value = THREE.MathUtils.lerp(u.uProgress.value, scrollState.progress, 0.06)
@@ -28,6 +30,7 @@ function Nebula({ tier }: { tier: QualityTier }) {
       mesh.current.rotation.z = s * 0.16
     }
   })
+  /* eslint-enable react-hooks/immutability */
 
   if (tier === 'low') return null
 
@@ -37,7 +40,7 @@ function Nebula({ tier }: { tier: QualityTier }) {
       <shaderMaterial
         vertexShader={auroraVertexShader}
         fragmentShader={auroraFragmentShader}
-        uniforms={uniforms.current}
+        uniforms={uniforms}
         transparent
         depthWrite={false}
         blending={THREE.AdditiveBlending}

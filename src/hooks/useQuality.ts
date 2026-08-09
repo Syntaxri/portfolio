@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 export type QualityTier = 'high' | 'medium' | 'low'
 
@@ -15,8 +15,7 @@ function detectTier(): QualityTier {
 }
 
 export function useQualityTier(): QualityTier {
-  const [tier, setTier] = useState<QualityTier>('high')
-  useEffect(() => setTier(detectTier()), [])
+  const [tier] = useState(detectTier)
   return tier
 }
 

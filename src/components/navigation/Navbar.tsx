@@ -54,7 +54,10 @@ export function Navbar() {
   }, [hidden, reduced])
 
   /* close menu on navigation */
-  useEffect(() => setMenuOpen(false), [pathname])
+  useEffect(() => {
+    const t = setTimeout(() => setMenuOpen(false), 0)
+    return () => clearTimeout(t)
+  }, [pathname])
 
   useEffect(() => {
     const el = menuRef.current

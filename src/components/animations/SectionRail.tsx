@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useLenis } from '@/components/animations/SmoothScroll'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { chapters } from '@/lib/data/engineered'
 
@@ -21,24 +22,14 @@ export function SectionRail() {
   const railRef = useRef<HTMLDivElement>(null)
   const fillRef = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(0)
-  const [enabled, setEnabled] = useState(false)
   const reduced = useReducedMotion()
+  const mdUp = useMediaQuery('(min-width: 768px)')
   const { scrollTo } = useLenis()
   const pathname = usePathname()
 
-  useEffect(() => {
-    /* the rail is a home-page feature: its chapter targets only exist in
-       the home sections, so any other route hides it entirely */
-    if (pathname !== '/') {
-      setEnabled(false)
-      return
-    }
-    if (window.matchMedia('(min-width: 768px)').matches && !reduced) {
-      setEnabled(true)
-    } else {
-      setEnabled(false)
-    }
-  }, [reduced, pathname])
+  /* the rail is a home-page feature: its chapter targets only exist in
+     the home sections, so any other route hides it entirely */
+  const enabled = pathname === '/' && mdUp && !reduced
 
   useEffect(() => {
     if (!enabled) return

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { useIsTouch } from '@/hooks/useIsTouch'
@@ -11,22 +11,19 @@ export function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
   const labelRef = useRef<HTMLDivElement>(null)
-  const [enabled, setEnabled] = useState(false)
   const reduced = useReducedMotion()
   const isTouch = useIsTouch()
 
-  useEffect(() => {
-    if (reduced) {
-      setEnabled(false)
-      return
-    }
-    gsap.set(dotRef.current, { opacity: 0 })
-    gsap.set(ringRef.current, { opacity: 0 })
-    setEnabled(true)
-  }, [reduced])
+  const canShow = !reduced && !isTouch
 
   useEffect(() => {
-    if (!enabled || isTouch) return
+    if (!canShow) return
+    gsap.set(dotRef.current, { opacity: 0 })
+    gsap.set(ringRef.current, { opacity: 0 })
+  }, [canShow])
+
+  useEffect(() => {
+    if (!canShow) return
 
     const dot = dotRef.current
     const ring = ringRef.current
@@ -91,9 +88,9 @@ export function CustomCursor() {
       document.documentElement.removeEventListener('mouseleave', onLeave)
       gsap.killTweensOf([dot, ring, label])
     }
-  }, [enabled, isTouch])
+  }, [canShow])
 
-  if (!enabled || isTouch) return null
+  if (!canShow) return null
 
   return (
     <>

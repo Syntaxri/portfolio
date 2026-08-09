@@ -5,7 +5,7 @@ import { getProject, getNextProject, projects } from '@/lib/data/projects'
 import { ProjectDetail } from './ProjectDetail'
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export const dynamicParams = false
@@ -15,7 +15,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const project = getProject(params.slug)
+  const { slug } = await params
+  const project = getProject(slug)
   if (!project) return {}
   return {
     title: project.title,
@@ -23,8 +24,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default function ProjectPage({ params }: Props) {
-  const project = getProject(params.slug)
+export default async function ProjectPage({ params }: Props) {
+  const { slug } = await params
+  const project = getProject(slug)
   if (!project) notFound()
 
   const nextProject = getNextProject(project.slug)

@@ -1,27 +1,31 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import gsap from 'gsap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { site } from '@/lib/data/site'
 
 const TOTAL = 100
 
+/* sessionStorage never changes after first paint — a static store is enough */
+function subscribeStorage(): () => void {
+  return () => {}
+}
+
+function readPreloaderSeen(): boolean {
+  return typeof window !== 'undefined' && sessionStorage.getItem('ar-preloader') !== null
+}
+
 export function Preloader() {
   const rootRef = useRef<HTMLDivElement>(null)
   const numberRef = useRef<HTMLSpanElement>(null)
   const fillRef = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
   const [done, setDone] = useState(false)
   const reduced = useReducedMotion()
+  const seen = useSyncExternalStore(subscribeStorage, readPreloaderSeen, () => false)
 
-  useEffect(() => {
-    if (sessionStorage.getItem('ar-preloader')) {
-      setDone(true)
-      return
-    }
-    setVisible(true)
-  }, [])
+  /* the first visit shows the loader; returning visitors skip it */
+  const visible = !seen
 
   useEffect(() => {
     if (!visible || done) return
@@ -29,8 +33,8 @@ export function Preloader() {
     if (!root) return
 
     if (reduced) {
-      setDone(true)
-      return
+      const t = setTimeout(() => setDone(true), 0)
+      return () => clearTimeout(t)
     }
 
     const ctx = gsap.context(() => {

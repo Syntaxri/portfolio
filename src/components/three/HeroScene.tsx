@@ -13,12 +13,14 @@ const SCALE_BY_TIER: Record<QualityTier, number> = { high: 1, medium: 0.85, low:
 function Nebula({ tier }: { tier: QualityTier }) {
   const mesh = useRef<THREE.Mesh>(null)
   const uniforms = useMemo(() => createAuroraUniforms(), [])
+  const timer = useMemo(() => new THREE.Timer(), [])
 
 /* eslint-disable react-hooks/immutability -- uniforms are three.js mutable
      state, mutated every frame by the render loop by design */
-  useFrame(({ clock }) => {
+  useFrame(() => {
+    timer.update()
     const u = uniforms
-    u.uTime.value = clock.elapsedTime
+    u.uTime.value = timer.getElapsed()
     u.uDetail.value = tier === 'medium' ? 0.5 : 1
     u.uProgress.value = THREE.MathUtils.lerp(u.uProgress.value, scrollState.progress, 0.06)
 
@@ -52,13 +54,15 @@ function Nebula({ tier }: { tier: QualityTier }) {
 function Core({ tier }: { tier: QualityTier }) {
   const group = useRef<THREE.Group>(null)
   const material = useRef<{ emissiveIntensity: number; opacity: number } | null>(null)
+  const timer = useMemo(() => new THREE.Timer(), [])
 
-  useFrame(({ clock, camera }, delta) => {
+  useFrame(({ camera }, delta) => {
     camera.lookAt(0, 0, 0)
 
     const g = group.current
     if (!g) return
-    const t = clock.elapsedTime
+    timer.update()
+    const t = timer.getElapsed()
     const s = scrollState.progress
     const v = THREE.MathUtils.clamp(Math.abs(scrollState.velocity) * 0.012, 0, 1)
 

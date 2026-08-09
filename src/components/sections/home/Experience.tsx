@@ -99,18 +99,18 @@ export function Experience() {
             {experience.map((item, i) => (
               <article key={item.year} className="exp-row">
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-[7rem_1fr] sm:gap-8">
-                  <div className="flex items-baseline gap-4 sm:block">
+                  <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 sm:block">
                     <p className="label text-ink-tertiary" aria-hidden>
                       {String(i + 1).padStart(2, '0')} — {item.company}
                     </p>
                     <h3
-                      className="text-6xl font-extrabold tracking-tight text-outline sm:mt-2 sm:text-7xl"
+                      className="text-[clamp(3.5rem,15vw,3.75rem)] font-extrabold tracking-tight text-outline sm:mt-2 sm:text-7xl"
                       aria-hidden
                     >
                       {item.year}
                     </h3>
                   </div>
-                  <div className="pt-1 sm:pt-2">
+                  <div className="pt-1 sm:pt-2 sm:pl-44">
                     <h4 className="fluid-title font-extrabold tracking-tight">{item.role}</h4>
                     <p className="label mt-1 text-accent-secondary">{item.company}</p>
                     <p className="mt-4 max-w-xl text-sm leading-relaxed text-ink-secondary">{item.desc}</p>

@@ -84,7 +84,8 @@ export function FeaturedWork() {
     }
     el.addEventListener('pointermove', onMove, { passive: true })
     el.addEventListener('pointerleave', onLeave)
-    ctx.add(() => {
+    /* returns the cleanup so it runs on ctx.revert() (unmount), not at mount */
+    ctx.add(() => () => {
       el.removeEventListener('pointermove', onMove)
       el.removeEventListener('pointerleave', onLeave)
       el.querySelectorAll<HTMLElement>('.fw-cover-inner').forEach((cover) => {
@@ -147,9 +148,9 @@ export function FeaturedWork() {
                 </div>
 
                 {/* editorial metadata */}
-                <div className={`mt-6 grid grid-cols-1 items-end gap-4 md:grid-cols-12 ${flip ? '' : ''}`}>
+                <div className={`mt-6 grid grid-cols-1 items-end gap-4 md:grid-cols-12`}>
                   <div className="md:col-span-7">
-                    <h3 className="text-[clamp(2.5rem,6vw,5rem)] font-extrabold leading-[0.95] tracking-tight text-ink transition-transform duration-500 ease-out-expo ${flip ? 'group-hover:-translate-x-3' : 'group-hover:translate-x-3'}">
+                    <h3 className={`text-[clamp(2.5rem,6vw,5rem)] max-[369px]:text-[clamp(2.1rem,10.4vw,2.5rem)] font-extrabold leading-[0.95] tracking-tight text-ink transition-transform duration-500 ease-out-expo ${flip ? 'group-hover:-translate-x-3' : 'group-hover:translate-x-3'}`}>
                       {project.title}
                     </h3>
                   </div>

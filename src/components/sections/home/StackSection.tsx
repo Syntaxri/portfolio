@@ -61,7 +61,7 @@ export function StackSection() {
           {stack.map((entry, i) => (
             <article
               key={entry.tech}
-              className={`stack-row group flex items-baseline justify-between gap-6 border-b border-white/[0.08] py-5 transition-opacity duration-300 md:py-6 ${
+              className={`stack-row group flex flex-wrap items-baseline justify-between gap-x-5 gap-y-3 border-b border-white/[0.08] py-5 transition-opacity duration-300 md:py-6 sm:gap-x-6 ${
                 i % 2 === 1 ? 'md:pl-14' : ''
               }`}
               data-cursor
@@ -74,7 +74,7 @@ export function StackSection() {
                   {entry.tech}
                 </h3>
               </div>
-              <p className="max-w-[16rem] text-right font-mono text-[0.58rem] uppercase tracking-[0.18em] text-ink-tertiary transition-colors duration-300 group-hover:text-ink-secondary sm:block">
+              <p className="ml-auto max-w-[16rem] min-w-0 text-right font-mono text-[0.54rem] uppercase tracking-[0.18em] text-ink-tertiary transition-colors duration-300 group-hover:text-ink-secondary sm:block sm:text-[0.58rem]">
                 {entry.note}
               </p>
             </article>

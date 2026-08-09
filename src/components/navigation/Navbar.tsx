@@ -71,9 +71,9 @@ export function Navbar() {
         return
       }
       const labels = el.querySelectorAll('.menu-item')
+      gsap.set(el, { display: 'flex' })
       gsap
         .timeline()
-        .set(el, { display: 'flex' })
         .fromTo(
           el,
           { clipPath: 'inset(0 0 100% 0)' },

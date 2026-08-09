@@ -2,6 +2,7 @@
 const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
+    qualities: [75, 82],
   },
   headers: async () => {
     const headers = [

@@ -6,6 +6,7 @@ import { Preloader } from '../components/animations/Preloader'
 import { PageTransition } from '../components/animations/PageTransition'
 import { CustomCursor } from '../components/animations/CustomCursor'
 import { SectionRail } from '../components/animations/SectionRail'
+import { Footer } from '../components/sections/home/Footer'
 import { site } from '@/lib/data/site'
 import './globals.css'
 
@@ -88,7 +89,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" data-scroll-behavior="smooth" className="dark">
       <body className={`${inter.variable} ${dmMono.variable} ${syne.variable} antialiased`}>
         <script
           type="application/ld+json"
@@ -125,6 +126,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main id="main" className="relative z-10">
             {children}
           </main>
+          <Footer />
           <div aria-hidden className="grain" />
           <Preloader />
           <PageTransition />

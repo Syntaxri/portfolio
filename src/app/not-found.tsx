@@ -15,7 +15,10 @@ export default function NotFound() {
       <p className="text-sm text-white/50 max-w-[400px] mb-8">
         The page you&apos;re looking for doesn&apos;t exist or has been moved.
       </p>
-      <Link href="/" className="glass-button glass-button-primary no-underline">
+      <Link
+        href="/"
+        className="inline-flex items-center gap-3 border border-white/15 px-7 py-4 font-mono text-[0.65rem] uppercase tracking-widest text-ink-secondary transition-colors duration-300 hover:border-accent/50 hover:text-ink"
+      >
         Back to home
       </Link>
     </div>

@@ -51,7 +51,10 @@ export function ProjectsIndex({ projects }: { projects: Project[] }) {
     <div className="mx-auto max-w-shell px-5 sm:px-8">
       <header className="mb-16 max-w-3xl">
         <p className="label label-accent mb-6">Index — {projects.length} projects</p>
-        <h1 className="fluid-title font-extrabold tracking-tight">
+        <h1
+          className="fluid-title font-extrabold tracking-tight"
+          style={{ fontSize: 'min(4.5rem, max(5vw, min(2rem, calc(1.75rem + (100vw - 320px) * 0.05714))))' }}
+        >
           <RevealText>Work that ships,</RevealText>
           <RevealText className="text-outline">experiences that stay.</RevealText>
         </h1>
@@ -86,7 +89,7 @@ export function ProjectsIndex({ projects }: { projects: Project[] }) {
 
               <div className="mt-5 grid grid-cols-1 items-end gap-4 md:grid-cols-12">
                 <div className={`md:col-span-6 ${flip ? 'md:order-2' : ''}`}>
-                  <h2 className="text-[clamp(2.25rem,5vw,4.25rem)] font-extrabold leading-[0.95] tracking-tight transition-transform duration-500 ease-out-expo group-hover:translate-x-3">
+                  <h2 className="text-[min(4.25rem,max(5vw,min(2.25rem,calc(1.9rem+(100vw-320px)*0.08))))] font-extrabold leading-[0.95] tracking-tight transition-transform duration-500 ease-out-expo group-hover:translate-x-3">
                     {project.title}
                   </h2>
                 </div>

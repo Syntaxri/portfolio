@@ -47,7 +47,7 @@ export default function StackMarquee({ items }: { items: string[] }) {
   return (
     <div
       className="mt-12 overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_12%,black_88%,transparent)]"
-      aria-hidden={!reduced}
+      aria-hidden
     >
       <div ref={trackRef} className="flex w-max gap-10 whitespace-nowrap will-change-transform">
         {doubled.map((tech, i) => (

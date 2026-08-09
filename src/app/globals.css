@@ -226,7 +226,7 @@
   }
 
   .fluid-display {
-    font-size: clamp(2.75rem, 8.5vw, 8rem);
+    font-size: clamp(1.8rem, 8.5vw, 8rem);
     line-height: 0.98;
     letter-spacing: -0.03em;
   }

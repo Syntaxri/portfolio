@@ -180,7 +180,7 @@ export function Hero() {
 
         <div className="hero-compress mt-auto pb-12 sm:pb-16">
           <div className="flex flex-col justify-between gap-10 md:flex-row md:items-end">
-            <h1 className="font-extrabold leading-[0.9] tracking-tight">
+            <h1 className="text-[clamp(2.75rem,8.5vw,8rem)] font-extrabold leading-[0.9] tracking-tight">
               <SkewScroll>
                 <span className="block overflow-hidden pb-[0.09em]">
                   <span className="hero-name-line inline-block will-change-transform">Akram</span>

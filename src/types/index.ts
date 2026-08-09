@@ -38,4 +38,7 @@ export interface GalleryImage {
   src: string
   alt: string
   caption?: string
+  /** intrinsic dimensions — reserve space to prevent layout shift while loading */
+  width: number
+  height: number
 }

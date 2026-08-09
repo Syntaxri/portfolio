@@ -7,7 +7,6 @@ import { Process } from '@/components/sections/home/Process'
 import { StackSection } from '@/components/sections/home/StackSection'
 import { Engineered } from '@/components/sections/home/Engineered'
 import { ContactCta } from '@/components/sections/home/ContactCta'
-import { Footer } from '@/components/sections/home/Footer'
 
 export default function Home() {
   return (
@@ -21,7 +20,6 @@ export default function Home() {
       <StackSection />
       <Engineered />
       <ContactCta />
-      <Footer />
     </>
   )
 }

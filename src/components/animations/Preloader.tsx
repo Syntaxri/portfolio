@@ -45,7 +45,7 @@ export function Preloader() {
       }
       tl.to(counter, {
         value: TOTAL,
-        duration: 1.7,
+        duration: 1.0,
         ease: 'power2.inOut',
         onUpdate: () => {
           const v = Math.round(counter.value)

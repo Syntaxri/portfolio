@@ -16,7 +16,10 @@ export default function Error({ reset }: { reset: () => void }) {
       <p className="mb-8 max-w-[400px] text-sm text-white/50">
         Please try again. If the problem persists, email me directly — the address is in the footer.
       </p>
-      <button onClick={reset} className="glass-button glass-button-primary no-underline">
+      <button
+        onClick={reset}
+        className="inline-flex items-center gap-3 border border-white/15 px-7 py-4 font-mono text-[0.65rem] uppercase tracking-widest text-ink-secondary transition-colors duration-300 hover:border-accent/50 hover:text-ink"
+      >
         Try again
       </button>
     </div>

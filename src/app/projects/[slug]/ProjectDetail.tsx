@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useLenis } from '@/components/animations/SmoothScroll'
 import { RevealText } from '@/components/animations/RevealText'
 import { Magnetic } from '@/components/animations/Magnetic'
 import { ProjectVisual } from '@/components/projects/ProjectVisual'
@@ -20,6 +21,7 @@ interface ProjectDetailProps {
 export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
   const rootRef = useRef<HTMLDivElement>(null)
   const reduced = useReducedMotion()
+  const { scrollTo } = useLenis()
 
   useEffect(() => {
     const el = rootRef.current
@@ -62,7 +64,14 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
                 <span className="label">{project.role}</span>
               </div>
 
-              <h1 className="mt-6 text-[clamp(3rem,9vw,8.5rem)] font-extrabold leading-[0.95] tracking-tight">
+              <h1
+                className="mt-6 font-extrabold leading-[0.95] tracking-tight"
+                style={{
+                  fontSize: project.title.split(/\s+/).some((w) => w.length >= 9)
+                    ? 'clamp(1.9rem, min(9vw, calc(((min(100vw - 160px, 1280px)) * 0.6667 - 56px) / 9.35)), 8.5rem)'
+                    : 'clamp(1.9rem, 9vw, 8.5rem)',
+                }}
+              >
                 <RevealText>{project.title}</RevealText>
               </h1>
 
@@ -120,7 +129,7 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
             <p className="text-base leading-relaxed text-ink-secondary">{project.longDescription}</p>
 
             {project.metrics && project.metrics.length > 0 && (
-              <dl className="mt-10 grid grid-cols-2 gap-px bg-white/[0.07]">
+              <dl className="mt-10 grid grid-cols-1 gap-px bg-white/[0.07] sm:grid-cols-2">
                 {project.metrics.map((m) => (
                   <div key={m.label} className="detail-reveal bg-base p-6">
                     <dt className="label mb-2">{m.label}</dt>
@@ -156,7 +165,12 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <div className="md:col-span-4">
-                    <h3 className="fluid-title font-extrabold tracking-tight">{c.title}</h3>
+                    <h3
+                      className="fluid-title font-extrabold tracking-tight"
+                      style={{ fontSize: 'min(4.5rem, max(5vw, min(2rem, calc(1.75rem + (100vw - 320px) * 0.05714))))' }}
+                    >
+                      {c.title}
+                    </h3>
                     <p className="mt-4 text-sm leading-relaxed text-ink-tertiary">{c.description}</p>
                   </div>
                   <div className="md:col-span-6 md:col-start-7">
@@ -178,10 +192,12 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               {project.gallery.map((img, i) => (
                 <figure key={i} className="detail-reveal">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- gallery images are remote/local, aspect unknown */}
+                  {/* eslint-disable-next-line @next/next/no-img-element -- gallery images are local; dims reserved via attributes */}
                   <img
                     src={img.src}
                     alt={img.alt}
+                    width={img.width}
+                    height={img.height}
                     loading="lazy"
                     decoding="async"
                     style={{ width: '100%', height: 'auto' }}
@@ -233,7 +249,7 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
         )}
         <button
           type="button"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          onClick={() => scrollTo(0, { duration: 1.15 })}
           className="link-underline label cursor-pointer text-ink-tertiary transition-colors hover:text-ink"
         >
           Back to top ↑

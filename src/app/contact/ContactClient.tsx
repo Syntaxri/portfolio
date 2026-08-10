@@ -172,7 +172,7 @@ export function ContactClient() {
       <div>
         <p className="label label-accent mb-8">Contact</p>
         <h1 className="fluid-title font-extrabold tracking-tight">
-          <RevealText>Say hello.</RevealText>
+          <RevealText>Say hello.</RevealText>{' '}
           <RevealText as="span" className="block text-outline">
             Start something.
           </RevealText>

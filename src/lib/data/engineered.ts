@@ -41,8 +41,9 @@ export const engineered = [
 /** Global chapter rail — anchors by section id, reused by the section indicator. */
 export const chapters = [
   { id: 'hero', label: 'Intro' },
-  { id: 'work', label: 'Work' },
   { id: 'capabilities', label: 'Practice' },
+  { id: 'work', label: 'Work' },
+  { id: 'experience', label: 'Experience' },
   { id: 'process', label: 'Process' },
   { id: 'contact', label: 'Contact' },
 ] as const

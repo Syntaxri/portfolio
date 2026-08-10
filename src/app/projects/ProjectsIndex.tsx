@@ -55,7 +55,7 @@ export function ProjectsIndex({ projects }: { projects: Project[] }) {
           className="fluid-title font-extrabold tracking-tight"
           style={{ fontSize: 'min(4.5rem, max(5vw, min(2rem, calc(1.75rem + (100vw - 320px) * 0.05714))))' }}
         >
-          <RevealText>Work that ships,</RevealText>
+          <RevealText>Work that ships,</RevealText>{' '}
           <RevealText className="text-outline">experiences that stay.</RevealText>
         </h1>
         <p className="mt-6 max-w-xl text-sm leading-relaxed text-ink-secondary">

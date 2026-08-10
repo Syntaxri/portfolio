@@ -136,7 +136,6 @@ export function Capabilities() {
           {capabilities.map((c) => (
             <article
               key={c.index}
-              data-cursor-text="Hold"
               className="cap-row group grid grid-cols-1 gap-8 border-b border-white/[0.08] py-10 transition-colors duration-500 hover:bg-white/[0.015] md:grid-cols-[5rem_minmax(0,1fr)_22rem] md:items-center md:gap-10 md:px-4"
             >
               <span className="label text-accent-secondary md:self-start">{c.index}</span>

@@ -64,7 +64,6 @@ export function StackSection() {
               className={`stack-row group flex flex-wrap items-baseline justify-between gap-x-5 gap-y-3 border-b border-white/[0.08] py-5 transition-opacity duration-300 md:py-6 sm:gap-x-6 ${
                 i % 2 === 1 ? 'md:pl-14' : ''
               }`}
-              data-cursor
             >
               <div className="flex items-baseline gap-5">
                 <span className="label text-ink-tertiary transition-colors duration-300 group-hover:text-accent-secondary">

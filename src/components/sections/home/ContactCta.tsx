@@ -77,7 +77,7 @@ export function ContactCta() {
           <h2 className="fluid-display font-extrabold leading-[1.0] tracking-tight">
             <RevealText className="block" blur>
               Let&apos;s build
-            </RevealText>
+            </RevealText>{' '}
             <RevealText className="text-outline block" delay={0.12}>
               something memorable
             </RevealText>

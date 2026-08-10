@@ -45,7 +45,7 @@ export function AboutClient({ experience }: { experience: ExperienceEntry[] }) {
         <p className="label label-accent mb-8">About</p>
         <SkewScroll>
           <h1 className="fluid-display max-w-5xl font-extrabold leading-[1.02] tracking-tight">
-            <RevealText>Engineering,</RevealText>
+            <RevealText>Engineering,</RevealText>{' '}
             <RevealText className="block text-outline">with taste.</RevealText>
           </h1>
         </SkewScroll>

@@ -111,7 +111,7 @@ export function Experience() {
                     </h3>
                   </div>
                   <div className="pt-1 sm:pt-2 sm:pl-44">
-                    <h4 className="fluid-title font-extrabold tracking-tight">{item.role}</h4>
+                    <h3 className="fluid-title font-extrabold tracking-tight">{item.role}</h3>
                     <p className="label mt-1 text-accent-secondary">{item.company}</p>
                     <p className="mt-4 max-w-xl text-sm leading-relaxed text-ink-secondary">{item.desc}</p>
                   </div>

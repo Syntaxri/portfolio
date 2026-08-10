@@ -213,6 +213,13 @@
     cursor: none;
   }
 
+  /* keep native text caret cursor inside form fields — precise editing must
+     not depend on the decorative ring */
+  .no-cursor input,
+  .no-cursor textarea {
+    cursor: text;
+  }
+
   @media (pointer: coarse) {
     .no-cursor {
       cursor: auto;

@@ -121,7 +121,7 @@ export function Manifesto() {
       ref={sectionRef}
       aria-label="About"
       className="relative overflow-hidden"
-      style={{ height: '190vh' }}
+      style={reduced ? undefined : { height: '190vh' }}
     >
       <div ref={stickyRef} className="sticky top-0 flex min-h-[100svh] flex-col justify-center px-5 sm:px-8">
         <div className="mx-auto w-full max-w-shell">

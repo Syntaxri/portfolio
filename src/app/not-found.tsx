@@ -4,7 +4,7 @@ export default function NotFound() {
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 text-center">
       <span
-        className="font-mono text-[0.6rem] tracking-widest uppercase block mb-6"
+        className="font-mono text-[0.65rem] tracking-widest uppercase block mb-6"
         style={{ color: 'var(--accent)' }}
       >
         Error 404

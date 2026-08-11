@@ -232,7 +232,7 @@ export function ContactClient() {
               <p
                 id="name-error"
                 role="alert"
-                className="mt-2 font-mono text-[0.6rem] uppercase tracking-widest text-red-400"
+                className="mt-2 font-mono text-[0.65rem] uppercase tracking-widest text-red-400"
               >
                 {errors.name}
               </p>
@@ -261,7 +261,7 @@ export function ContactClient() {
               <p
                 id="email-error"
                 role="alert"
-                className="mt-2 font-mono text-[0.6rem] uppercase tracking-widest text-red-400"
+                className="mt-2 font-mono text-[0.65rem] uppercase tracking-widest text-red-400"
               >
                 {errors.email}
               </p>
@@ -289,7 +289,7 @@ export function ContactClient() {
               <p
                 id="message-error"
                 role="alert"
-                className="mt-2 font-mono text-[0.6rem] uppercase tracking-widest text-red-400"
+                className="mt-2 font-mono text-[0.65rem] uppercase tracking-widest text-red-400"
               >
                 {errors.message}
               </p>

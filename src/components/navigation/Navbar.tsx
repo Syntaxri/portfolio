@@ -181,7 +181,7 @@ export function Navbar() {
             <Magnetic strength={0.3} as="div">
               <Link
                 href="/contact"
-                className="hidden items-center gap-2 border border-white/10 px-4 py-2 font-mono text-[0.6rem] uppercase tracking-widest text-ink-secondary transition-colors duration-300 hover:border-accent/40 hover:text-ink md:inline-flex"
+                className="hidden items-center gap-2 border border-white/10 px-4 py-2 font-mono text-[0.65rem] uppercase tracking-widest text-ink-secondary transition-colors duration-300 hover:border-accent/40 hover:text-ink md:inline-flex"
               >
                 Let&apos;s talk
               </Link>

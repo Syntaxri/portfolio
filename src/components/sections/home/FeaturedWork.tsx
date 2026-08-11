@@ -166,7 +166,7 @@ export function FeaturedWork() {
                       {project.tags.slice(0, 4).map((t) => (
                         <span
                           key={t}
-                          className="font-mono text-[0.55rem] uppercase tracking-widest text-ink-tertiary"
+                          className="font-mono text-[0.625rem] uppercase tracking-widest text-ink-tertiary"
                         >
                           {t}
                         </span>

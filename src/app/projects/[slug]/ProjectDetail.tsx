@@ -84,7 +84,7 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
               {project.tags.map((t) => (
                 <span
                   key={t}
-                  className="tag border border-white/10 px-3 py-1 font-mono text-[0.55rem] uppercase tracking-widest text-ink-tertiary"
+                  className="tag border border-white/10 px-3 py-1 font-mono text-[0.625rem] uppercase tracking-widest text-ink-tertiary"
                 >
                   {t}
                 </span>
@@ -95,7 +95,7 @@ export function ProjectDetail({ project, nextProject }: ProjectDetailProps) {
 
         {/* Visual band — the project cover, framed at the source ratio */}
         <div
-          className="relative mx-auto mb-14 flex h-[38vh] max-w-shell items-center justify-center overflow-hidden px-5 sm:px-8 md:h-auto md:aspect-[1905/990]"
+          className="relative mx-auto mb-14 flex aspect-[1905/990] max-w-shell items-center justify-center overflow-hidden px-5 sm:px-8"
           aria-hidden
         >
           <div

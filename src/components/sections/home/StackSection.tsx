@@ -73,7 +73,7 @@ export function StackSection() {
                   {entry.tech}
                 </h3>
               </div>
-              <p className="ml-auto max-w-[16rem] min-w-0 text-right font-mono text-[0.54rem] uppercase tracking-[0.18em] text-ink-tertiary transition-colors duration-300 group-hover:text-ink-secondary sm:block sm:text-[0.58rem]">
+              <p className="ml-auto max-w-[16rem] min-w-0 text-right font-mono text-[0.625rem] uppercase tracking-[0.18em] text-ink-tertiary transition-colors duration-300 group-hover:text-ink-secondary sm:block sm:text-[0.65rem]">
                 {entry.note}
               </p>
             </article>

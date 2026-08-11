@@ -75,7 +75,7 @@ function CapabilityMotive({ variant, color }: { variant: CapabilityPreview; colo
           {['success — trees shake', 'pass — 624 checks', 'deploy · edge', 'gzip 98%'].map((line, i) => (
             <p
               key={line}
-              className={`font-mono text-[0.55rem] uppercase tracking-[0.18em] ${i === 3 ? 'text-white/55' : 'text-white/50'}`}
+              className={`font-mono text-[0.625rem] uppercase tracking-[0.18em] ${i === 3 ? 'text-white/55' : 'text-white/50'}`}
             >
               <span className={i === 3 ? 'text-emerald-400' : 'text-white/50'}>▸ </span>
               {line}
@@ -145,7 +145,7 @@ export function Capabilities() {
                   {c.title}
                 </h3>
                 <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-secondary">{c.description}</p>
-                <p className="mt-5 font-mono text-[0.58rem] uppercase tracking-[0.2em] text-ink-tertiary">
+                <p className="mt-5 font-mono text-[0.65rem] uppercase tracking-[0.2em] text-ink-tertiary">
                   {c.skills.map((s, i) => (
                     <span key={s}>
                       {i > 0 && <span className="mx-2 text-white/20">/</span>}

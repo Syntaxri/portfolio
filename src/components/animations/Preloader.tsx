@@ -7,13 +7,22 @@ import { site } from '@/lib/data/site'
 
 const TOTAL = 100
 
-/* sessionStorage never changes after first paint — a static store is enough */
+/* localStorage persists across tabs, so returning visitors skip the loader;
+   sessionStorage keeps first-visit tabs consistent when localStorage is
+   unavailable (private mode). Neither changes after first paint — a static
+   store is enough */
 function subscribeStorage(): () => void {
   return () => {}
 }
 
 function readPreloaderSeen(): boolean {
-  return typeof window !== 'undefined' && sessionStorage.getItem('ar-preloader') !== null
+  if (typeof window === 'undefined') return false
+  try {
+    if (localStorage.getItem('ar-preloader') !== null) return true
+  } catch {
+    /* storage unavailable — fall back to tab-only memory */
+  }
+  return sessionStorage.getItem('ar-preloader') !== null
 }
 
 export function Preloader() {
@@ -45,7 +54,7 @@ export function Preloader() {
       }
       tl.to(counter, {
         value: TOTAL,
-        duration: 1.0,
+        duration: 0.55,
         ease: 'power2.inOut',
         onUpdate: () => {
           const v = Math.round(counter.value)
@@ -53,14 +62,19 @@ export function Preloader() {
           if (fillRef.current) fillRef.current.style.transform = `scaleX(${v / TOTAL})`
         },
       })
-        .to(fillRef.current, { transformOrigin: 'right', scaleX: 0, duration: 0.45, ease: 'power2.inOut' })
+        .to(fillRef.current, { transformOrigin: 'right', scaleX: 0, duration: 0.3, ease: 'power2.inOut' })
         .to(numberRef.current, { opacity: 0, y: -14, duration: 0.35, ease: 'power2.out' }, '<')
         .set(root, { pointerEvents: 'none' })
         .to(root, {
           yPercent: -100,
-          duration: 0.85,
+          duration: 0.6,
           ease: 'expo.inOut',
           onComplete: () => {
+            try {
+              localStorage.setItem('ar-preloader', '1')
+            } catch {
+              /* storage unavailable (private mode) — session only */
+            }
             sessionStorage.setItem('ar-preloader', '1')
             window.dispatchEvent(new Event('ar:entrance-ready'))
             setDone(true)

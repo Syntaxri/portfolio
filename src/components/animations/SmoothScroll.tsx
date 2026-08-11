@@ -18,6 +18,11 @@ interface LenisContextValue {
 
 const LenisContext = createContext<LenisContextValue | null>(null)
 
+/* scroll positions per route — remembered so browser back/forward can
+   restore the page where the reader left it (Next doesn't restore it for
+   us on history traversal) */
+const scrollPositions = new Map<string, number>()
+
 export function useLenis() {
   const ctx = useContext(LenisContext)
   if (!ctx) throw new Error('useLenis must be used inside <SmoothScroll>')
@@ -28,6 +33,9 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null)
   const reduced = useReducedMotion()
   const pathname = usePathname()
+  const prevPathRef = useRef(pathname)
+  const isPopRef = useRef(false)
+  const trackingPausedRef = useRef(false)
 
   useEffect(() => {
     /* reduced motion — Lenis is never constructed */
@@ -68,15 +76,58 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     }
   }, [reduced])
 
+  /* flag history traversal — forward pushes never emit popstate */
+  useEffect(() => {
+    const onPop = () => {
+      isPopRef.current = true
+      /* the browser and Lenis fire correction scrolls right after a pop —
+         ignore them so remembered positions survive until restore below */
+      trackingPausedRef.current = true
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+
+  /* remember where each route is left — in-memory, cheap */
+  useEffect(() => {
+    const onScroll = () => {
+      if (trackingPausedRef.current) return
+      scrollPositions.set(location.pathname, Math.round(window.scrollY))
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   /* stop/reposition on route change so anchors reset without warping */
   useEffect(() => {
     const lenis = lenisRef.current
-    if (!lenis) return
+    const pop = isPopRef.current
+    isPopRef.current = false
+    const arrivedBack = pop && prevPathRef.current !== pathname
+    prevPathRef.current = pathname
+
+    if (!lenis) {
+      /* reduced motion — no Lenis; restore natively, never an arbitrary jump */
+      if (arrivedBack) {
+        const saved = scrollPositions.get(pathname)
+        if (typeof saved === 'number') window.scrollTo({ top: saved, behavior: 'auto' })
+      }
+      trackingPausedRef.current = false
+      return
+    }
+
     lenis.stop()
     ScrollTrigger.clearScrollMemory?.()
     const timer = setTimeout(() => {
+      if (arrivedBack) {
+        const saved = scrollPositions.get(pathname)
+        /* force: Lenis is still stopped here; immediate: no visible animation */
+        if (typeof saved === 'number') lenis.scrollTo(saved, { immediate: true, force: true })
+      }
       ScrollTrigger.refresh()
       lenis.start()
+      trackingPausedRef.current = false
     }, 40)
     return () => clearTimeout(timer)
   }, [pathname])

@@ -116,7 +116,14 @@ export function Hero() {
       }, 6000)
     }
 
-    const alreadySeen = sessionStorage.getItem('ar-preloader')
+    let alreadySeen = sessionStorage.getItem('ar-preloader')
+    if (!alreadySeen) {
+      try {
+        alreadySeen = localStorage.getItem('ar-preloader')
+      } catch {
+        /* storage unavailable (private mode) — session result stands */
+      }
+    }
     if (alreadySeen) {
       const id = setTimeout(() => start(), 100)
       return () => {
@@ -156,7 +163,7 @@ export function Hero() {
       {/* vertical rail — editorial annotation */}
       <span
         aria-hidden
-        className="hero-rail absolute right-8 top-1/2 z-[1] hidden origin-right -translate-y-1/2 rotate-90 font-mono text-[0.6rem] uppercase tracking-[0.34em] text-ink-tertiary xl:block"
+        className="hero-rail absolute right-8 top-1/2 z-[1] hidden origin-right -translate-y-1/2 rotate-90 font-mono text-[0.65rem] uppercase tracking-[0.34em] text-ink-tertiary xl:block"
       >
         3D — Motion — Engineering
       </span>

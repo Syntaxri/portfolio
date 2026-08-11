@@ -83,7 +83,7 @@ export function AboutClient({ experience }: { experience: ExperienceEntry[] }) {
                 {stack.slice(0, 8).map((entry) => (
                   <span
                     key={entry.tech}
-                    className="font-mono text-[0.58rem] uppercase tracking-[0.2em] text-ink-tertiary"
+                    className="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-ink-tertiary"
                   >
                     {entry.tech}
                   </span>

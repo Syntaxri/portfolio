@@ -120,11 +120,11 @@ export function mulberry32(seed: number): () => number {
 }
 
 /* ---------------------------------------------------------------------------
- * THE HERO MANDALA — the composition of the entrance installation.
+ * THE HERO ZELLIGE — the composition of the entrance installation.
  * Unit space is world units in the WebGL scene (camera at z≈9.5, fov 42).
  * ------------------------------------------------------------------------- */
 
-export interface MandalaPiece {
+export interface ZelligePiece {
   kind: 'star' | 'diamond' | 'square' | 'cross'
   /** polar position around the centre (radius, angle in radians, rotation) */
   radius: number
@@ -136,9 +136,9 @@ export interface MandalaPiece {
   order: number
 }
 
-export function mandalaPieces(onMobile: boolean, seed = 0): MandalaPiece[] {
+export function zelligePieces(onMobile: boolean, seed = 0): ZelligePiece[] {
   const rnd = mulberry32(seed)
-  const pieces: MandalaPiece[] = []
+  const pieces: ZelligePiece[] = []
 
   /* seeded fires rotate the whole composition and re-tint the rings while
      keeping the zellige rules intact: rings never cross radii, glazes stay

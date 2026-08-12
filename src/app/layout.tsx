@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   ],
   category: 'portfolio',
   icons: {
-    icon: '/favicon.svg',
+    icon: [{ url: '/akramlogo.png', sizes: 'any', type: 'image/png' }],
     apple: '/apple-touch-icon.png',
   },
   alternates: {

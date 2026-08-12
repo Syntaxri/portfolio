@@ -15,7 +15,7 @@
 
 ## The rooms
 
-**ROOM 00 — THE ATRIUM**: the Zellige mandala assembles itself in WebGL; the
+**ROOM 00 — THE ATRIUM**: the Zellige composition assembles itself in WebGL; the
 monogram is an arch cut into an A whose negative space is a V.
 
 **ROOM 01 — THE FOUNTAIN**: the founding story in four steps, the seven rules
@@ -47,7 +47,7 @@ building?
 - Archivo for signage, Fraunces for the catalogue voice, Space Mono for the
   conservation labels.
 - Zellige geometry is computed, never shipped: stars, walls, bands and the
-  mandala all come from `src/lib/geometry.ts`.
+  the Zellige all come from `src/lib/geometry.ts`.
 - The monogram is an arch cut into an A whose negative space is a V.
 - Dark room convention: `.room-dark` overrides the palette tokens in place.
 

@@ -18,7 +18,7 @@ const MosaicCanvas = dynamic(
 
 /**
  * ROOM 00 — THE ATRIUM.
- * The entrance installation: a Zellige mandala assembles itself out of
+ * The entrance installation: a Zellige composition assembles itself out of
  * glazed geometry while the monogram hangs above the name. Scroll
  * grinds the composition apart and the visitor walks into the museum.
  */
@@ -127,27 +127,27 @@ export function EntranceScene() {
               </p>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="pointer-events-none relative z-10 mx-auto flex w-full max-w-7xl flex-1 items-end justify-between gap-6 px-4 pb-6 sm:px-6">
-        <span
-          className="label-muted label hidden items-center gap-2 sm:flex"
-          data-hero-reveal
-          style={{ opacity: entered ? undefined : 0 }}
-        >
-          <span className="inline-block h-px w-6 bg-text-3" aria-hidden="true" />
-          Scroll — the mandala unlocks
-        </span>
-        {!glFailed && (
-          <span
-            className="label-muted label hidden sm:block"
+          <div
+            className="mt-4 flex flex-col items-start gap-1.5"
             data-hero-reveal
             style={{ opacity: entered ? undefined : 0 }}
           >
-            Double-click the mandala — the kiln fires a new pattern
-          </span>
-        )}
+            <p className="label-muted label flex items-center gap-2">
+              <span className="inline-block h-px w-6 bg-text-3" aria-hidden="true" />
+              Scroll — the zellige unlocks
+            </p>
+            {!glFailed && (
+              <p className="label-muted label">
+                <span className="sm:hidden">Double-tap</span>
+                <span className="hidden sm:inline">Double-click</span> the zellige — the kiln
+                fires a new pattern
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="pointer-events-none relative z-10 mx-auto flex w-full max-w-7xl flex-1 items-end justify-end px-4 pb-6 sm:px-6">
         <span
           className="label-muted label"
           data-hero-reveal

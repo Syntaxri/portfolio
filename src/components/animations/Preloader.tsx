@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import gsap from 'gsap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { Monogram } from '@/components/museum/Monogram'
-import { MONOGRAM_PATHS, starPath } from '@/lib/geometry'
+import { starPath } from '@/lib/geometry'
 import { site } from '@/lib/data/site'
 
 /* returning visitors skip the door; sessionStorage keeps private-mode
@@ -30,9 +30,9 @@ const RING_POINTS = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => ({
 }))
 
 /**
- * THE DOOR — the entrance sequence. The monogram draws itself, the eight
- * points of the star lock around it, and the door lifts. Short, skippable
- * by returning visitors, and fully asleep under reduced motion.
+ * THE DOOR — the entrance sequence. The monogram mark with the eight
+ * points of the star locked around it, then the door lifts. Short,
+ * skippable by returning visitors, and fully asleep under reduced motion.
  */
 export function Preloader() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -57,9 +57,9 @@ export function Preloader() {
 
     const ctx = gsap.context(() => {
       /* the door is refired each day: the same door, a different weave —
-         the glaze ring starts at a different point, the stars fall in
-         from the other side, and the studs sit a hair smaller or wider.
-         Deterministic for the whole day, so nothing ever flickers. */
+         the glaze ring starts at a different point and the studs sit a
+         hair smaller or wider. Deterministic for the whole day, so
+         nothing ever flickers. */
       const variant = Math.floor(Date.now() / 86_400_000) % 3
       const faces = ['#1e4082', '#15695c', '#aa5226', '#8c6634']
       const rotated = [...faces.slice(variant), ...faces.slice(0, variant)]
@@ -70,22 +70,15 @@ export function Preloader() {
 
       const tl = gsap.timeline()
       tl.fromTo(
-        '.door-draw',
-        { strokeDashoffset: 190 },
-        { strokeDashoffset: 0, duration: 0.85, ease: 'power2.inOut' }
+        '.door-star',
+        { scale: 0, opacity: 0, transformOrigin: 'center' },
+        {
+          scale: starScale,
+          opacity: 1,
+          duration: 0.4,
+          ease: 'back.out(2.2)',
+        }
       )
-        .fromTo(
-          '.door-star',
-          { scale: 0, opacity: 0, transformOrigin: 'center' },
-          {
-            scale: starScale,
-            opacity: 1,
-            duration: 0.4,
-            ease: 'back.out(2.2)',
-            stagger: variant % 2 === 0 ? 0.045 : { each: 0.045, from: 'end' },
-          },
-          '-=0.5'
-        )
         .to('.door-fade', { opacity: 0, y: -16, duration: 0.3, ease: 'power2.in' }, '+=0.15')
         .set(root, { pointerEvents: 'none' })
         .to(root, {
@@ -136,23 +129,6 @@ export function Preloader() {
           ))}
         </svg>
         <Monogram className="door-fade h-24 w-24 text-accent" />
-        <svg
-          viewBox="0 0 100 96"
-          className="absolute inset-0 h-24 w-24"
-          aria-hidden="true"
-          fill="none"
-        >
-          <path
-            className="door-draw"
-            d={MONOGRAM_PATHS.arch}
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinejoin="round"
-            strokeDasharray="190"
-            strokeDashoffset="190"
-            fill="none"
-          />
-        </svg>
       </div>
 
       <div className="door-fade border-t border-[rgba(28,26,22,0.12)] pt-3">

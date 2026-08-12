@@ -13,7 +13,7 @@ Commit count: 80 · Single-author history
 A creative developer portfolio rebuilt as **"The Moroccan digital museum of software
 craftsmanship"** — a single continuous scroll through seven "rooms" delivered as a
 Next.js 16 App Router site with two bespoke WebGL installations. All Zellige geometry
-(stars, walls, bands, mandala, monogram) is **computed in code, never shipped as
+(stars, walls, bands, zellige, monogram) is **computed in code, never shipped as
 images**. The project passes a hardening pipeline — ESLint, `tsc --noEmit`, 83 Vitest
 tests, production build — enforced by GitHub Actions CI.
 
@@ -156,7 +156,7 @@ src/
 - **Monogram**: `MONOGRAM_PATHS` — one A without a center line, arch top, whose
   negative space is a V; plus `monogramSolidPath` (plaque engraving variant)
 - `rotateSquares` — star construction halves for WebGL
-- `mandalaPieces(onMobile)` — hero composition: central cobalt star (order 0),
+- `zelligePieces(onMobile)` — hero composition: central cobalt star (order 0),
   ring 1 eight teal/terracotta diamonds (r=3.05), ring 2 eight ivory squares
   (r=3.85, scale 0.62), ring 3 sixteen brass studs (r=4.75, scale 0.3) — mobile
   collapses to heart + one quiet ring
@@ -169,7 +169,7 @@ src/
 `page.tsx` composes: **EntranceScene → Fountain → Workshop → LoomRoom → Collection →
 Archive → ExitRoom**.
 
-1. **ROOM 00 — THE ATRIUM** (`EntranceScene`): Zellige mandala assembles in WebGL
+1. **ROOM 00 — THE ATRIUM** (`EntranceScene`): Zellige assembles in WebGL
    (staggered `order`), entrance title pinned top-left, scales to viewport.
 2. **ROOM 01 — THE FOUNTAIN** (`Fountain`): founding story in four steps; seven
    workshop rules translated into engineering laws ("the grammar").
@@ -203,7 +203,7 @@ helpers; detail page at `/work/[slug]` renders gallery with intrinsic
 width/height (reserved space → no CLS), challenges/solutions, metrics, cover band.
 
 ### The two WebGL canvases (raw Three.js)
-- `MosaicCanvas.tsx` (313 lines) — the hero Zellige mandala installation
+- `MosaicCanvas.tsx` (313 lines) — the hero Zellige installation
 - `ZarbiaCanvas.tsx` (600 lines) — the Loom rug; two-side rendering, scrubbed
   pose path, dissolve into geometric field
 - Both wrapped by `WebGLErrorBoundary` (flat CSS fallback on failure), quality
@@ -300,7 +300,7 @@ Env files present: `.env.local` (Resend key `re_ZbjV3gJY…`, `CONTACT_EMAIL=kss
 |---|---|
 | `1e21902` | refactor: unify monogram — single A mark with upright V, drop keystone + floor line |
 | `0be506c` | feat: loom — Zarbia becomes calm horizontal runner with readable reading column |
-| `6141d2c` | feat: museum redesign — Zellige mandala entrance, rooms, monogram branding; scale mandala to viewport; pin entrance title top-left |
+| `6141d2c` | feat: museum redesign — Zellige entrance, rooms, monogram branding; scale Zellige to viewport; pin entrance title top-left |
 | `2a4eebf` | fix: UI/UX audit G–L — cover band ratio, back-button scroll restore, preloader persistence, minimum type size, og.png dimensions |
 | `9d7c67a` | fix: UI/UX audit A–F — heading spacing, RM manifesto dead space, rail order, cursor affordances, heading levels, form I-beam |
 | `de08b1c` | fix: 320px overflow — h1/h2 ramps, detail h1 cap + metrics grid, experience spacing |

@@ -39,7 +39,7 @@ const NOTES: CuratorNote[] = [
   },
   {
     id: 'n2',
-    tag: 'on the mandala',
+    tag: 'on the zellige',
     body: 'The hero ships zero images. 33 extruded ceramic pieces, computed on load. Double-click it — the kiln fires a new deterministic seed and the whole room re-weaves itself from the same vocabulary.',
     tilt: 'rotate-[0.6deg]',
   },

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { mandalaPieces, mulberry32, starPoints } from '@/lib/geometry'
+import { zelligePieces, mulberry32, starPoints } from '@/lib/geometry'
 
 describe('mulberry32', () => {
   it('is deterministic for the same seed', () => {
@@ -15,9 +15,9 @@ describe('mulberry32', () => {
   })
 })
 
-describe('mandalaPieces', () => {
+describe('zelligePieces', () => {
   it('seed 0 is the canonical composition (desktop)', () => {
-    const pieces = mandalaPieces(false, 0)
+    const pieces = zelligePieces(false, 0)
     expect(pieces).toHaveLength(33)
     expect(pieces[0]).toMatchObject({ kind: 'star', radius: 0, glaze: 'cobalt', rotation: 0 })
     /* eight diamonds, eight ivory squares, sixteen studs */
@@ -27,26 +27,26 @@ describe('mandalaPieces', () => {
   })
 
   it('is deterministic: same seed, same composition', () => {
-    const a = mandalaPieces(false, 7)
-    const b = mandalaPieces(false, 7)
+    const a = zelligePieces(false, 7)
+    const b = zelligePieces(false, 7)
     expect(a).toEqual(b)
   })
 
   it('different seeds produce different compositions', () => {
-    const a = mandalaPieces(false, 7)
-    const b = mandalaPieces(false, 8)
+    const a = zelligePieces(false, 7)
+    const b = zelligePieces(false, 8)
     expect(a).not.toEqual(b)
   })
 
   it('keeps the mobile composition canonical at seed 0', () => {
-    const pieces = mandalaPieces(true, 0)
+    const pieces = zelligePieces(true, 0)
     expect(pieces).toHaveLength(17)
     expect(pieces.filter((p) => p.kind === 'diamond')).toHaveLength(8)
   })
 
   it('never lets the rings cross radii on any seed', () => {
     for (let seed = 0; seed < 24; seed++) {
-      const pieces = mandalaPieces(false, seed)
+      const pieces = zelligePieces(false, seed)
       const diamond = Math.max(...pieces.filter((p) => p.kind === 'diamond').map((p) => p.radius))
       const square = Math.min(...pieces.filter((p) => p.kind === 'square' && p.scale > 0.5).map((p) => p.radius))
       const squareMax = Math.max(...pieces.filter((p) => p.kind === 'square' && p.scale > 0.5).map((p) => p.radius))
@@ -57,7 +57,7 @@ describe('mandalaPieces', () => {
   })
 
   it('only ever uses the kiln glazes', () => {
-    const glazes = new Set(mandalaPieces(false, 11).map((p) => p.glaze))
+    const glazes = new Set(zelligePieces(false, 11).map((p) => p.glaze))
     for (const g of glazes) {
       expect(['cobalt', 'teal', 'terra', 'ivory', 'brass']).toContain(g)
     }
@@ -65,7 +65,7 @@ describe('mandalaPieces', () => {
 
   it('keeps the central star as the lock on every seed', () => {
     for (let seed = 0; seed < 12; seed++) {
-      expect(mandalaPieces(false, seed)[0]).toMatchObject({ kind: 'star', radius: 0, glaze: 'cobalt' })
+      expect(zelligePieces(false, seed)[0]).toMatchObject({ kind: 'star', radius: 0, glaze: 'cobalt' })
     }
   })
 

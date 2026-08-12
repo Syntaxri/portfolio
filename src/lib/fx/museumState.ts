@@ -49,10 +49,10 @@ export const museumState = {
   /** the room the visitor is standing in (label for the console) */
   roomLabel: 'The Atrium',
   roomId: 'entrance',
-  /** fires of the kiln: every mandala regeneration */
+  /** fires of the kiln: every zellige regeneration */
   regens: 0,
-  mandalaSeed: 0,
-  mandalaPieces: 0,
+  zelligeSeed: 0,
+  zelligePieces: 0,
   /** the loom's weave progress 0..1 */
   weave: 0,
   ambience: 'idle' as AmbienceState,

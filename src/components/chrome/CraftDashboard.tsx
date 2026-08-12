@@ -8,7 +8,7 @@ import { Monogram } from '@/components/museum/Monogram'
 /**
  * THE CONSERVATION CONSOLE — Ctrl+Shift+K (or the footer link).
  * The museum's engineering monitoring panel: real FPS, real draw calls
- * from the live canvases, the current room, the mandala's seed and the
+ * from the live canvases, the current room, the zellige's seed and the
  * kiln fires, the loom's weave, and a clearly-labeled build-time badge.
  * Nothing here is fabricated; anything the browser cannot truthfully
  * say is shown as "—". A conservation console, not a debug panel.
@@ -115,7 +115,7 @@ export function CraftDashboard() {
       setGl(glRegistry.snapshot())
       setScrollPct(Math.round(scrollState.progress * 100))
       setWeave(Math.round(museumState.weave * 100))
-      setSeed(museumState.mandalaSeed)
+      setSeed(museumState.zelligeSeed)
       setRegens(museumState.regens)
     }
     loop()
@@ -180,7 +180,7 @@ export function CraftDashboard() {
             value={`${gl.calls} calls · ${gl.triangles} tris · ${gl.canvases} canvas${gl.canvases === 1 ? '' : 'es'}`}
           />
           <Row label="GPU" value={gpuLine} dim />
-          <Row label="Mandala seed" value={seed === 0 ? 'canonical' : String(seed)} />
+          <Row label="Zellige seed" value={seed === 0 ? 'canonical' : String(seed)} />
           <Row label="Kiln fires" value={String(regens)} />
           <Row label="The loom" value={`${weave}% woven`} />
           <Row label="Ambience" value={ambience === 'playing' ? 'playing' : ambience === 'off' ? 'off' : 'idle'} dim />

@@ -3,18 +3,18 @@
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { mandalaPieces, starPoints, GLAZE_HEX, type MandalaPiece } from '@/lib/geometry'
+import { zelligePieces, starPoints, GLAZE_HEX, type ZelligePiece } from '@/lib/geometry'
 import { glRegistry, museumState } from '@/lib/fx/museumState'
 
 /*
  * MOSAIC — the entrance installation.
- * A full eight-fold Zellige mandala, assembled from raw geometry: one
+ * A full eight-fold Zellige, assembled from raw geometry: one
  * cobalt star bound by eight glazed diamonds, ivory squares between the
  * points, brass studs on the rim. On arrival the pieces fly in from the
  * far ring and lock into place; pointer movement leans the whole
  * composition; scrolling grinds it slowly apart as the visitor walks on.
  *
- * The mandala is alive: every settled star feels the cursor — scales a
+ * The Zellige is alive: every settled star feels the cursor — scales a
  * little toward it, leans its glaze, turns with a slow inertia. A
  * double-click (or double-tap, or Enter with focus) fires the kiln
  * again: a new deterministic seed recomposes the whole pattern in the
@@ -118,7 +118,7 @@ interface RigidPiece {
 }
 
 /** depth band per ring, so no two overlapping faces ever share a z-plane */
-function layerZ(p: MandalaPiece): number {
+function layerZ(p: ZelligePiece): number {
   if (p.kind === 'star') return 0.5
   if (p.kind === 'diamond') return 0
   /* studs are small squares riding the outer rim */
@@ -183,9 +183,9 @@ export function MosaicCanvas() {
 
     const build = (seed: number) => {
       disposePieces()
-      museumState.mandalaSeed = seed
-      const pieces = mandalaPieces(mobile, seed)
-      museumState.mandalaPieces = pieces.length
+      museumState.zelligeSeed = seed
+      const pieces = zelligePieces(mobile, seed)
+      museumState.zelligePieces = pieces.length
 
       for (let i = 0; i < pieces.length; i++) {
         const p = pieces[i]
@@ -257,7 +257,7 @@ export function MosaicCanvas() {
     }
     window.addEventListener('pointermove', onPointer, { passive: true })
 
-    /* the visitor's hand, in the mandala's world units */
+    /* the visitor's hand, in the Zellige's world units */
     const hand = { x: 0, y: 0 }
 
     /* firing the kiln: double-click, double-tap, or Enter on the canvas */
@@ -424,8 +424,8 @@ export function MosaicCanvas() {
       ref={canvasRef}
       tabIndex={0}
       role="img"
-      aria-label="The Zellige mandala. Double-click it, or press Enter, to fire the kiln and weave a new pattern."
-      className="h-full w-full focus:outline-none"
+      aria-label="The Zellige composition. Double-click it, or press Enter, to fire the kiln and weave a new pattern."
+      className="h-full w-full touch-manipulation focus:outline-none"
     />
   )
 }

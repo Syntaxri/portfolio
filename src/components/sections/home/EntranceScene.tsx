@@ -35,23 +35,33 @@ export function EntranceScene() {
       done()
       return
     }
-    /* fallback: returning visitors never fire the preloader — enter
-       anyway once the scene has had a beat to settle */
-    const fallback = window.setTimeout(done, 1100)
-    const onReady = () => {
+    /* the hero waits for the door to lift (ar:door-lift) so the WebGL
+       kiln never fights the preloader for the main thread. Returning
+       visitors skip the door entirely — then the fallback enters once
+       the page has had a beat to settle. */
+    let fallback = window.setTimeout(done, 1150)
+    const toLift = () => {
+      /* a door is playing: wait for its lift, capped in case it is
+         lost (background tab, throttled frames) */
+      window.clearTimeout(fallback)
+      fallback = window.setTimeout(done, 7000)
+    }
+    const onReady = toLift
+    const onLift = () => {
       window.clearTimeout(fallback)
       done()
     }
     const existing = window.__entranceReady
     if (existing) {
-      window.clearTimeout(fallback)
-      done()
+      toLift()
     } else {
       window.addEventListener('ar:entrance-ready', onReady)
     }
+    window.addEventListener('ar:door-lift', onLift)
     return () => {
       window.clearTimeout(fallback)
       window.removeEventListener('ar:entrance-ready', onReady)
+      window.removeEventListener('ar:door-lift', onLift)
     }
   }, [reduced])
 
@@ -101,7 +111,7 @@ export function EntranceScene() {
 
       <div className="absolute inset-0" aria-hidden="true">
         <WebGLErrorBoundary onFail={() => setGlFailed(true)}>
-          {!glFailed && (
+          {!glFailed && entered && (
             <div className="absolute inset-0">
               <MosaicCanvas />
             </div>

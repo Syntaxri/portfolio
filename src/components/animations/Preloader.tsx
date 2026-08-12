@@ -24,15 +24,19 @@ function readPreloaderSeen(): boolean {
   return sessionStorage.getItem('ar-museum-v5') !== null
 }
 
-const RING_POINTS = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => ({
-  a: (i * Math.PI) / 4 - Math.PI / 2,
+/* twenty-one stars — one for every year of the maker — gathered as a
+   ring around the mark. Their ring slots; the assembly flies them in. */
+const STAR_COUNT = 21
+const RING_POINTS = Array.from({ length: STAR_COUNT }, (_, i) => ({
+  a: (i * Math.PI * 2) / STAR_COUNT - Math.PI / 2,
   face: ['#1e4082', '#15695c', '#aa5226', '#8c6634'][i % 4],
 }))
 
 /**
- * THE DOOR — the entrance sequence. The monogram mark with the eight
- * points of the star locked around it, then the door lifts. Short,
- * skippable by returning visitors, and fully asleep under reduced motion.
+ * THE DOOR — the entrance sequence. The monogram mark while twenty-one
+ * stars gather as a ring around it — one for every year of the maker —
+ * then the door lifts. Short, skippable by returning visitors, and
+ * fully asleep under reduced motion.
  */
 export function Preloader() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -69,21 +73,48 @@ export function Preloader() {
       })
 
       const tl = gsap.timeline()
-      tl.fromTo(
+      /* the ring builds itself from the top star, one after another,
+         sweeping clockwise until the circle closes — never born whole.
+         Each star is hidden and tucked in toward the mark with its own
+         set() first (a single staggered tween renders each star's start
+         state only at its own slot, so the whole ring would flash
+         visible on frame one), then launched to its slot on its own
+         beat. */
+      root.querySelectorAll<SVGPathElement>('.door-star').forEach((el, i) => {
+        const a = RING_POINTS[i].a
+        gsap.set(el, {
+          x: -Math.cos(a) * 76 * 0.55,
+          y: -Math.sin(a) * 76 * 0.55,
+          scale: 0,
+          opacity: 0,
+        })
+        tl.to(
+          el,
+          {
+            x: 0,
+            y: 0,
+            scale: starScale,
+            opacity: 1,
+            duration: 0.6,
+            ease: 'back.out(1.8)',
+          },
+          i * 0.07
+        )
+      })
+      tl.to(
         '.door-star',
-        { scale: 0, opacity: 0, transformOrigin: 'center' },
-        {
-          scale: starScale,
-          opacity: 1,
-          duration: 0.4,
-          ease: 'back.out(2.2)',
-        }
+        { scale: starScale * 0.985, duration: 0.5, ease: 'power1.inOut' },
+        '+=0.35'
       )
-        .to('.door-fade', { opacity: 0, y: -16, duration: 0.3, ease: 'power2.in' }, '+=0.15')
+        .to('.door-fade', { opacity: 0, y: -16, duration: 0.45, ease: 'power2.in' }, '+=0.9')
         .set(root, { pointerEvents: 'none' })
+        /* the entrance takes the stage under the rising door — the hero
+           reveal and the WebGL kiln start their work here, never while
+           the door is still assembling on top of them */
+        .call(() => window.dispatchEvent(new Event('ar:door-lift')))
         .to(root, {
           yPercent: -100,
-          duration: 0.6,
+          duration: 0.9,
           ease: 'expo.inOut',
           onComplete: () => {
             try {
@@ -128,7 +159,11 @@ export function Preloader() {
             />
           ))}
         </svg>
-        <Monogram className="door-fade h-24 w-24 text-accent" />
+        {/* the mark's drawn content sits a touch high of its box — the
+            nudge sits its centroid exactly on the ring's centre */}
+        <div className="-translate-x-[3px] -translate-y-[10%]">
+          <Monogram className="door-fade h-24 w-24 text-accent" />
+        </div>
       </div>
 
       <div className="door-fade border-t border-[rgba(28,26,22,0.12)] pt-3">

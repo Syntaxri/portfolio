@@ -1,13 +1,13 @@
 import { RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS } from '@/config/contact'
+import { RedisRateLimitStore, isRedisConfigured } from './redisStore'
 
 /**
- * Sliding-window rate limiting with a pluggable store.
+ * Token-bucket rate limiting with a pluggable store.
  *
- * The default store is in-memory: correct for a single instance, but on
- * serverless platforms (Vercel) each instance has its own memory, so the
- * limit is best-effort per instance. Swap in a shared adapter (Redis /
- * Upstash KV) when cross-instance enforcement is required — keep the
- * RateLimitStore contract and the route stays untouched.
+ * In production, the shared Redis (Upstash KV REST) store enforces the
+ * limit across every serverless instance. Without Redis configured the
+ * in-memory store is used: correct per instance, best-effort at fleet
+ * level — that is also the local-development and test-path behavior.
  */
 export interface RateLimitRecord {
   count: number
@@ -15,9 +15,7 @@ export interface RateLimitRecord {
 }
 
 export interface RateLimitStore {
-  get(key: string): RateLimitRecord | undefined
-  set(key: string, record: RateLimitRecord): void
-  clear?(): void
+  check(key: string, limit: number, windowMs: number): Promise<RateLimitResult>
 }
 
 export class MemoryRateLimitStore implements RateLimitStore {
@@ -34,9 +32,46 @@ export class MemoryRateLimitStore implements RateLimitStore {
   clear(): void {
     this.store.clear()
   }
+
+  async check(key: string, limit: number, windowMs: number): Promise<RateLimitResult> {
+    const now = Date.now()
+    const record = this.get(key)
+
+    if (!record || now > record.resetAt) {
+      this.set(key, { count: 1, resetAt: now + windowMs })
+      return { allowed: true, remaining: limit - 1 }
+    }
+
+    if (record.count >= limit) {
+      const retryAfter = Math.ceil((record.resetAt - now) / 1000)
+      return { allowed: false, remaining: 0, retryAfter }
+    }
+
+    record.count++
+    this.set(key, record)
+    return { allowed: true, remaining: limit - record.count }
+  }
 }
 
 export const defaultRateLimitStore = new MemoryRateLimitStore()
+
+let redisStore: RedisRateLimitStore | null = null
+
+/** Shared store: Redis when configured, otherwise per-instance memory. */
+export function getRateLimitStore(env: NodeJS.ProcessEnv = process.env): RateLimitStore {
+  if (isRedisConfigured(env)) {
+    redisStore ??= new RedisRateLimitStore({
+      url: env.UPSTASH_REDIS_KV_REST_API_URL as string,
+      token: env.UPSTASH_REDIS_KV_REST_API_TOKEN as string,
+    })
+    return redisStore
+  }
+  if (redisStore) {
+    // Environment changed (e.g. tests re-running) — keep it simple, reset.
+    redisStore = null
+  }
+  return defaultRateLimitStore
+}
 
 export interface RateLimitResult {
   allowed: boolean
@@ -44,23 +79,11 @@ export interface RateLimitResult {
   retryAfter?: number
 }
 
-export function checkRateLimit(ip: string, store: RateLimitStore = defaultRateLimitStore): RateLimitResult {
-  const now = Date.now()
-  const record = store.get(ip)
-
-  if (!record || now > record.resetAt) {
-    store.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
-    return { allowed: true, remaining: RATE_LIMIT_MAX - 1 }
-  }
-
-  if (record.count >= RATE_LIMIT_MAX) {
-    const retryAfter = Math.ceil((record.resetAt - now) / 1000)
-    return { allowed: false, remaining: 0, retryAfter }
-  }
-
-  record.count++
-  store.set(ip, record)
-  return { allowed: true, remaining: RATE_LIMIT_MAX - record.count }
+export async function checkRateLimit(
+  ip: string,
+  store: RateLimitStore = getRateLimitStore()
+): Promise<RateLimitResult> {
+  return store.check(ip, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS)
 }
 
 export function getRateHeaders(result: RateLimitResult): Record<string, string> {

@@ -28,11 +28,18 @@ const nextConfig = {
       },
     ]
 
-    // A strict CSP that the app actually satisfies. 'unsafe-inline' is still
-    // required for Next.js App Router RSC runtime scripts and inline style
-    // attributes; it guards against injected remote content while the
-    // remaining surface is 'self'. Skipped in `next dev` where HMR relies
-    // on eval/inline.
+    // Content-Security-Policy is set here (not in middleware) and keeps
+    // 'unsafe-inline' in script-src — required by Next's RSC hydration
+    // payloads. A strict nonce-based policy is NOT possible on Next 16
+    // + Turbopack today: production SSR never emits the nonce attribute
+    // on framework scripts (vercel/next.js#93094, still-open #96063),
+    // so a nonce-only policy blocks every script and blanks the site.
+    // Everything else stays strict: remote origins are impossible, and
+    // inline scripts only exist as Next-generated hydration payloads.
+    // Revisit when the upstream fix lands.
+    // Skipped in `next dev`: React dev mode requires eval() for its
+    // debugging features, and HMR relies on inline/eval — the strict
+    // policy is a production guarantee only.
     if (process.env.NODE_ENV === 'production') {
       headers.push({
         key: 'Content-Security-Policy',

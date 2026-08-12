@@ -1,4 +1,4 @@
-import { validateEnv, isResendConfigured } from '@/lib/env'
+import { validateEnv, missingEnvVars, isResendConfigured, type EnvValidationResult } from '@/lib/env'
 import { sendContactEmail } from '@/lib/email'
 import {
   sanitize,
@@ -7,7 +7,7 @@ import {
   MAX_MESSAGE_LENGTH,
   MAX_EMAIL_LENGTH,
 } from '@/lib/validation/contact'
-import { checkRateLimit, getRateHeaders } from '@/lib/rateLimit'
+import { checkRateLimit, getRateHeaders, getRateLimitStore } from '@/lib/rateLimit'
 import { getClientIp } from '@/lib/network/getClientIp'
 import { site } from '@/lib/data/site'
 
@@ -47,10 +47,29 @@ function logFailure(context: string, err: unknown) {
 }
 
 export async function POST(request: Request): Promise<Response> {
-  validateEnv()
+  // Misconfigured deploys must not crash with an opaque 500 — log loudly
+  // and answer a structured 503 so visitors get a real message.
+  let env: EnvValidationResult
+  try {
+    env = validateEnv()
+  } catch {
+    env = { ok: false, missing: missingEnvVars() }
+  }
+  if (!env.ok) {
+    console.error(`[api/contact] Email service not configured: missing ${env.missing.join(', ')}`)
+    return json(
+      errorEnvelope(
+        'SERVICE_NOT_CONFIGURED',
+        'Email service is not configured yet. Please try again later, or email me directly at ' +
+          `${site.email}.`
+      ),
+      503,
+      { 'Retry-After': '60' }
+    )
+  }
 
   const ip = getClientIp(request)
-  const rateResult = checkRateLimit(ip)
+  const rateResult = await checkRateLimit(ip, getRateLimitStore())
   const rateHeaders = getRateHeaders(rateResult)
 
   if (!rateResult.allowed) {

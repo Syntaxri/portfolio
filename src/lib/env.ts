@@ -1,4 +1,4 @@
-const REQUIRED_VARS = ['RESEND_API_KEY', 'CONTACT_EMAIL'] as const
+export const REQUIRED_VARS = ['RESEND_API_KEY', 'CONTACT_EMAIL'] as const
 
 export type RequiredEnvVar = (typeof REQUIRED_VARS)[number]
 
@@ -7,13 +7,19 @@ export interface EnvValidationResult {
   missing: RequiredEnvVar[]
 }
 
+/** Which required variables are absent from the given environment. */
+export function missingEnvVars(env: NodeJS.ProcessEnv = process.env): RequiredEnvVar[] {
+  return REQUIRED_VARS.filter((key) => !env[key])
+}
+
 /**
  * Validates the server-side environment. Throws in production when
- * required variables are missing so the boot fails loudly; in
+ * required variables are missing so misconfigured deploys fail loudly
+ * (callers catch and surface a structured response); in
  * development/test it reports so the API can fall back to logging.
  */
 export function validateEnv(env: NodeJS.ProcessEnv = process.env): EnvValidationResult {
-  const missing = REQUIRED_VARS.filter((key) => !env[key])
+  const missing = missingEnvVars(env)
   if (missing.length > 0) {
     if (process.env.NODE_ENV === 'production') {
       throw new Error(`Missing required environment variables: ${missing.join(', ')}`)

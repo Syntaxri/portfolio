@@ -20,34 +20,34 @@ describe('checkRateLimit', () => {
     vi.useFakeTimers()
   })
 
-  it('allows requests up to the max and counts them', () => {
+  it('allows requests up to the max and counts them', async () => {
     for (let i = 1; i <= RATE_LIMIT_MAX; i++) {
-      const result = checkRateLimit('1.2.3.4', store)
+      const result = await checkRateLimit('1.2.3.4', store)
       expect(result.allowed).toBe(true)
       expect(result.remaining).toBe(RATE_LIMIT_MAX - i)
     }
   })
 
-  it('blocks once the max is reached and reports retryAfter', () => {
-    for (let i = 0; i < RATE_LIMIT_MAX; i++) checkRateLimit('1.2.3.4', store)
-    const blocked = checkRateLimit('1.2.3.4', store)
+  it('blocks once the max is reached and reports retryAfter', async () => {
+    for (let i = 0; i < RATE_LIMIT_MAX; i++) await checkRateLimit('1.2.3.4', store)
+    const blocked = await checkRateLimit('1.2.3.4', store)
     expect(blocked.allowed).toBe(false)
     expect(blocked.remaining).toBe(0)
     expect(blocked.retryAfter).toBe(RATE_LIMIT_WINDOW_MS / 1000)
   })
 
-  it('resets after the window elapses', () => {
-    for (let i = 0; i < RATE_LIMIT_MAX; i++) checkRateLimit('1.2.3.4', store)
+  it('resets after the window elapses', async () => {
+    for (let i = 0; i < RATE_LIMIT_MAX; i++) await checkRateLimit('1.2.3.4', store)
     vi.advanceTimersByTime(RATE_LIMIT_WINDOW_MS + 1)
-    const result = checkRateLimit('1.2.3.4', store)
+    const result = await checkRateLimit('1.2.3.4', store)
     expect(result.allowed).toBe(true)
     expect(result.remaining).toBe(RATE_LIMIT_MAX - 1)
   })
 
-  it('tracks keys independently', () => {
-    checkRateLimit('a', store)
-    checkRateLimit('a', store)
-    expect(checkRateLimit('b', store).remaining).toBe(RATE_LIMIT_MAX - 1)
+  it('tracks keys independently', async () => {
+    await checkRateLimit('a', store)
+    await checkRateLimit('a', store)
+    expect((await checkRateLimit('b', store)).remaining).toBe(RATE_LIMIT_MAX - 1)
   })
 })
 

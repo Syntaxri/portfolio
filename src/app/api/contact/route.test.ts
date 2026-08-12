@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { POST, GET, PUT, DELETE } from './route'
 import { sendContactEmail } from '@/lib/email'
-import { isResendConfigured } from '@/lib/env'
+import { isResendConfigured, validateEnv } from '@/lib/env'
 import { getClientIp } from '@/lib/network/getClientIp'
 import { defaultRateLimitStore } from '@/lib/rateLimit'
 import { RATE_LIMIT_MAX } from '@/config/contact'
@@ -40,6 +40,9 @@ beforeEach(() => {
   vi.clearAllMocks()
   vi.mocked(sendContactEmail).mockResolvedValue({ id: 'email_x' })
   defaultRateLimitStore.clear()
+  // Force the in-memory store for tests — never touch the real Redis.
+  vi.stubEnv('UPSTASH_REDIS_KV_REST_API_URL', '')
+  vi.stubEnv('UPSTASH_REDIS_KV_REST_API_TOKEN', '')
 })
 
 describe('POST /api/contact', () => {
@@ -95,6 +98,14 @@ describe('POST /api/contact', () => {
     expect(res.headers.get('Retry-After')).toBe('600')
     expect(res.headers.get('X-RateLimit-Remaining')).toBe('0')
     expect((await bodyOf(res)).error).toMatchObject({ code: 'RATE_LIMITED' })
+  })
+
+  it('returns 503 SERVICE_NOT_CONFIGURED when required env vars are missing', async () => {
+    vi.mocked(validateEnv).mockReturnValueOnce({ ok: false, missing: ['RESEND_API_KEY'] })
+    const res = await post({ name: 'Ann', email: 'a@b.com', message: 'x'.repeat(20) })
+    expect(res.status).toBe(503)
+    expect((await bodyOf(res)).error).toMatchObject({ code: 'SERVICE_NOT_CONFIGURED' })
+    expect(vi.mocked(sendContactEmail)).not.toHaveBeenCalled()
   })
 
   it('returns 500 with a safe message when mail sending fails', async () => {

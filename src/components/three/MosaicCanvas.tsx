@@ -135,10 +135,10 @@ const NEAR_RADIUS = 3.4
 /** the strongest the composition leans, per piece */
 const NEAR_STRENGTH = 0.07
 
-/* the presentation: for ~1.6s the composition is shown arriving —
+/* the presentation: for ~1.35s the composition is shown arriving —
    pulled out of the kiln while it is still warm, the camera stepping
    forward a little as it settles on its plinth. */
-const REVEAL_DURATION = 1.6
+const REVEAL_DURATION = 1.35
 const KILN_WARM = new THREE.Color('#ffcf9e')
 const KILN_FLASH = new THREE.Color('#ff9a4d')
 /* the haptic confirmation reuses the loom's shared throttle (ms) */
@@ -248,8 +248,8 @@ export function MosaicCanvas() {
           final,
           startRot: p.rotation + (Math.PI / 2) * (i % 2 === 0 ? 1 : -1),
           finalRot: p.rotation,
-          delay: 0.5 + p.order * 0.14,
-          duration: 1.05,
+          delay: 0.35 + p.order * 0.12,
+          duration: 0.95,
           drift: 0.035 + (i % 5) * 0.012,
           phase: i * 1.7,
           z: layerZ(p),

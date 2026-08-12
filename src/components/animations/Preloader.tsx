@@ -35,8 +35,9 @@ const RING_POINTS = Array.from({ length: STAR_COUNT }, (_, i) => ({
 /**
  * THE DOOR — the entrance sequence. The monogram mark while twenty-one
  * stars gather as a ring around it — one for every year of the maker —
- * then the door lifts. Short (about 3.5s in full), skippable by
- * returning visitors, and fully asleep under reduced motion.
+ * then the door lifts. Short (about 3s in full, skippable with any
+ * click or key), skipped entirely for returning visitors, and fully
+ * asleep under reduced motion.
  */
 export function Preloader() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -59,6 +60,25 @@ export function Preloader() {
     window.__entranceReady = true
     window.dispatchEvent(new Event('ar:entrance-ready'))
 
+    /* whether the door finished on its own, was skipped by the visitor,
+       or was force-lifted by the watchdog — one shared completion */
+    let finished = false
+    const finish = () => {
+      if (finished) return
+      finished = true
+      try {
+        localStorage.setItem('ar-museum-v5', '1')
+      } catch {
+        /* storage unavailable (private mode) — session only */
+      }
+      sessionStorage.setItem('ar-museum-v5', '1')
+      /* the door is done — a later visit inside this session must
+         not wait for a lift that will never come */
+      window.__entranceReady = false
+      setDone(true)
+    }
+
+    let tl: gsap.core.Timeline | undefined
     const ctx = gsap.context(() => {
       /* the door is refired each day: the same door, a different weave —
          the glaze ring starts at a different point and the studs sit a
@@ -72,15 +92,15 @@ export function Preloader() {
         gsap.set(el, { fill: rotated[i % rotated.length] })
       })
 
-      const tl = gsap.timeline()
+      tl = gsap.timeline()
       /* the ring builds itself from the top star, one after another,
          sweeping clockwise until the circle closes — never born whole.
          Each star is hidden and tucked in toward the mark with its own
          set() first (a single staggered tween renders each star's start
          state only at its own slot, so the whole ring would flash
          visible on frame one), then launched to its slot on its own
-         beat. The whole door is tuned to hand the stage over at ~2.8s
-         and be fully gone by ~3.5s — an entrance, never a wait. */
+         beat. The door hands the stage over at ~2.1s and is fully gone
+         by ~2.9s — an entrance, never a wait. */
       root.querySelectorAll<SVGPathElement>('.door-star').forEach((el, i) => {
         const a = RING_POINTS[i].a
         gsap.set(el, {
@@ -96,18 +116,18 @@ export function Preloader() {
             y: 0,
             scale: starScale,
             opacity: 1,
-            duration: 0.5,
+            duration: 0.45,
             ease: 'back.out(1.8)',
           },
-          i * 0.045
+          i * 0.03
         )
       })
       tl.to(
         '.door-star',
-        { scale: starScale * 0.985, duration: 0.4, ease: 'power1.inOut' },
-        '+=0.2'
+        { scale: starScale * 0.985, duration: 0.3, ease: 'power1.inOut' },
+        '+=0.15'
       )
-        .to('.door-fade', { opacity: 0, y: -16, duration: 0.4, ease: 'power2.in' }, '+=0.4')
+        .to('.door-fade', { opacity: 0, y: -16, duration: 0.35, ease: 'power2.in' }, '+=0.3')
         .set(root, { pointerEvents: 'none' })
         /* the entrance takes the stage under the rising door — the hero
            reveal and the WebGL kiln start their work here, never while
@@ -115,35 +135,38 @@ export function Preloader() {
         .call(() => window.dispatchEvent(new Event('ar:door-lift')))
         .to(root, {
           yPercent: -100,
-          duration: 0.8,
+          duration: 0.7,
           ease: 'expo.inOut',
-          onComplete: () => {
-            try {
-              localStorage.setItem('ar-museum-v5', '1')
-            } catch {
-              /* storage unavailable (private mode) — session only */
-            }
-            sessionStorage.setItem('ar-museum-v5', '1')
-            /* the door is done — a later visit inside this session must
-               not wait for a lift that will never come */
-            window.__entranceReady = false
-            setDone(true)
-          },
+          onComplete: finish,
         })
     }, root)
 
-    /* safety net: however the browser throttles or starves the tab,
-       the door can never hold the museum hostage. If it has not lifted
-       on its own by ~4.5s it is lifted by force — the loading screen
-       never stays for five seconds. */
-    const watchdog = window.setTimeout(() => {
-      window.dispatchEvent(new Event('ar:door-lift'))
+    /* nothing may hold the entrance hostage: a click or any key jumps
+       straight to the lift, and a watchdog force-lifts at 3.5s even if
+       the browser throttles the ceremony into a stall. The visitor's
+       first gesture is always enough. */
+    const liftByForce = () => {
+      if (finished) return
+      window.clearTimeout(watchdog)
       window.__entranceReady = false
-      setDone(true)
-    }, 4500)
+      window.dispatchEvent(new Event('ar:door-lift'))
+      tl?.kill()
+      gsap.to(root, {
+        yPercent: -100,
+        duration: 0.4,
+        ease: 'expo.inOut',
+        onComplete: finish,
+      })
+    }
+    const skip = () => liftByForce()
+    const watchdog = window.setTimeout(liftByForce, 3500)
+    window.addEventListener('pointerdown', skip)
+    window.addEventListener('keydown', skip)
 
     return () => {
       window.clearTimeout(watchdog)
+      window.removeEventListener('pointerdown', skip)
+      window.removeEventListener('keydown', skip)
       ctx.revert()
     }
   }, [visible, done, reduced])

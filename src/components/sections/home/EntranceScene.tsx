@@ -30,9 +30,9 @@ const MosaicCanvas = dynamic(() => import('@/components/three/MosaicCanvas').the
 
 /* the entrance choreography, in one place:
    entered = the moment the door lifts (ar:door-lift)
-   + ~2.5s  the last zellige piece locks into place (0.5 + order·0.14 + 1.05)
+   + ~2.1s  the last zellige piece locks into place (0.35 + order·0.12 + 0.95)
    + ~1.4s  of stillness — then the thesis reveals */
-const MOSAIC_SETTLES_MS = 2500
+const MOSAIC_SETTLES_MS = 2100
 const THESIS_REVEAL_MS = MOSAIC_SETTLES_MS + 1400
 
 export function EntranceScene() {
@@ -57,13 +57,13 @@ export function EntranceScene() {
        visitors skip the door entirely — a short paint beat only, so
        the entrance opens as soon as the page is ready, never behind
        an artificial wait. */
-    let fallback = window.setTimeout(done, 400)
+    let fallback = window.setTimeout(done, 250)
     const toLift = () => {
       /* a door is playing: wait for its lift, capped in case it is
-         lost (listener race). The door force-lifts itself after 4.5s,
+         lost (listener race). The door force-lifts itself after 3.5s,
          so the cap simply sits beyond that guarantee. */
       window.clearTimeout(fallback)
-      fallback = window.setTimeout(done, 5500)
+      fallback = window.setTimeout(done, 4500)
     }
     const onReady = toLift
     const onLift = () => {
@@ -92,14 +92,14 @@ export function EntranceScene() {
       gsap.fromTo(
         '[data-hero-reveal]',
         { y: 26, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, ease: 'power3.out', stagger: 0.09, delay: 0.45 }
+        { y: 0, opacity: 1, duration: 1, ease: 'power3.out', stagger: 0.09, delay: 0.3 }
       )
       /* the installation is presented, not spawned: it rises and opens
          into the room just as the door finishes clearing */
       gsap.fromTo(
         '[data-installation]',
         { y: 18, scale: 1.045, opacity: 0 },
-        { y: 0, scale: 1, opacity: 1, duration: 1.6, ease: 'expo.out', delay: 0.15 }
+        { y: 0, scale: 1, opacity: 1, duration: 1.3, ease: 'expo.out', delay: 0.05 }
       )
     }, sceneRef)
     return () => ctx.revert()

@@ -1,89 +1,99 @@
-export type CapabilityPreview = 'signal' | 'lumen' | 'render' | 'aura'
-
-export interface Capability {
-  index: string
+export interface Craft {
   title: string
-  preview: CapabilityPreview
+  index: string
   description: string
   skills: string[]
+  plate: string
+  glaze: 'cobalt' | 'teal' | 'terra' | 'brass'
 }
 
-export const capabilities: Capability[] = [
+/**
+ * THE WORKSHOP — four disciplines, taught as crafts.
+ * Each one maps a tradition of the workshop onto a branch of engineering.
+ */
+export const crafts: Craft[] = [
   {
-    index: '01',
-    title: 'Creative Development',
-    preview: 'signal',
+    title: 'Java Backend',
+    index: 'Craft I',
     description:
-      'Interactive websites and web experiences. Creative frontend development and motion design implementation with a focus on emotion and restraint.',
-    skills: ['Interactive websites', 'Creative frontend', 'Web experiences', 'Motion design'],
+      'The load-bearing walls. Spring Boot systems with real teeth — authentication, authorization, business rules and state machines that never guess.',
+    skills: ['Java', 'Spring Boot', 'Spring Security', 'RBAC', 'JPA', 'MySQL', 'REST'],
+    plate: 'The structure that holds the whole building up.',
+    glaze: 'cobalt',
   },
   {
-    index: '02',
-    title: '3D / WebGL',
-    preview: 'lumen',
+    title: 'TS · React · Next',
+    index: 'Craft II',
     description:
-      'Real-time rendering with Three.js and React Three Fiber. Custom GLSL shaders and interactive scenes that stay fast on modest hardware.',
-    skills: ['Three.js', 'React Three Fiber', 'GLSL shaders', 'Real-time rendering'],
+      'The rooms visitors walk through. TypeScript-strict, server-first frontends — fast by default, accessible always, and only beautiful at the end.',
+    skills: ['TypeScript', 'React', 'Next.js', 'RSC', 'Tailwind', 'Accessibility', 'Performance'],
+    plate: 'The rooms the visitors walk through.',
+    glaze: 'teal',
   },
   {
-    index: '03',
-    title: 'Motion & Interaction',
-    preview: 'render',
+    title: 'DevOps & Security',
+    index: 'Craft III',
     description:
-      'Scroll choreography with GSAP and ScrollTrigger, micro-interactions and scrollytelling — motion that earns its place.',
-    skills: ['GSAP', 'ScrollTrigger', 'Lenis', 'Micro-interactions'],
+      'The locks on every door. Linux, deployment, rate limits, headers, hardening — the invisible discipline that keeps what is built from falling.',
+    skills: ['Linux', 'Git', 'CI/CD', 'Deployment', 'Auth', 'Security', 'Monitoring'],
+    plate: 'The locks, the keys, the night guard.',
+    glaze: 'terra',
   },
   {
-    index: '04',
-    title: 'Engineering',
-    preview: 'aura',
+    title: 'WebGL & Motion',
+    index: 'Craft IV',
     description:
-      'Production systems in React, Next.js and TypeScript. Clean APIs, performance budgets, accessibility, responsive architecture.',
-    skills: ['React / Next.js', 'TypeScript', 'API integration', 'Performance'],
+      'The glazed walls. Three.js scenes, GSAP choreography, scroll that reads like a tour — every frame earns its place or leaves the room.',
+    skills: ['Three.js', 'React Three Fiber', 'GSAP', 'ScrollTrigger', 'Lenis', 'WebGL'],
+    plate: 'The glaze that catches the light.',
+    glaze: 'brass',
   },
 ]
 
-export const stack = [
-  { tech: 'TypeScript', note: 'Typed end-to-end — data, props, contracts.' },
-  { tech: 'React', note: 'Component systems with predictable state.' },
-  { tech: 'Next.js', note: 'App Router, RSC boundaries, route-level splits.' },
-  { tech: 'Three.js', note: 'Custom scenes and shaders, kept lazy.' },
-  { tech: 'React Three Fiber', note: 'Declarative WebGL inside React.' },
-  { tech: 'GLSL', note: 'Hand-written fragment and vertex shaders.' },
-  { tech: 'GSAP', note: 'Scroll choreography and micro-interactions.' },
-  { tech: 'Lenis', note: 'Smooth scrolling with native fallbacks.' },
-  { tech: 'Tailwind CSS', note: 'A disciplined design-token layer.' },
-  { tech: 'Node.js', note: 'APIs, tooling and build pipelines.' },
-  { tech: 'Java', note: 'Spring Boot backends behind the scenes.' },
-  { tech: 'SQL', note: 'MySQL / PostgreSQL data modelling.' },
-]
+export interface CraftPrinciple {
+  craft: string
+  engineering: string
+  note: string
+}
 
-export const processSteps = [
+/**
+ * THE GRAMMAR — the seven principles taken from the Moroccan workshop and
+ * translated into how this museum (and every build in it) is made.
+ */
+export const grammar: CraftPrinciple[] = [
   {
-    index: '01',
-    title: 'Discover',
-    description: 'Goals, constraints, content and the one thing this experience must communicate.',
+    craft: 'Geometry',
+    engineering: 'Architecture',
+    note: 'Every tile is cut to a plan before it is glazed. Every feature is designed as a system before a line is written.',
   },
   {
-    index: '02',
-    title: 'Design',
-    description: 'Art direction, typography, a motion language, and clear visual hierarchy.',
+    craft: 'Modularity',
+    engineering: 'Components',
+    note: 'One star, eight points, a thousand compositions. One primitive, reused with discipline, becomes a whole building.',
   },
   {
-    index: '03',
-    title: 'Prototype',
-    description: 'Interactive prototypes that prove the interaction model early.',
-  },
-  { index: '04', title: 'Develop', description: 'Component architecture, APIs, and the experience in code.' },
-  {
-    index: '05',
-    title: 'Animate',
-    description: 'Scroll choreography, transitions, micro-interactions — sequenced, not scattered.',
+    craft: 'Repetition',
+    engineering: 'Systems',
+    note: 'The master repeats a pattern until it stops being decoration and becomes structure. Rendered once, reused everywhere.',
   },
   {
-    index: '06',
-    title: 'Optimize',
-    description: 'Bundle budgets, 60fps, reduced motion, and honest performance.',
+    craft: 'Symmetry',
+    engineering: 'Consistency',
+    note: 'A pattern that breaks on one side ruins the wall. State, roles and interfaces must answer the same way every time.',
   },
-  { index: '07', title: 'Deploy', description: 'Review, test across devices, ship, and iterate.' },
+  {
+    craft: 'Hierarchy',
+    engineering: 'Information',
+    note: 'The star governs the tile, the tile governs the wall. Typography and data follow the same rule: one voice leads.',
+  },
+  {
+    craft: 'Precision',
+    engineering: 'Correctness',
+    note: 'A tile off by a millimetre breaks the whole motif. A nullable field, a wrong status, a race — the motif breaks too.',
+  },
+  {
+    craft: 'Patience',
+    engineering: 'Craft',
+    note: 'Zellige cannot be rushed; neither can good software. The kiln fires at its own temperature. The types compile when they are right.',
+  },
 ]

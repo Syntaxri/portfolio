@@ -4,3 +4,8 @@ declare module '*.module.css' {
 }
 
 declare module '*.css' {}
+
+interface Window {
+  /** set by the Preloader as soon as the entrance has opened */
+  __entranceReady?: boolean
+}

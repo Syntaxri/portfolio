@@ -5,8 +5,14 @@ import gsap from 'gsap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { useIsTouch } from '@/hooks/useIsTouch'
 
-const INTERACTIVE_SELECTOR = 'a, button, [role="button"], input, textarea, select, [data-cursor]'
+const INTERACTIVE_SELECTOR =
+  'a, button, [role="button"], input, textarea, select, [data-cursor]'
 
+/**
+ * The keeper's pointer: a sapphire-faceted diamond that flashes white
+ * against any wall (difference blend), swelling over anything clickable
+ * and becoming a brass plaque — VIEW EXHIBIT — over the collection doors.
+ */
 export function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
@@ -18,8 +24,7 @@ export function CustomCursor() {
 
   useEffect(() => {
     if (!canShow) return
-    gsap.set(dotRef.current, { opacity: 0 })
-    gsap.set(ringRef.current, { opacity: 0 })
+    gsap.set([dotRef.current, ringRef.current, labelRef.current], { opacity: 0 })
   }, [canShow])
 
   useEffect(() => {
@@ -32,17 +37,18 @@ export function CustomCursor() {
 
     document.documentElement.classList.add('no-cursor')
 
-    const dotX = gsap.quickTo(dot, 'x', { duration: 0.12, ease: 'power3.out' })
-    const dotY = gsap.quickTo(dot, 'y', { duration: 0.12, ease: 'power3.out' })
-    const ringX = gsap.quickTo(ring, 'x', { duration: 0.45, ease: 'power3.out' })
-    const ringY = gsap.quickTo(ring, 'y', { duration: 0.45, ease: 'power3.out' })
+    const dotX = gsap.quickTo(dot, 'x', { duration: 0.08, ease: 'power3.out' })
+    const dotY = gsap.quickTo(dot, 'y', { duration: 0.08, ease: 'power3.out' })
+    const ringX = gsap.quickTo(ring, 'x', { duration: 0.38, ease: 'power3.out' })
+    const ringY = gsap.quickTo(ring, 'y', { duration: 0.38, ease: 'power3.out' })
 
     let visible = false
-    let labelText = ''
+    let mode: 'default' | 'exhibit' = 'default'
+
     const move = (e: MouseEvent) => {
       if (!visible) {
         visible = true
-        gsap.to([dot, ring], { opacity: 1, duration: 0.25 })
+        gsap.to([dot, ring], { opacity: 1, duration: 0.2 })
       }
       dotX(e.clientX)
       dotY(e.clientY)
@@ -50,31 +56,51 @@ export function CustomCursor() {
       ringY(e.clientY)
     }
 
+    const setExhibit = (on: boolean) => {
+      if (on === (mode === 'exhibit')) return
+      mode = on ? 'exhibit' : 'default'
+      if (on) {
+        gsap.to(ring, {
+          scale: 1.9,
+          background: 'rgba(140, 102, 52, 0.96)',
+          borderColor: 'rgba(140, 102, 52, 0.96)',
+          mixBlendMode: 'normal',
+          duration: 0.22,
+          ease: 'power3.out',
+        })
+        gsap.to(label, { opacity: 1, duration: 0.18, ease: 'power3.out' })
+      } else {
+        gsap.to(ring, {
+          scale: 1,
+          background: 'transparent',
+          borderColor: 'rgba(255,255,255,0.9)',
+          mixBlendMode: 'difference',
+          duration: 0.32,
+          ease: 'power3.out',
+        })
+        gsap.to(label, { opacity: 0, duration: 0.15 })
+      }
+    }
+
     const onOver = (e: MouseEvent) => {
       const target = (e.target as HTMLElement)?.closest(INTERACTIVE_SELECTOR) as HTMLElement | null
-      const text = target?.dataset?.cursorText
-      if (target) {
-        gsap.to(ring, { scale: 2.1, duration: 0.3, ease: 'power3.out' })
-      } else {
-        gsap.to(ring, { scale: 1, duration: 0.3, ease: 'power3.out' })
+      if (!target) {
+        gsap.to(ring, { scale: 1, duration: 0.25, ease: 'power3.out' })
+        setExhibit(false)
+        return
       }
-      if (text && text !== labelText) {
-        labelText = text
-        label.textContent = text
-        gsap.to(label, { opacity: 1, scale: 1, duration: 0.2, ease: 'power3.out' })
-        gsap.set(ring, { scale: 3.4, mixBlendMode: 'normal' })
-      } else if (!text && labelText) {
-        labelText = ''
-        label.textContent = ''
-        gsap.to(label, { opacity: 0, scale: 0.7, duration: 0.2, ease: 'power3.out' })
-        gsap.set(ring, { scale: 2.1 })
+      const isExhibit = target.hasAttribute('data-cursor')
+      if (isExhibit) setExhibit(true)
+      else {
+        setExhibit(false)
+        gsap.to(ring, { scale: 1.45, duration: 0.25, ease: 'power3.out' })
       }
     }
 
     const onLeave = () => {
       visible = false
-      gsap.to([dot, ring], { opacity: 0, duration: 0.3 })
-      gsap.set(label, { opacity: 0 })
+      setExhibit(false)
+      gsap.to([dot, ring, label], { opacity: 0, duration: 0.22 })
     }
 
     window.addEventListener('mousemove', move, { passive: true })
@@ -97,16 +123,22 @@ export function CustomCursor() {
       <div
         ref={dotRef}
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[300] h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent"
-        style={{ opacity: 0 }}
+        className="pointer-events-none fixed left-0 top-0 z-[300] h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2"
+        style={{ background: 'rgba(255,255,255,0.95)', mixBlendMode: 'difference', opacity: 0 }}
       />
       <div
         ref={ringRef}
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[300] flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/25"
-        style={{ opacity: 0, mixBlendMode: 'difference' }}
+        className="pointer-events-none fixed left-0 top-0 z-[300] flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 rotate-45 items-center justify-center border"
+        style={{ borderColor: 'rgba(255,255,255,0.9)', mixBlendMode: 'difference', opacity: 0 }}
       >
-        <span ref={labelRef} className="label-accent label text-center" style={{ opacity: 0 }} />
+        <div
+          ref={labelRef}
+          className="label -rotate-45 text-[0.5rem] text-[#f6f1e2]"
+          style={{ opacity: 0, whiteSpace: 'nowrap' }}
+        >
+          View exhibit
+        </div>
       </div>
     </>
   )

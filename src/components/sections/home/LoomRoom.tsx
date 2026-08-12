@@ -1,0 +1,141 @@
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import dynamic from 'next/dynamic'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { WebGLErrorBoundary } from '@/components/three/WebGLErrorBoundary'
+import type { ZarbiaControl } from '@/components/three/ZarbiaCanvas'
+
+gsap.registerPlugin(ScrollTrigger)
+
+const ZarbiaCanvas = dynamic(
+  () => import('@/components/three/ZarbiaCanvas').then((m) => m.ZarbiaCanvas),
+  { ssr: false, loading: () => null }
+)
+
+const CHAPTERS = [
+  {
+    num: '01',
+    name: 'Material',
+    body: 'Close to the wool. Fibre by fibre, thread by thread — this is where a build begins: the careful, dull, necessary work before the pattern can hold.',
+  },
+  {
+    num: '02',
+    name: 'Craft',
+    body: 'Step back. The whole Zarbia at once — backends that hold, frontends that sing, the kiln watched at every knot.',
+  },
+  {
+    num: '03',
+    name: 'Culture',
+    body: 'From above the pattern decides. What reads as decoration from the street is a map from the sky: rhythm, geometry, constraint — the grammar of every system.',
+  },
+  {
+    num: '04',
+    name: 'Digital',
+    body: 'The wool lets go. The field underneath the carpet was always the museum’s own geometry — craft becomes architecture, not decoration.',
+  },
+]
+
+/**
+ * THE LOOM — the interlude between the Workshop and the Collection.
+ * A Zarbia is a pattern of decisions; this one is woven in software.
+ * Scrolling walks the visitor through four chapters — material, craft,
+ * culture, digital — as one continuous WebGL choreography.
+ */
+export function LoomRoom() {
+  const reduced = useReducedMotion()
+  const [glFailed, setGlFailed] = useState(false)
+  const [active, setActive] = useState(0)
+  const control = useRef<ZarbiaControl>({ p: 0 })
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const staticView = reduced || glFailed
+
+  useEffect(() => {
+    if (reduced) return
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: wrapRef.current,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.5,
+          onUpdate: (self) => setActive(Math.min(3, Math.floor(self.progress * 4))),
+        },
+      })
+      tl.to(control.current, { p: 1, ease: 'none', duration: 1 })
+    }, wrapRef)
+    return () => ctx.revert()
+  }, [reduced])
+
+  return (
+    <section id="loom" aria-label="The Loom — the carpet between the work and the work" className="relative bg-bg">
+      <div className="zellige-wall" aria-hidden="true" />
+
+      <div ref={wrapRef} className="relative h-[420vh]">
+        <div className="sticky top-0 grid h-[100svh] grid-cols-1 overflow-hidden lg:grid-cols-12">
+          {/* the cloth */}
+          <div className="absolute inset-0" aria-hidden="true">
+            <WebGLErrorBoundary onFail={() => setGlFailed(true)}>
+              {!glFailed && !reduced && <ZarbiaCanvas control={control} />}
+            </WebGLErrorBoundary>
+            {staticView && <div className="mosaic-fallback" aria-hidden="true" />}
+          </div>
+
+          {/* desktop: the reading column */}
+          <div
+            className={`relative z-10 hidden flex-col justify-center px-4 sm:px-6 lg:col-span-5 lg:flex ${
+              reduced ? 'lg:px-4' : 'lg:pl-[max(1.5rem,calc((100vw-80rem)/2+1.5rem))]'
+            }`}
+          >
+            <p className="label-accent label">The Loom</p>
+            <p className="mt-3 max-w-[26ch] text-[1.35rem] leading-snug text-text-2">
+              <span className="serif-italic">Before the code there is the thread.</span> A Zarbia is
+              a pattern of decisions — this one is woven in software.
+            </p>
+            <div role="list" className="mt-10 space-y-7">
+              {CHAPTERS.map((c, i) => (
+                <div
+                  key={c.num}
+                  role="listitem"
+                  data-chapter={i}
+                  aria-current={active === i ? 'step' : undefined}
+                  className={`transition-opacity duration-500 ${active === i ? 'opacity-100' : 'opacity-40'}`}
+                >
+                  <p className="label label-muted">
+                    {c.num} — {c.name}
+                  </p>
+                  <p className="mt-2 max-w-[44ch] text-sm leading-relaxed text-text-3">{c.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* mobile: one story card at a time */}
+          <div className="relative z-10 mt-auto px-4 pb-8 sm:px-6 lg:hidden">
+            {staticView ? (
+              <div className="space-y-6 bg-surface/[0.88] p-5">
+                {CHAPTERS.map((c) => (
+                  <div key={c.num}>
+                    <p className="label label-muted">
+                      {c.num} — {c.name}
+                    </p>
+                    <p className="mt-2 max-w-[44ch] text-sm leading-relaxed text-text-3">{c.body}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div key={active} className="loom-card max-w-md bg-surface/[0.88] p-5">
+                <p className="label-accent label">
+                  The Loom — {CHAPTERS[active].num} · {CHAPTERS[active].name}
+                </p>
+                <p className="mt-3 text-base leading-relaxed text-text-3">{CHAPTERS[active].body}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

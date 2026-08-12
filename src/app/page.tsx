@@ -1,25 +1,25 @@
-import { Hero } from '@/components/sections/home/Hero'
-import { Manifesto } from '@/components/sections/home/Manifesto'
-import { Capabilities } from '@/components/sections/home/Capabilities'
-import { FeaturedWork } from '@/components/sections/home/FeaturedWork'
-import { Experience } from '@/components/sections/home/Experience'
-import { Process } from '@/components/sections/home/Process'
-import { StackSection } from '@/components/sections/home/StackSection'
-import { Engineered } from '@/components/sections/home/Engineered'
-import { ContactCta } from '@/components/sections/home/ContactCta'
+import { EntranceScene } from '@/components/sections/home/EntranceScene'
+import { Fountain } from '@/components/sections/home/Fountain'
+import { Workshop } from '@/components/sections/home/Workshop'
+import { LoomRoom } from '@/components/sections/home/LoomRoom'
+import { Collection } from '@/components/sections/home/Collection'
+import { Archive } from '@/components/sections/home/Archive'
+import { ExitRoom } from '@/components/sections/home/ExitRoom'
 
+/**
+ * THE MUSEUM — one continuous walk:
+ * Atrium → Fountain → Workshop → The Loom → Collection → Archive → Exit.
+ */
 export default function Home() {
   return (
     <>
-      <Hero />
-      <Manifesto />
-      <Capabilities />
-      <FeaturedWork />
-      <Experience />
-      <Process />
-      <StackSection />
-      <Engineered />
-      <ContactCta />
+      <EntranceScene />
+      <Fountain />
+      <Workshop />
+      <LoomRoom />
+      <Collection />
+      <Archive />
+      <ExitRoom />
     </>
   )
 }

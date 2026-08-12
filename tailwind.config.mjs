@@ -1,64 +1,42 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    './src/app/**/*.{js,ts,jsx,tsx}',
-    './src/components/**/*.{js,ts,jsx,tsx}',
-    './src/lib/**/*.{js,ts,jsx,tsx}',
-  ],
-  darkMode: 'class',
+  content: ['./src/app/**/*.{ts,tsx,mdx}', './src/components/**/*.{ts,tsx}', './src/lib/**/*.{ts,tsx}'],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['var(--font-body)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-mono)', 'monospace'],
-        display: ['var(--font-display)', 'sans-serif'],
-        body: ['var(--font-body)', 'system-ui', 'sans-serif'],
-      },
-      fontSize: {
-        '2xs': ['0.625rem', { lineHeight: '0.875rem' }],
-        xs: ['0.6875rem', { lineHeight: '1rem' }],
-        sm: ['0.8125rem', { lineHeight: '1.25rem' }],
-        base: ['0.9375rem', { lineHeight: '1.5rem' }],
-        lg: ['1.0625rem', { lineHeight: '1.5rem' }],
-        xl: ['1.25rem', { lineHeight: '1.5rem' }],
-        '2xl': ['1.5rem', { lineHeight: '1.375' }],
-        '3xl': ['1.875rem', { lineHeight: '1.18' }],
-        '4xl': ['2.25rem', { lineHeight: '1.08' }],
-        '5xl': ['3rem', { lineHeight: '1.02' }],
-        '6xl': ['3.75rem', { lineHeight: '1' }],
-        '7xl': ['4.5rem', { lineHeight: '0.98' }],
-      },
       colors: {
-        base: 'var(--bg)',
-        elevated: 'var(--bg-elevated)',
-        accent: {
-          DEFAULT: 'var(--accent)',
-          soft: 'var(--accent-soft)',
-          secondary: 'var(--accent-secondary)',
-        },
-        surface: 'var(--surface)',
-        ink: {
-          DEFAULT: 'var(--text)',
-          secondary: 'var(--text-secondary)',
-          tertiary: 'var(--text-tertiary)',
-        },
+        bg: 'rgb(var(--bg-rgb) / <alpha-value>)',
+        'bg-2': 'rgb(var(--bg-2-rgb) / <alpha-value>)',
+        surface: 'rgb(var(--surface-rgb) / <alpha-value>)',
+        text: 'rgb(var(--text-rgb) / <alpha-value>)',
+        'text-2': 'rgb(var(--text-2-rgb) / <alpha-value>)',
+        'text-3': 'rgb(var(--text-3-rgb) / <alpha-value>)',
+        accent: 'rgb(var(--accent-rgb) / <alpha-value>)',
+        gold: 'rgb(var(--gold-rgb) / <alpha-value>)',
+        emerald: 'rgb(var(--emerald-rgb) / <alpha-value>)',
+        terra: 'rgb(var(--terra-rgb) / <alpha-value>)',
+        ivory: 'rgb(var(--ivory-rgb) / <alpha-value>)',
+        walnut: 'rgb(var(--walnut-rgb) / <alpha-value>)',
+        ok: 'rgb(var(--ok-rgb) / <alpha-value>)',
+        err: 'rgb(var(--err-rgb) / <alpha-value>)',
       },
-      borderRadius: {
-        '4xl': '2rem',
+      fontFamily: {
+        sans: ['var(--font-sans)'],
+        mono: ['var(--font-mono)'],
+        serif: ['var(--font-serif)'],
+        display: ['var(--font-sans)'],
       },
-      letterSpacing: {
-        widest: '0.14em',
+      boxShadow: {
+        brass: '0 4px 26px rgba(140, 102, 52, 0.22)',
+        azul: '0 4px 26px rgba(30, 64, 130, 0.2)',
+        'arch-ink': '0 24px 60px -30px rgba(50, 40, 20, 0.5)',
       },
       maxWidth: {
-        shell: '80rem',
+        'prose-narrow': '52ch',
+        'prose-wide': '68ch',
       },
       transitionTimingFunction: {
         'out-expo': 'var(--ease-out-expo)',
         'in-out-expo': 'var(--ease-in-out-expo)',
-      },
-      animation: {
-        'status-pulse': 'status-pulse 2s ease-in-out infinite',
-        'spin-slow': 'spin-slow 1.1s linear infinite',
       },
     },
   },

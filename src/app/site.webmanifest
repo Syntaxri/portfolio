@@ -1,0 +1,16 @@
+{
+  "name": "Akram Rihani — Museum of Software Craftsmanship",
+  "short_name": "AR Museum",
+  "description": "I build ideas into real things — the Moroccan digital museum of software craftsmanship.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#eae4d4",
+  "theme_color": "#eae4d4",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

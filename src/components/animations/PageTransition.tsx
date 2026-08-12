@@ -2,47 +2,41 @@
 
 import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
-import { site } from '@/lib/data/site'
 import gsap from 'gsap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { Monogram } from '@/components/museum/Monogram'
+
+function roomLabel(pathname: string): string {
+  if (pathname === '/') return 'The museum'
+  if (pathname.startsWith('/work/')) return 'An exhibit room'
+  return 'The museum'
+}
 
 /**
- * Short directional wipe on route changes — decorative only,
- * never blocks navigation or content.
+ * A door leaf between rooms: the wall slides up and down behind the
+ * route change so the frame cut reads as walking from one room into the
+ * next. Decorative only — it never intercepts navigation.
  */
 export function PageTransition() {
-  const overlayRef = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
-  const prevPath = useRef(pathname)
   const reduced = useReducedMotion()
 
-  const destination =
-    pathname === '/'
-      ? 'Home'
-      : pathname.startsWith('/projects')
-        ? pathname === '/projects'
-          ? 'Work'
-          : 'Case study'
-        : pathname === '/about'
-          ? 'About'
-          : 'Contact'
-
   useEffect(() => {
-    if (prevPath.current === pathname) return
-    prevPath.current = pathname
-    const el = overlayRef.current
-    if (!el || reduced) return
+    if (reduced) return
+    const el = ref.current
+    if (!el) return
 
     gsap.killTweensOf(el)
     gsap.fromTo(
       el,
-      { yPercent: 100 },
+      { yPercent: 100, display: 'flex' },
       {
         yPercent: -100,
-        duration: 0.8,
+        duration: 0.55,
         ease: 'expo.inOut',
         onStart: () => {
-          gsap.set(el, { display: 'block' })
+          gsap.set(el, { display: 'flex' })
         },
         onComplete: () => {
           gsap.set(el, { display: 'none' })
@@ -53,14 +47,13 @@ export function PageTransition() {
 
   return (
     <div
-      ref={overlayRef}
+      ref={ref}
       aria-hidden
-      className="pointer-events-none fixed inset-0 z-[150] hidden bg-elevated"
-      style={{ background: 'var(--bg-elevated)' }}
+      className="pointer-events-none fixed inset-0 z-[150] hidden items-center justify-center bg-bg"
     >
-      <div className="flex h-full flex-col items-center justify-center gap-3">
-        <span className="font-display text-3xl font-extrabold tracking-tight">{site.name}</span>
-        <span className="label">Entering — {destination}</span>
+      <div className="flex flex-col items-center gap-4">
+        <Monogram variant="outline" className="h-10 w-10 text-accent" />
+        <span className="label-accent label">{roomLabel(pathname)}</span>
       </div>
     </div>
   )

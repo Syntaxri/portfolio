@@ -1,80 +1,72 @@
-# Akram Rihani — Portfolio
+# Portfolio — Akram Rihani
 
-Personal portfolio at [akramrihani.com](https://akramrihani.com): an expressive, WebGL-heavy React site documenting real project work (no fabricated clients, awards, or metrics).
+> The Moroccan museum of engineered digital experiences.
+> Akram Rihani — creative developer from Azrou: Java backends that hold,
+> frontends that sing, 3D screens that breathe.
 
 ## Stack
 
-- **Next.js 14** (App Router, RSC + client islands)
-- **React 18**, strict TypeScript
-- **Tailwind CSS** (CSS-first theme in `src/app/globals.css`)
-- **Three.js / React Three Fiber / drei** — hero scene, quality tiers
-- **GSAP + ScrollTrigger + Lenis** — scroll choreography
-- **Next fonts** (`Inter`, `DM Mono`, `Syne`), local cover JPGs in `public/work/<slug>/`
+- Next.js 16 (App Router) · TypeScript · Tailwind CSS
+- Three.js on raw WebGL canvases for the installations (no R3F, no textures
+  shipped — every pattern is computed)
+- GSAP + ScrollTrigger + Lenis for the scroll choreography
+- Resend for the contact form
+- Vitest + Testing Library for the unit suite
 
-## Scripts
+## The rooms
+
+**ROOM 00 — THE ATRIUM**: the Zellige mandala assembles itself in WebGL; the
+monogram is an arch cut into an A whose negative space is a V.
+
+**ROOM 01 — THE FOUNTAIN**: the founding story in four steps, the seven rules
+of the workshop translated into engineering laws.
+
+**ROOM 02 — THE WORKSHOP**: four craft panels — Java Backend, TS · React ·
+Next, DevOps & Security, WebGL & Motion.
+
+**THE LOOM** (interlude between the Workshop and the Collection): a Zarbia
+rug woven in WebGL. Scrolling walks four chapters — Material (macro wool),
+Craft (the whole carpet hangs and bends), Culture (the pattern becomes a map
+from above), Digital (the wool dissolves into the museum's own geometric
+field). Both faces of the rug are drawn onto canvas at init; the camera
+choreography is a single scrubbed pose path.
+
+**ROOM 03 — THE COLLECTION**: six accessions in the arcade. WISLA hangs as
+the flagship; the web builds fill the shelves.
+
+**ROOM 04 — THE ARCHIVE**: the dark room — the engineering of the WISLA
+platform, documented with field notes, role matrix and frames.
+
+**ROOM 05 — THE EXIT**: the visitors' book. One question: have an idea worth
+building?
+
+## Design system v5
+
+- Light museum palette: lime plaster `#EAE4D4`, Fes-cobalt glaze `#1E4082`,
+  mint glaze `#15695C`, terracotta `#AA5226`, aged brass `#8C6634`.
+- Archivo for signage, Fraunces for the catalogue voice, Space Mono for the
+  conservation labels.
+- Zellige geometry is computed, never shipped: stars, walls, bands and the
+  mandala all come from `src/lib/geometry.ts`.
+- The monogram is an arch cut into an A whose negative space is a V.
+- Dark room convention: `.room-dark` overrides the palette tokens in place.
+
+## Craft notes
+
+- Motion is transform/opacity only; reduced motion collapses everything.
+- The hero WebGL installation degrades to a flat CSS fallback.
+- The contact form posts to the secured `/api/contact` endpoint with a
+  `mailto:` fallback.
+- Returning visitors skip the door via `ar-museum-v5`.
+- Scroll choreography is Lenis + GSAP scrollState-driven.
+
+## Commands
 
 ```bash
-npm run dev        # development server
-npm run build      # production build
-npm start          # serve production build
+npm run dev        # run the museum
+npm run build      # assemble everything
+npm run start      # open the doors
 npm run lint       # eslint
 npm run typecheck  # tsc --noEmit
-npm test           # vitest (unit + component)
-npm run format     # prettier --write .
-npm run format:check
+npm test           # vitest
 ```
-
-## Environment
-
-Copy `.env.example` to `.env.local`:
-
-| Variable         | Required | Purpose                              |
-| ---------------- | -------- | ------------------------------------ |
-| `RESEND_API_KEY` | prod yes | Sends contact-form emails via Resend |
-| `CONTACT_EMAIL`  | prod yes | Recipient for the contact form       |
-
-Without a key, `next dev` logs submissions instead of emailing and the API
-returns `EMAIL_NOT_CONFIGURED` in production.
-
-## Contact form pipeline
-
-`POST /api/contact`:
-
-1. **Validation** — server-side (`src/lib/validation/contact.ts`) mirrors the
-   client rules; input sanitized (tags stripped, length capped).
-2. **Honeypot** — hidden `website`/`phone` fields absorb bots.
-3. **Rate limit** — sliding window per IP (`src/lib/rateLimit`), pluggable
-   store; the in-memory default is best-effort on serverless — swap in a
-   Redis adapter by implementing `RateLimitStore`.
-4. **Email** — Resend with HTML-escaped values; failures return a generic
-   message and are logged server-side (never leaked to the client).
-5. **Security headers** — CSP (production), HSTS, Permissions-Policy and more
-   are applied in `next.config.mjs`.
-
-## Performance & accessibility
-
-- WebGL quality tiers (DPR cap, particle count, shader/mesh complexity) based
-  on device hardware; coarse-pointer devices always render the low tier.
-- WebGL is a decorative enhancement, never a page dependency: renderer
-  failure, import errors or a lost context degrade to a static CSS gradient,
-  and the DOM content stays available in every case.
-- `prefers-reduced-motion` respected throughout: content is visible by
-  default and only animated as progressive enhancement, Lenis smooth
-  scrolling is never initialized, anchor navigation uses native instant
-  scrolling, and entrance/scroll choreography is skipped.
-- Transforms/opacity-only animation; marquees and the WebGL scene pause
-  offscreen via `IntersectionObserver`.
-- Mobile menu is a proper dialog (focus trap, ESC to close, aria attributes);
-  form status is announced via `role="status"`.
-
-## Testing
-
-Unit tests (`vitest`) cover validation, rate limiting, env handling, HTML
-escaping, IP extraction, the email gateway and the API route; component tests
-cover the navbar dialog and contact form. CI runs lint, typecheck, tests and a
-production build.
-
-## Deployment
-
-Deployed on Vercel from `main`. Pushed commits are auto-deployed to
-akramrihani.com.

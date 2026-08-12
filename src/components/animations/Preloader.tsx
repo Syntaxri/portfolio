@@ -3,14 +3,13 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import gsap from 'gsap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { Monogram } from '@/components/museum/Monogram'
+import { starPath } from '@/lib/geometry'
 import { site } from '@/lib/data/site'
 
-const TOTAL = 100
-
-/* localStorage persists across tabs, so returning visitors skip the loader;
-   sessionStorage keeps first-visit tabs consistent when localStorage is
-   unavailable (private mode). Neither changes after first paint — a static
-   store is enough */
+/* returning visitors skip the door; sessionStorage keeps private-mode
+   tabs consistent. Neither changes after first paint — a static store is
+   enough. */
 function subscribeStorage(): () => void {
   return () => {}
 }
@@ -18,22 +17,29 @@ function subscribeStorage(): () => void {
 function readPreloaderSeen(): boolean {
   if (typeof window === 'undefined') return false
   try {
-    if (localStorage.getItem('ar-preloader') !== null) return true
+    if (localStorage.getItem('ar-museum-v5') !== null) return true
   } catch {
     /* storage unavailable — fall back to tab-only memory */
   }
-  return sessionStorage.getItem('ar-preloader') !== null
+  return sessionStorage.getItem('ar-museum-v5') !== null
 }
 
+const RING_POINTS = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => ({
+  a: (i * Math.PI) / 4 - Math.PI / 2,
+  face: ['#1e4082', '#15695c', '#aa5226', '#8c6634'][i % 4],
+}))
+
+/**
+ * THE DOOR — the entrance sequence. The monogram draws itself, the eight
+ * points of the star lock around it, and the door lifts. Short, skippable
+ * by returning visitors, and fully asleep under reduced motion.
+ */
 export function Preloader() {
   const rootRef = useRef<HTMLDivElement>(null)
-  const numberRef = useRef<HTMLSpanElement>(null)
-  const fillRef = useRef<HTMLDivElement>(null)
   const [done, setDone] = useState(false)
   const reduced = useReducedMotion()
   const seen = useSyncExternalStore(subscribeStorage, readPreloaderSeen, () => false)
 
-  /* the first visit shows the loader; returning visitors skip it */
   const visible = !seen
 
   useEffect(() => {
@@ -46,24 +52,23 @@ export function Preloader() {
       return () => clearTimeout(t)
     }
 
+    window.__entranceReady = true
+    window.dispatchEvent(new Event('ar:entrance-ready'))
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline()
-
-      const counter = {
-        value: 0,
-      }
-      tl.to(counter, {
-        value: TOTAL,
-        duration: 0.55,
-        ease: 'power2.inOut',
-        onUpdate: () => {
-          const v = Math.round(counter.value)
-          if (numberRef.current) numberRef.current.textContent = `${v}%`
-          if (fillRef.current) fillRef.current.style.transform = `scaleX(${v / TOTAL})`
-        },
-      })
-        .to(fillRef.current, { transformOrigin: 'right', scaleX: 0, duration: 0.3, ease: 'power2.inOut' })
-        .to(numberRef.current, { opacity: 0, y: -14, duration: 0.35, ease: 'power2.out' }, '<')
+      tl.fromTo(
+        '.door-draw',
+        { strokeDashoffset: 360 },
+        { strokeDashoffset: 0, duration: 0.85, ease: 'power2.inOut' }
+      )
+        .fromTo(
+          '.door-star',
+          { scale: 0, opacity: 0, transformOrigin: 'center' },
+          { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2.2)', stagger: 0.045 },
+          '-=0.5'
+        )
+        .to('.door-fade', { opacity: 0, y: -16, duration: 0.3, ease: 'power2.in' }, '+=0.15')
         .set(root, { pointerEvents: 'none' })
         .to(root, {
           yPercent: -100,
@@ -71,12 +76,11 @@ export function Preloader() {
           ease: 'expo.inOut',
           onComplete: () => {
             try {
-              localStorage.setItem('ar-preloader', '1')
+              localStorage.setItem('ar-museum-v5', '1')
             } catch {
               /* storage unavailable (private mode) — session only */
             }
-            sessionStorage.setItem('ar-preloader', '1')
-            window.dispatchEvent(new Event('ar:entrance-ready'))
+            sessionStorage.setItem('ar-museum-v5', '1')
             setDone(true)
           },
         })
@@ -88,23 +92,56 @@ export function Preloader() {
   if (!visible || done) return null
 
   return (
-    <div ref={rootRef} aria-hidden className="fixed inset-0 z-[200] flex flex-col justify-end bg-base">
-      <div className="flex items-end justify-between px-6 pb-6 sm:px-10">
-        <span className="label">{site.domain} — Akram Rihani</span>
-        <span
-          ref={numberRef}
-          className="font-display text-[clamp(3.5rem,10vw,7rem)] font-extrabold leading-none tabular-nums text-ink"
-          style={{ letterSpacing: '-0.03em' }}
-        >
-          0%
-        </span>
+    <div
+      ref={rootRef}
+      aria-hidden
+      className="fixed inset-0 z-[200] flex flex-col justify-between bg-bg px-5 py-4 sm:px-8"
+    >
+      <div className="flex items-center justify-between border-b border-[rgba(28,26,22,0.12)] pb-3">
+        <span className="label-muted label">The museum of software craftsmanship</span>
+        <span className="label-muted label">©{new Date().getFullYear()}</span>
       </div>
-      <div className="h-px w-full bg-white/10">
-        <div
-          ref={fillRef}
-          className="h-full w-full origin-left bg-accent"
-          style={{ transform: 'scaleX(0)' }}
-        />
+
+      <div className="relative mx-auto flex h-44 w-44 items-center justify-center sm:h-52 sm:w-52">
+        <svg
+          viewBox="0 0 200 200"
+          className="absolute inset-0 h-full w-full"
+          aria-hidden="true"
+        >
+          {RING_POINTS.map((p, i) => (
+            <path
+              key={i}
+              className="door-star"
+              d={starPath(100 + Math.cos(p.a) * 76, 100 + Math.sin(p.a) * 76, 13, 5.2)}
+              fill={p.face}
+            />
+          ))}
+        </svg>
+        <Monogram variant="line" className="door-fade h-24 w-24 text-accent" />
+        <svg
+          viewBox="0 0 100 96"
+          className="absolute inset-0 h-24 w-24"
+          aria-hidden="true"
+          fill="none"
+        >
+          <path
+            className="door-draw"
+            d="M8 88 C8 42 36 12 50 12 C64 12 92 42 92 88 L85 88 C85 44 64 18 50 18 C36 18 15 44 15 88 Z"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinejoin="round"
+            strokeDasharray="360"
+            strokeDashoffset="360"
+            fill="none"
+          />
+        </svg>
+      </div>
+
+      <div className="door-fade border-t border-[rgba(28,26,22,0.12)] pt-3">
+        <div className="flex items-center justify-between">
+          <span className="label-muted label">The kiln is ready</span>
+          <span className="label-muted label">{site.domain}</span>
+        </div>
       </div>
     </div>
   )

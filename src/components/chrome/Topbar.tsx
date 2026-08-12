@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLenis } from '@/components/animations/SmoothScroll'
 import { Monogram } from '@/components/museum/Monogram'
+import { AmbienceControl } from '@/components/chrome/AmbienceControl'
 import { site, socials } from '@/lib/data/site'
 
 const ROOMS = [
@@ -98,6 +99,7 @@ export function Topbar() {
             >
               Start a project
             </Link>
+            <AmbienceControl />
           </div>
 
           <button
@@ -162,7 +164,8 @@ export function Topbar() {
           </div>
           <div className="border-t border-[rgba(28,26,22,0.12)] px-6 py-6">
             <p className="label-muted label mb-3">The keeper</p>
-            <div className="flex flex-wrap gap-x-5 gap-y-2">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+              <AmbienceControl />
               {socials.map((s) => (
                 <a
                   key={s.label}

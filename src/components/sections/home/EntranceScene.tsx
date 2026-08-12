@@ -110,7 +110,9 @@ export function EntranceScene() {
         <div className="mosaic-fallback" aria-hidden="true" />
       </div>
 
-      <div className="relative z-10 w-full flex-1 px-4 pt-4 sm:px-6 sm:pt-5">
+      <div
+        className="pointer-events-none relative z-10 w-full flex-1 px-4 pt-4 sm:px-6 sm:pt-5"
+      >
         <div ref={contentRef} className="max-w-4xl">
           <div
             className="flex items-center gap-4"
@@ -128,7 +130,7 @@ export function EntranceScene() {
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 items-end justify-between gap-6 px-4 pb-6 sm:px-6">
+      <div className="pointer-events-none relative z-10 mx-auto flex w-full max-w-7xl flex-1 items-end justify-between gap-6 px-4 pb-6 sm:px-6">
         <span
           className="label-muted label hidden items-center gap-2 sm:flex"
           data-hero-reveal
@@ -137,6 +139,15 @@ export function EntranceScene() {
           <span className="inline-block h-px w-6 bg-text-3" aria-hidden="true" />
           Scroll — the mandala unlocks
         </span>
+        {!glFailed && (
+          <span
+            className="label-muted label hidden sm:block"
+            data-hero-reveal
+            style={{ opacity: entered ? undefined : 0 }}
+          >
+            Double-click the mandala — the kiln fires a new pattern
+          </span>
+        )}
         <span
           className="label-muted label"
           data-hero-reveal

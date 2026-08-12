@@ -56,6 +56,18 @@ export function Preloader() {
     window.dispatchEvent(new Event('ar:entrance-ready'))
 
     const ctx = gsap.context(() => {
+      /* the door is refired each day: the same door, a different weave —
+         the glaze ring starts at a different point, the stars fall in
+         from the other side, and the studs sit a hair smaller or wider.
+         Deterministic for the whole day, so nothing ever flickers. */
+      const variant = Math.floor(Date.now() / 86_400_000) % 3
+      const faces = ['#1e4082', '#15695c', '#aa5226', '#8c6634']
+      const rotated = [...faces.slice(variant), ...faces.slice(0, variant)]
+      const starScale = variant === 2 ? 0.96 : 1.04
+      root.querySelectorAll<SVGPathElement>('.door-star').forEach((el, i) => {
+        gsap.set(el, { fill: rotated[i % rotated.length] })
+      })
+
       const tl = gsap.timeline()
       tl.fromTo(
         '.door-draw',
@@ -65,7 +77,13 @@ export function Preloader() {
         .fromTo(
           '.door-star',
           { scale: 0, opacity: 0, transformOrigin: 'center' },
-          { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2.2)', stagger: 0.045 },
+          {
+            scale: starScale,
+            opacity: 1,
+            duration: 0.4,
+            ease: 'back.out(2.2)',
+            stagger: variant % 2 === 0 ? 0.045 : { each: 0.045, from: 'end' },
+          },
           '-=0.5'
         )
         .to('.door-fade', { opacity: 0, y: -16, duration: 0.3, ease: 'power2.in' }, '+=0.15')

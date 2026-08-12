@@ -24,7 +24,7 @@ export function ZelligeBand({
   return (
     <div
       aria-hidden="true"
-      className={className}
+      className={`zellige-band ${className}`}
       style={{
         width: '100%',
         height: tile,

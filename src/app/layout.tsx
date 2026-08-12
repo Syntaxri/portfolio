@@ -9,6 +9,8 @@ import { RoomDirectory } from '@/components/museum/RoomDirectory'
 import { CustomCursor } from '@/components/animations/CustomCursor'
 import { Preloader } from '@/components/animations/Preloader'
 import { PageTransition } from '@/components/animations/PageTransition'
+import { CraftDashboard } from '@/components/chrome/CraftDashboard'
+import { CuratorsKey } from '@/components/chrome/CuratorsKey'
 import { site } from '@/lib/data/site'
 
 const archivo = Archivo({
@@ -66,6 +68,10 @@ export const metadata: Metadata = {
     'freelance developer',
   ],
   category: 'portfolio',
+  icons: {
+    icon: '/favicon.svg',
+    apple: '/apple-touch-icon.png',
+  },
   alternates: {
     canonical: '/',
   },
@@ -120,6 +126,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <CustomCursor />
           <Preloader />
           <PageTransition />
+          <CraftDashboard />
+          <CuratorsKey />
         </SmoothScrollProvider>
       </body>
     </html>

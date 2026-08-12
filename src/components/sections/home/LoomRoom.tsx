@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import dynamic from 'next/dynamic'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { WebGLErrorBoundary } from '@/components/three/WebGLErrorBoundary'
+import { museumState } from '@/lib/fx/museumState'
 import type { ZarbiaControl } from '@/components/three/ZarbiaCanvas'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -43,7 +44,16 @@ const CHAPTERS = [
  * A Zarbia is a pattern of decisions; this one is woven in software.
  * The camera never moves: the wide runner hangs, breathing, in the
  * middle of the room while the visitor scrolls slowly past it.
+ * On devices that can, the loom taps the hand — a short pulse for
+ * every fibre transition, a firmer one when a pattern segment locks.
  */
+const PULSE_MIN_MS = 90
+
+export function weavePulse(step: number): number | null {
+  if (step % 16 === 0) return 24
+  return 7
+}
+
 export function LoomRoom() {
   const reduced = useReducedMotion()
   const [glFailed, setGlFailed] = useState(false)
@@ -51,6 +61,7 @@ export function LoomRoom() {
   const control = useRef<ZarbiaControl>({ p: 0 })
   const wrapRef = useRef<HTMLDivElement>(null)
   const staticView = reduced || glFailed
+  const stepRef = useRef(-1)
 
   useEffect(() => {
     if (reduced) return
@@ -61,7 +72,27 @@ export function LoomRoom() {
           start: 'top top',
           end: 'bottom bottom',
           scrub: 0.5,
-          onUpdate: (self) => setActive(Math.min(3, Math.floor(self.progress * 4))),
+          onUpdate: (self) => {
+            const p = self.progress
+            museumState.weave = p
+            setActive(Math.min(3, Math.floor(p * 4)))
+
+            /* the weaver's hand: pulse on fibre transitions, heavier
+               when a quarter of the runner locks into place. Throttled,
+               silent when the platform or the visitor declines. */
+            const step = Math.floor(p * 64)
+            if (step !== stepRef.current) {
+              stepRef.current = step
+              const now = performance.now()
+              if (now - museumState.lastPulseAt >= PULSE_MIN_MS) {
+                const ms = weavePulse(step)
+                if (ms && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+                  museumState.lastPulseAt = now
+                  navigator.vibrate(ms)
+                }
+              }
+            }
+          },
         },
       })
       tl.to(control.current, { p: 1, ease: 'none', duration: 1 })

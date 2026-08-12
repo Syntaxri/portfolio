@@ -110,6 +110,13 @@ export function Footer() {
             >
               Back to the entrance ↑
             </a>
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event('ar:toggle-console'))}
+              className="font-mono text-[0.6rem] uppercase tracking-[0.18em] text-text-3 transition-colors hover:text-accent"
+            >
+              Conservation console
+            </button>
           </div>
         </div>
       </div>

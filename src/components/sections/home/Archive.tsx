@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Reveal, RevealItem } from '@/components/museum/Reveal'
 import { Room, RoomDoor } from '@/components/museum/Room'
 import { ZelligeBand } from '@/components/museum/ZelligeBand'
+import { VaultLight } from '@/components/sections/home/VaultLight'
 import { starPath } from '@/lib/geometry'
 import { getProject } from '@/lib/data/projects'
 
@@ -57,6 +58,7 @@ export function Archive() {
   return (
     <Room id="archive" number="04" name="THE ARCHIVE" dark className="bg-walnut">
       <div className="zellige-wall" aria-hidden="true" />
+      <VaultLight rootId="archive" />
       <div className="section-pad mx-auto max-w-7xl px-4 sm:px-6">
         <RoomDoor
           number="04"

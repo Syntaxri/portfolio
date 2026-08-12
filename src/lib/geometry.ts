@@ -106,6 +106,19 @@ export function rotateSquares(size: number): number[] {
   return [size * 0.52, size * 0.28]
 }
 
+/** mulberry32 — a small, dependency-free, deterministic PRNG. Same seed,
+ *  same stream, everywhere (SSR, WebGL, tests). */
+export function mulberry32(seed: number): () => number {
+  let a = seed >>> 0
+  return () => {
+    a |= 0
+    a = (a + 0x6d2b79f5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
 /* ---------------------------------------------------------------------------
  * THE HERO MANDALA — the composition of the entrance installation.
  * Unit space is world units in the WebGL scene (camera at z≈9.5, fov 42).
@@ -123,11 +136,22 @@ export interface MandalaPiece {
   order: number
 }
 
-export function mandalaPieces(onMobile: boolean): MandalaPiece[] {
+export function mandalaPieces(onMobile: boolean, seed = 0): MandalaPiece[] {
+  const rnd = mulberry32(seed)
   const pieces: MandalaPiece[] = []
 
+  /* seeded fires rotate the whole composition and re-tint the rings while
+     keeping the zellige rules intact: rings never cross radii, glazes stay
+     in the kiln's palette, and the central star is always the lock.
+     seed 0 is the canonical first firing — byte-identical to before. */
+  const spin = seed === 0 ? 0 : Math.floor(rnd() * 4) * (Math.PI / 16)
+  const glazePhase = seed === 0 ? 0 : Math.floor(rnd() * 4)
+  const studMotive = seed === 0 ? 0 : Math.floor(rnd() * 3)
+  const jit = (base: number, spread: number) =>
+    seed === 0 ? base : base + (rnd() - 0.5) * spread
+
   /* the central star — the lock of the whole composition */
-  pieces.push({ kind: 'star', radius: 0, angle: 0, rotation: 0, scale: 1, glaze: 'cobalt', order: 0 })
+  pieces.push({ kind: 'star', radius: 0, angle: 0, rotation: spin, scale: 1, glaze: 'cobalt', order: 0 })
 
   if (onMobile) {
     /* mobile keeps the heart and one quiet ring */
@@ -135,11 +159,11 @@ export function mandalaPieces(onMobile: boolean): MandalaPiece[] {
       const a = (i * Math.PI) / 4
       pieces.push({
         kind: 'diamond',
-        radius: 3.05,
-        angle: a,
+        radius: jit(3.05, 0.18),
+        angle: a + spin,
         rotation: Math.PI / 4,
         scale: 1,
-        glaze: i % 2 ? 'teal' : 'terra',
+        glaze: (i + glazePhase) % 2 ? 'teal' : 'terra',
         order: 2 + i * 0.3,
       })
     }
@@ -147,8 +171,8 @@ export function mandalaPieces(onMobile: boolean): MandalaPiece[] {
       const a = (i * Math.PI) / 4 + Math.PI / 8
       pieces.push({
         kind: 'square',
-        radius: 3.95,
-        angle: a,
+        radius: jit(3.95, 0.18),
+        angle: a + spin,
         rotation: Math.PI / 4,
         scale: 0.55,
         glaze: 'ivory',
@@ -163,11 +187,11 @@ export function mandalaPieces(onMobile: boolean): MandalaPiece[] {
     const a = (i * Math.PI) / 4
     pieces.push({
       kind: 'diamond',
-      radius: 3.05,
-      angle: a,
+      radius: jit(3.05, 0.2),
+      angle: a + spin,
       rotation: Math.PI / 4,
-      scale: 1,
-      glaze: i % 2 ? 'teal' : 'terra',
+      scale: jit(1, 0.06),
+      glaze: (i + glazePhase) % 2 ? 'teal' : 'terra',
       order: 1 + i * 0.3,
     })
   }
@@ -177,10 +201,10 @@ export function mandalaPieces(onMobile: boolean): MandalaPiece[] {
     const a = (i * Math.PI) / 4 + Math.PI / 8
     pieces.push({
       kind: 'square',
-      radius: 3.85,
-      angle: a,
+      radius: jit(3.85, 0.2),
+      angle: a + spin,
       rotation: Math.PI / 4,
-      scale: 0.62,
+      scale: jit(0.62, 0.05),
       glaze: 'ivory',
       order: 3 + i * 0.25,
     })
@@ -190,13 +214,15 @@ export function mandalaPieces(onMobile: boolean): MandalaPiece[] {
   for (let i = 0; i < 16; i++) {
     const a = (i * Math.PI) / 8 + Math.PI / 16
     const stud = (i * Math.PI) / 8
+    const accent =
+      studMotive === 1 ? i % 4 === 0 : studMotive === 2 ? i % 5 === 2 : i % 3 === 1
     pieces.push({
       kind: 'square',
-      radius: 4.75,
-      angle: a,
-      rotation: stud,
-      scale: 0.3,
-      glaze: i % 3 === 1 ? 'cobalt' : 'brass',
+      radius: jit(4.75, 0.2),
+      angle: a + spin,
+      rotation: stud + (seed !== 0 && rnd() < 0.5 ? Math.PI / 16 : 0),
+      scale: jit(0.3, 0.04),
+      glaze: accent ? 'cobalt' : 'brass',
       order: 5 + i * 0.12,
     })
   }

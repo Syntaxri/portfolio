@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { glRegistry, museumState } from '@/lib/fx/museumState'
 
 /*
  * ZARBIA — the loom interlude.
@@ -521,6 +522,15 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
     )
     io.observe(canvas)
 
+    const glSource = {
+      stats: () => ({
+        calls: renderer.info.render.calls,
+        triangles: renderer.info.render.triangles,
+      }),
+      gpu: () => null,
+    }
+    glRegistry.register(glSource)
+
     let raf = 0
     const clock = new THREE.Clock()
 
@@ -537,6 +547,7 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
       pointer.y += (pointer.ty - pointer.y) * Math.min(1, dt * 2.4)
 
       const p = control.current.p
+      museumState.weave = p
 
       /* the camera never moves — the room holds still around the runner */
       camera.position.x = pointer.x * 0.16
@@ -585,6 +596,7 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
     return () => {
       cancelAnimationFrame(raf)
       io.disconnect()
+      glRegistry.unregister(glSource)
       window.removeEventListener('pointermove', onPointer)
       window.removeEventListener('resize', resize)
       geo.dispose()

@@ -41,7 +41,11 @@ describe('ContactForm', () => {
         expect.objectContaining({ method: 'POST' })
       )
     )
-    await waitFor(() => expect(screen.getByText(/Received — I'll answer within 24 hours\./)).toBeTruthy())
+    await waitFor(() =>
+      expect(
+        screen.getByText(/Received — sealed with the keeper's mark\. Answer within 24 hours\./i)
+      ).toBeTruthy()
+    )
     vi.unstubAllGlobals()
   })
 

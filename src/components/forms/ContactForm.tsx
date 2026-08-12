@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { site } from '@/lib/data/site'
+import { WaxSeal } from '@/components/forms/WaxSeal'
 
 interface FormState {
   name: string
@@ -208,7 +209,12 @@ export function ContactForm() {
         </button>
         <p className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-text-3" aria-live="polite">
           {status === 'sent' && (
-            <span className="text-ok">Received — I&apos;ll answer within 24 hours.</span>
+            <span className="flex items-center gap-3 normal-case tracking-normal text-ok">
+              <WaxSeal />
+              <span className="uppercase tracking-[0.16em]">
+                Received — sealed with the keeper&apos;s mark. Answer within 24 hours.
+              </span>
+            </span>
           )}
           {status === 'error' && (
             <span className="text-err">The wire slipped — your mail client will open instead.</span>

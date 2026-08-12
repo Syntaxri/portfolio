@@ -122,7 +122,9 @@ function build(ctx: AudioContext) {
 /** called from a user gesture — the only legal moment to wake audio */
 export function ensureAmbience(): void {
   if (engine.state !== 'idle') return
-  const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+  const Ctor =
+    window.AudioContext ??
+    (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
   if (!Ctor) {
     engine.state = 'off'
     return
@@ -173,6 +175,36 @@ export function setAmbientRoom(roomId: string): void {
 
 export function ambienceState(): EngineState {
   return engine.state
+}
+
+/** The kiln's confirmation: one short, quiet ceramic clink — a high
+ *  body note dropping into a dull glaze partial. Synthesized on the fly:
+ *  it reuses the live ambience engine (never creates a context, never
+ *  plays while the visitor has muted the museum), and every node stops
+ *  itself within 160ms — nothing is retained between firings. */
+export function playKilnClink(): void {
+  const ctx = engine.ctx
+  const master = engine.master
+  if (!ctx || master === null || engine.state !== 'playing') return
+
+  const t0 = ctx.currentTime
+  const strike = (freq: number, drop: number, vol: number, dur: number, type: OscillatorType) => {
+    const osc = ctx.createOscillator()
+    osc.type = type
+    osc.frequency.setValueAtTime(freq, t0)
+    osc.frequency.exponentialRampToValueAtTime(freq * drop, t0 + dur * 0.55)
+    const gain = ctx.createGain()
+    gain.gain.setValueAtTime(0.0001, t0)
+    gain.gain.exponentialRampToValueAtTime(vol, t0 + 0.008)
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur)
+    osc.connect(gain).connect(master)
+    osc.start(t0)
+    osc.stop(t0 + dur + 0.02)
+  }
+  /* the ceramic body */
+  strike(2150, 0.55, 0.05, 0.16, 'triangle')
+  /* the glaze — a bright hairline partial, shorter and quieter */
+  strike(3200, 0.8, 0.018, 0.09, 'sine')
 }
 
 /* visibility: a museum that is not being visited makes no sound */

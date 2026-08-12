@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { zelligePieces, starPoints, GLAZE_HEX, type ZelligePiece } from '@/lib/geometry'
 import { glRegistry, museumState } from '@/lib/fx/museumState'
+import { playKilnClink } from '@/lib/fx/ambience'
 
 /*
  * MOSAIC — the entrance installation.
@@ -14,20 +15,21 @@ import { glRegistry, museumState } from '@/lib/fx/museumState'
  * far ring and lock into place; pointer movement leans the whole
  * composition; scrolling grinds it slowly apart as the visitor walks on.
  *
- * The Zellige is alive: every settled star feels the cursor — scales a
- * little toward it, leans its glaze, turns with a slow inertia. A
- * double-click (or double-tap, or Enter with focus) fires the kiln
- * again: a new deterministic seed recomposes the whole pattern in the
- * same geometry language, never the same room twice.
- * No textures, no images — cut ceramic, computed.
+ *  The Zellige is alive: every settled star feels the cursor — scales a
+ *  little toward it, leans its glaze, turns with a slow inertia. A
+ *  double-click (or double-tap, or Enter with focus) fires the kiln
+ *  again: a new deterministic seed recomposes the whole pattern in the
+ *  same geometry language, never the same room twice. The firing is a
+ *  small ceremony — the central star flares warm, the engine plays a
+ *  short clink, the hand feels one strike, and a FIRED proof mark
+ *  flashes over the room.
+ *  No textures, no images — cut ceramic, computed.
  */
 
 function detectTier() {
   const coarse = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches
   const cores =
-    typeof navigator !== 'undefined' && navigator.hardwareConcurrency
-      ? navigator.hardwareConcurrency
-      : 8
+    typeof navigator !== 'undefined' && navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 8
   if (coarse) return Math.min(window.devicePixelRatio, 1.5)
   if (cores <= 4) return Math.min(window.devicePixelRatio, 1.5)
   return Math.min(window.devicePixelRatio, 2)
@@ -97,6 +99,9 @@ interface RigidPiece {
   mesh: THREE.Mesh
   material: THREE.MeshStandardMaterial
   baseColor: THREE.Color
+  /** the idle glaze shadow — restored every frame so the kiln flash can
+   *  never leave a permanent mark on the material */
+  baseEmissive: THREE.Color
   glowColor: THREE.Color
   start: THREE.Vector3
   final: THREE.Vector3
@@ -129,6 +134,15 @@ function layerZ(p: ZelligePiece): number {
 const NEAR_RADIUS = 3.4
 /** the strongest the composition leans, per piece */
 const NEAR_STRENGTH = 0.07
+
+/* the presentation: for ~1.6s the composition is shown arriving —
+   pulled out of the kiln while it is still warm, the camera stepping
+   forward a little as it settles on its plinth. */
+const REVEAL_DURATION = 1.6
+const KILN_WARM = new THREE.Color('#ffcf9e')
+const KILN_FLASH = new THREE.Color('#ff9a4d')
+/* the haptic confirmation reuses the loom's shared throttle (ms) */
+const KILN_PULSE_MIN_MS = 90
 
 export function MosaicCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -190,11 +204,7 @@ export function MosaicCanvas() {
       for (let i = 0; i < pieces.length; i++) {
         const p = pieces[i]
         const group = new THREE.Group()
-        group.position.set(
-          Math.cos(p.angle) * p.radius,
-          Math.sin(p.angle) * p.radius - 0.15,
-          0
-        )
+        group.position.set(Math.cos(p.angle) * p.radius, Math.sin(p.angle) * p.radius - 0.15, 0)
         group.rotation.z = p.rotation
 
         const hex = GLAZE_HEX[p.glaze]
@@ -226,11 +236,13 @@ export function MosaicCanvas() {
         const final = group.position.clone()
         const start = new THREE.Vector3().copy(final).multiplyScalar(2.35)
         const baseColor = new THREE.Color(hex)
+        const baseEmissive = new THREE.Color(dark)
         rigids.push({
           group,
           mesh,
           material,
           baseColor,
+          baseEmissive,
           glowColor: baseColor.clone().lerp(new THREE.Color('#fff8ea'), 0.22),
           start,
           final,
@@ -263,12 +275,30 @@ export function MosaicCanvas() {
     /* firing the kiln: double-click, double-tap, or Enter on the canvas */
     let lastFire = 0
     const taps = { t: 0, x: 0, y: 0 }
+    /* the warmth of this firing: 1 just after the strike, decaying to 0
+       over a few hundred ms. Drives the central-star flash only — the
+       material's idle state is recomputed every frame around it. */
+    let flash = 0
     const fireKiln = () => {
       const now = performance.now()
       if (now - lastFire < 700) return
       lastFire = now
       museumState.regens += 1
+      flash = 1
+      /* the kiln confirms in the hand too — one short strike, throttled
+         on the same shared pulse line as the loom */
+      if (
+        now - museumState.lastPulseAt >= KILN_PULSE_MIN_MS &&
+        typeof navigator !== 'undefined' &&
+        'vibrate' in navigator
+      ) {
+        museumState.lastPulseAt = now
+        navigator.vibrate(24)
+      }
+      playKilnClink()
       build(Math.floor(Math.random() * 0x7fffffff))
+      /* the proof mark in the room hears the fire */
+      window.dispatchEvent(new Event('ar:kiln-fire'))
     }
     const onPointerDown = (e: PointerEvent) => {
       const now = performance.now()
@@ -337,7 +367,18 @@ export function MosaicCanvas() {
       hand.x = pointer.x * 5.2
       hand.y = pointer.y * 4.6
 
-      for (const r of rigids) {
+      /* the first ~1.6s are the presentation: the camera steps forward
+         onto the composition while the pieces cool from kiln heat —
+         the object is being shown, not merely spawned */
+      const entering = easeOutExpo(Math.min(1, t / REVEAL_DURATION))
+      const kindle = 1 - entering
+      warm.intensity = 2.1 + 1.9 * kindle
+      /* and after it settles, the hall breathes — the same slow tide as
+         the sound, so the object is calm but never quite frozen */
+      fill.intensity = 0.85 + Math.sin(t * 0.6) * 0.03
+
+      for (let i = 0; i < rigids.length; i++) {
+        const r = rigids[i]
         /* pieces fly in from the far ring, outside in, then settle */
         const local = Math.min(1, Math.max(0, (t - r.delay) / r.duration))
         if (local < 1) {
@@ -346,6 +387,10 @@ export function MosaicCanvas() {
           r.group.position.z = r.z
           r.group.rotation.z = r.startRot + (r.finalRot - r.startRot) * e
           r.group.scale.setScalar(Math.max(0.01, e))
+          /* still warm from the kiln while it flies in */
+          r.material.color.copy(r.baseColor).lerp(KILN_WARM, kindle * 0.45)
+          r.material.emissive.copy(r.baseEmissive)
+          r.material.emissiveIntensity = 0.12 + kindle * 0.5
         } else {
           /* settled: gentle float + pointer depth */
           const near = Math.max(0, 1 - Math.hypot(r.final.x - hand.x, r.final.y - hand.y) / NEAR_RADIUS)
@@ -358,19 +403,25 @@ export function MosaicCanvas() {
 
           /* the star feels the visitor: a little bigger, a little warmer,
              turning with a slow inertia that never leaves the pattern */
-          r.group.scale.setScalar(1 + nearK * NEAR_STRENGTH)
-          r.targetRot =
-            r.finalRot +
-            pointer.x * 0.05 * Math.max(0, 1 - near / 6) +
-            nearK * 0.12
+          const f = i === 0 ? flash : 0
+          r.group.scale.setScalar(1 + nearK * NEAR_STRENGTH + f * 0.045)
+          r.targetRot = r.finalRot + pointer.x * 0.05 * Math.max(0, 1 - near / 6) + nearK * 0.12
           r.rotVel += (r.targetRot - r.group.rotation.z) * Math.min(1, dt * 8)
           r.rotVel *= 1 - Math.min(1, dt * 2.6)
           r.group.rotation.z += r.rotVel * Math.min(1, dt * 4)
 
-          r.material.color.copy(r.baseColor).lerp(r.glowColor, nearK * 0.5)
-          r.material.emissiveIntensity = 0.12 + nearK * 0.35
+          r.material.color
+            .copy(r.baseColor)
+            .lerp(KILN_WARM, kindle * 0.45)
+            .lerp(r.glowColor, nearK * 0.5)
+            .lerp(KILN_FLASH, f * 0.7)
+          r.material.emissive.copy(r.baseEmissive).lerp(KILN_FLASH, f)
+          r.material.emissiveIntensity = 0.12 + kindle * 0.5 + f * 2.6 + nearK * 0.35
         }
       }
+
+      /* the kiln's flash cools back to the glaze tone within ~300ms */
+      flash *= Math.max(0, 1 - dt * 6)
 
       /* the roll on scroll is safe: rotation about z never changes a
          piece's depth. The pointer yaw/pitch must stay small enough that
@@ -383,10 +434,11 @@ export function MosaicCanvas() {
       root.rotation.x = pointer.y * 0.02
       root.position.y = -scroll * 0.9
       root.position.z = scroll * 5.4
-      root.scale.setScalar(1 - scroll * 0.28)
+      root.scale.setScalar((0.9 + 0.1 * entering) * (1 - scroll * 0.28))
 
       camera.position.x = pointer.x * 0.7
-      camera.position.y = -pointer.y * 0.34 + 0.25
+      camera.position.y = -pointer.y * 0.34 + 0.25 + (1 - entering) * 0.55
+      camera.position.z = 18.15 - 1.25 * entering
       camera.lookAt(0, 0, 0)
 
       renderer.render(scene, camera)

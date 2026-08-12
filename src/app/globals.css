@@ -19,17 +19,17 @@
 @layer base {
   :root {
     /* palette (channel triplets let tailwind use /opacity modifiers) */
-    --bg-rgb: 238 232 218;      /* lime plaster */
-    --bg-2-rgb: 230 223 207;    /* plaster in shadow */
+    --bg-rgb: 238 232 218; /* lime plaster */
+    --bg-2-rgb: 230 223 207; /* plaster in shadow */
     --surface-rgb: 247 243 234; /* paper / tadelakt highlight */
-    --text-rgb: 28 26 22;       /* ink */
+    --text-rgb: 28 26 22; /* ink */
     --text-2-rgb: 82 76 65;
     --text-3-rgb: 111 102 86;
-    --accent-rgb: 30 64 130;    /* Fes cobalt glaze */
+    --accent-rgb: 30 64 130; /* Fes cobalt glaze */
     --accent-2-rgb: 140 102 52; /* aged brass */
     --gold-rgb: 168 122 54;
-    --emerald-rgb: 21 105 92;   /* mint glaze */
-    --terra-rgb: 170 82 38;     /* terracotta glaze */
+    --emerald-rgb: 21 105 92; /* mint glaze */
+    --terra-rgb: 170 82 38; /* terracotta glaze */
     --ivory-rgb: 233 227 212;
     --walnut-rgb: 27 23 18;
     --ok-rgb: 21 105 92;
@@ -228,11 +228,7 @@
 
   .rule-accent {
     height: 1px;
-    background: linear-gradient(
-      to right,
-      rgba(var(--accent-rgb), 0.55),
-      rgba(var(--accent-rgb), 0.12)
-    );
+    background: linear-gradient(to right, rgba(var(--accent-rgb), 0.55), rgba(var(--accent-rgb), 0.12));
   }
 
   /* --- buttons (brass / ink ghost) ---------------------------------------- */
@@ -364,7 +360,9 @@
     border-radius: 50% 50% 0.3rem 0.3rem / 135% 135% 0.3rem 0.3rem;
     border: 1px solid rgba(var(--accent-2-rgb), 0.35);
     pointer-events: none;
-    transition: inset 0.65s var(--ease-out-expo), border-radius 0.65s var(--ease-out-expo);
+    transition:
+      inset 0.65s var(--ease-out-expo),
+      border-radius 0.65s var(--ease-out-expo);
   }
 
   .arch-frame:hover {
@@ -428,6 +426,132 @@
     background-size: 140px 140px;
     filter: blur(14px);
     opacity: 0.8;
+  }
+
+  /* --- orbital instruments: hairline rings turning around the mandala ----- */
+  /* faint brass bezels, the size of clockwork — slow, low, always behind
+     the composition. The spin keyframes live at the bottom of this file;
+     reduced motion freezes them via the global kill-switch. */
+  .orbs {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .orb-pos {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    display: block;
+  }
+
+  .orb-a {
+    animation: spin 110s linear infinite;
+  }
+
+  .orb-b {
+    animation: spin 170s linear infinite reverse;
+  }
+
+  .orb-c {
+    animation: spin 240s linear infinite;
+  }
+
+  .orb-circle {
+    fill: none;
+    stroke: var(--accent-2);
+    stroke-linecap: round;
+  }
+
+  /* --- the museum's thesis: spoken once the mandala has settled ----------- */
+  .thesis-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    line-height: 1.4;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .thesis-line {
+    margin-top: 0.8rem;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(1.45rem, 2.8vw, 2.15rem);
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    text-wrap: balance;
+  }
+
+  /* --- the kiln's proof mark: FIRED, stamped over the zellige ------------- */
+  .fired-mark {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.34rem 0.75rem;
+    border: 1px solid rgba(var(--accent-2-rgb), 0.5);
+    border-radius: 0.22rem;
+    background: rgba(var(--surface-rgb), 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    white-space: nowrap;
+  }
+
+  /* every remount is a fresh stamp: in, hold, gone */
+  .fired-mark.is-fired {
+    animation:
+      fired-in 0.3s var(--ease-out-expo),
+      fired-out 0.4s ease-in 0.8s forwards;
+  }
+
+  @keyframes fired-in {
+    from {
+      opacity: 0;
+      transform: scale(0.92) translateY(5px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes fired-out {
+    from {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.99) translateY(-5px);
+    }
+  }
+
+  /* --- the museum's thesis: spoken once the mandala has settled ---------- */
+  .thesis-reveal {
+    opacity: 0;
+    transform: translateY(1.1rem);
+    transition:
+      opacity 1.6s var(--ease-out-expo) 0.15s,
+      transform 1.6s var(--ease-out-expo) 0.15s;
+  }
+
+  .thesis-reveal.is-shown {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .thesis-reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 
   /* --- outlined display type ------------------------------------------------ */
@@ -563,12 +687,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(
-      100deg,
-      transparent 30%,
-      rgba(255, 255, 255, 0.16) 50%,
-      transparent 70%
-    );
+    background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.16) 50%, transparent 70%);
     transform: translateX(-130%);
     animation: band-drift 9s linear infinite;
   }
@@ -578,12 +697,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(
-      100deg,
-      transparent 25%,
-      rgba(255, 255, 255, 0.38) 50%,
-      transparent 75%
-    );
+    background: linear-gradient(100deg, transparent 25%, rgba(255, 255, 255, 0.38) 50%, transparent 75%);
     animation: band-ripple 1.05s var(--ease-out-expo) 1;
   }
 

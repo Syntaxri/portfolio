@@ -84,7 +84,7 @@ export function ExitRoom() {
       {/* the final moment — the exhibition ends on the monogram */}
       <div className="relative border-t border-[rgba(28,26,22,0.12)]">
         <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-16 text-center sm:px-6">
-          <Monogram variant="outline" className="h-16 w-16 text-accent-2" />
+          <Monogram className="h-16 w-16 text-accent-2" />
           <p className="lede mt-6 max-w-[24ch] text-text-2">
             The exhibition has ended — the door stays open.
           </p>

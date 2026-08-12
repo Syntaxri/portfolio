@@ -74,7 +74,7 @@ export function Topbar() {
             className="group flex items-center gap-3"
             aria-label={`${site.name} — the museum entrance`}
           >
-            <Monogram variant="solid" className="h-7 w-7 text-accent-2 transition-colors group-hover:text-accent" />
+            <Monogram className="h-7 w-7 text-accent-2 transition-colors group-hover:text-accent" />
             <span className="hidden font-mono text-[0.62rem] uppercase tracking-[0.24em] text-text-2 sm:inline">
               {site.name}
             </span>

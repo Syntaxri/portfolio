@@ -43,8 +43,6 @@ export default function OpengraphImage() {
           <path d={MONOGRAM_PATHS.arch} fill="#1e4082" />
           <path d={MONOGRAM_PATHS.vLeft} stroke="#eae4d4" strokeWidth="7" strokeLinecap="round" />
           <path d={MONOGRAM_PATHS.vRight} stroke="#eae4d4" strokeWidth="7" strokeLinecap="round" />
-          <path d={MONOGRAM_PATHS.keystone} fill="#eae4d4" />
-          <path d={MONOGRAM_PATHS.floor} stroke="#8c6634" strokeWidth="3.5" strokeLinecap="round" />
         </svg>
         <div style={{ fontSize: 28, display: 'flex', gap: 20, color: '#6f6656', letterSpacing: 6, marginBottom: 26 }}>
           <span>THE MUSEUM OF SOFTWARE CRAFTSMANSHIP</span>

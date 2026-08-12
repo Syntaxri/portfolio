@@ -44,7 +44,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
         <div>
           <div className="mb-4 flex items-center gap-3">
-            <Monogram variant="solid" className="h-6 w-6 text-accent-2" />
+            <Monogram className="h-6 w-6 text-accent-2" />
             <span className="font-mono text-[0.62rem] uppercase tracking-[0.24em] text-text-2">
               {site.name} × {site.nickname}
             </span>

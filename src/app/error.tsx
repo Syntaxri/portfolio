@@ -16,7 +16,7 @@ export default function ErrorPage({
 }) {
   return (
     <main className="flex min-h-[70svh] flex-col items-center justify-center px-4 py-28 text-center">
-      <Monogram variant="outline" className="mb-8 h-14 w-14 text-accent" />
+      <Monogram className="mb-8 h-14 w-14 text-accent" />
       <span className="label-accent label mb-6">The cold gallery</span>
       <h1 className="room-title text-text">One of the tiles fell off.</h1>
       <p className="mt-4 max-w-[46ch] text-text-3">

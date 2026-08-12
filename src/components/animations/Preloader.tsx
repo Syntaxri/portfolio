@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import gsap from 'gsap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { Monogram } from '@/components/museum/Monogram'
-import { starPath } from '@/lib/geometry'
+import { MONOGRAM_PATHS, starPath } from '@/lib/geometry'
 import { site } from '@/lib/data/site'
 
 /* returning visitors skip the door; sessionStorage keeps private-mode
@@ -59,7 +59,7 @@ export function Preloader() {
       const tl = gsap.timeline()
       tl.fromTo(
         '.door-draw',
-        { strokeDashoffset: 360 },
+        { strokeDashoffset: 190 },
         { strokeDashoffset: 0, duration: 0.85, ease: 'power2.inOut' }
       )
         .fromTo(
@@ -117,7 +117,7 @@ export function Preloader() {
             />
           ))}
         </svg>
-        <Monogram variant="line" className="door-fade h-24 w-24 text-accent" />
+        <Monogram className="door-fade h-24 w-24 text-accent" />
         <svg
           viewBox="0 0 100 96"
           className="absolute inset-0 h-24 w-24"
@@ -126,12 +126,12 @@ export function Preloader() {
         >
           <path
             className="door-draw"
-            d="M8 88 C8 42 36 12 50 12 C64 12 92 42 92 88 L85 88 C85 44 64 18 50 18 C36 18 15 44 15 88 Z"
+            d={MONOGRAM_PATHS.arch}
             stroke="currentColor"
             strokeWidth="3"
             strokeLinejoin="round"
-            strokeDasharray="360"
-            strokeDashoffset="360"
+            strokeDasharray="190"
+            strokeDashoffset="190"
             fill="none"
           />
         </svg>

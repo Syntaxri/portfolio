@@ -77,17 +77,15 @@ export function zelligeBandSvg(count = 24, tile = 14, colors: string[] = []): st
 }
 
 /* ---------------------------------------------------------------------------
- * THE MONOGRAM — an arch cut into an A, whose negative space is a V.
- * The apex carries a keystone diamond, like the boss of a carved door.
+ * THE MONOGRAM — a single-stroke A cut from an arch, whose negative
+ * space is a V. One mark, drawn the same everywhere.
  * ------------------------------------------------------------------------- */
 
-/** Outline variant: arch ring + V + keystone, drawn as stroked paths. */
+/** The mark: one A without a centre line, a plain V inside it. */
 export const MONOGRAM_PATHS = {
-  arch: 'M8 88 C8 42 36 12 50 12 C64 12 92 42 92 88 L85 88 C85 44 64 18 50 18 C36 18 15 44 15 88 Z',
-  vLeft: 'M50 30 L33 83',
-  vRight: 'M50 30 L67 83',
-  keystone: 'M50 3 L56 11 L50 19 L44 11 Z',
-  floor: 'M18 92 H82',
+  arch: 'M8 88 C8 42 36 12 50 12 C64 12 92 42 92 88',
+  vLeft: 'M33 30 L50 83',
+  vRight: 'M67 30 L50 83',
 } as const
 
 /** Solid variant: a solid arch wedge (plaque engraving). */

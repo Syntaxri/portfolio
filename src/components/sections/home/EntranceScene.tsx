@@ -117,7 +117,7 @@ export function EntranceScene() {
             data-hero-reveal
             style={{ opacity: entered ? undefined : 0 }}
           >
-            <Monogram variant="outline" className="h-12 w-12 text-accent-2" />
+            <Monogram className="h-12 w-12 text-accent-2" />
             <div>
               <h1 className="label-accent label">Room 00 — the atrium</h1>
               <p className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.22em] text-text-3">

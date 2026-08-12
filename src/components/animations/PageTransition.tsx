@@ -52,7 +52,7 @@ export function PageTransition() {
       className="pointer-events-none fixed inset-0 z-[150] hidden items-center justify-center bg-bg"
     >
       <div className="flex flex-col items-center gap-4">
-        <Monogram variant="outline" className="h-10 w-10 text-accent" />
+        <Monogram className="h-10 w-10 text-accent" />
         <span className="label-accent label">{roomLabel(pathname)}</span>
       </div>
     </div>

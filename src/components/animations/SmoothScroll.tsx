@@ -88,6 +88,13 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('popstate', onPop)
   }, [])
 
+  /* fresh loads must land on the header. With the browser's automatic
+     restoration left on, reloading a deep-scrolled project page reopens
+     it at the footer; the app restores positions itself on popstate. */
+  useEffect(() => {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+  }, [])
+
   /* remember where each route is left — in-memory, cheap */
   useEffect(() => {
     const onScroll = () => {
@@ -112,6 +119,8 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       if (arrivedBack) {
         const saved = scrollPositions.get(pathname)
         if (typeof saved === 'number') window.scrollTo({ top: saved, behavior: 'auto' })
+      } else {
+        window.scrollTo({ top: 0, behavior: 'auto' })
       }
       trackingPausedRef.current = false
       return
@@ -124,6 +133,11 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
         const saved = scrollPositions.get(pathname)
         /* force: Lenis is still stopped here; immediate: no visible animation */
         if (typeof saved === 'number') lenis.scrollTo(saved, { immediate: true, force: true })
+      } else if (window.scrollY > 0) {
+        /* fresh navigation (or a reload the browser re-scrolled): land on
+           the header, never on the footer */
+        window.scrollTo({ top: 0, behavior: 'auto' })
+        lenis.scrollTo(0, { immediate: true, force: true })
       }
       ScrollTrigger.refresh()
       lenis.start()

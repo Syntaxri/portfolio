@@ -123,6 +123,9 @@ export function Preloader() {
               /* storage unavailable (private mode) — session only */
             }
             sessionStorage.setItem('ar-museum-v5', '1')
+            /* the door is done — a later visit inside this session must
+               not wait for a lift that will never come */
+            window.__entranceReady = false
             setDone(true)
           },
         })

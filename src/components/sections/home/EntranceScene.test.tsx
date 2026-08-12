@@ -1,14 +1,15 @@
 // @vitest-environment jsdom
-import { render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { act, render, screen } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { EntranceScene } from './EntranceScene'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 vi.mock('@/components/animations/SmoothScroll', () => ({
   useLenis: () => ({ scrollTo: vi.fn() }),
 }))
 
 vi.mock('@/hooks/useReducedMotion', () => ({
-  useReducedMotion: () => true,
+  useReducedMotion: vi.fn(() => true),
 }))
 
 vi.mock('next/dynamic', () => {
@@ -23,6 +24,12 @@ vi.mock('@/components/three/WebGLErrorBoundary', () => ({
 }))
 
 describe('EntranceScene', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.mocked(useReducedMotion).mockReturnValue(true)
+    window.__entranceReady = false
+  })
+
   it('names the room as the page heading', () => {
     render(<EntranceScene />)
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Room 00/i)
@@ -37,5 +44,28 @@ describe('EntranceScene', () => {
     const { container } = render(<EntranceScene />)
     expect(container.querySelectorAll('[data-hero-reveal]').length).toBeGreaterThan(0)
     expect(screen.getByRole('heading', { level: 1 })).toBeVisible()
+  })
+
+  it('enters despite a stale door flag when no lift event ever comes', () => {
+    vi.useFakeTimers()
+    vi.mocked(useReducedMotion).mockReturnValue(false)
+    window.__entranceReady = true
+    const { container } = render(<EntranceScene />)
+    expect(container.querySelector('[data-hero-reveal]')).toHaveStyle({ opacity: 0 })
+    act(() => {
+      vi.advanceTimersByTime(8000)
+    })
+    expect(document.documentElement.classList.contains('no-cursor')).toBe(true)
+  })
+
+  it('enters as soon as the door lifts', () => {
+    vi.mocked(useReducedMotion).mockReturnValue(false)
+    window.__entranceReady = true
+    const { container } = render(<EntranceScene />)
+    expect(container.querySelector('[data-hero-reveal]')).toHaveStyle({ opacity: 0 })
+    act(() => {
+      window.dispatchEvent(new Event('ar:door-lift'))
+    })
+    expect(document.documentElement.classList.contains('no-cursor')).toBe(true)
   })
 })

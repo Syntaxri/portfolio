@@ -35,8 +35,8 @@ const RING_POINTS = Array.from({ length: STAR_COUNT }, (_, i) => ({
 /**
  * THE DOOR — the entrance sequence. The monogram mark while twenty-one
  * stars gather as a ring around it — one for every year of the maker —
- * then the door lifts. Short, skippable by returning visitors, and
- * fully asleep under reduced motion.
+ * then the door lifts. Short (about 3.5s in full), skippable by
+ * returning visitors, and fully asleep under reduced motion.
  */
 export function Preloader() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -79,7 +79,8 @@ export function Preloader() {
          set() first (a single staggered tween renders each star's start
          state only at its own slot, so the whole ring would flash
          visible on frame one), then launched to its slot on its own
-         beat. */
+         beat. The whole door is tuned to hand the stage over at ~2.8s
+         and be fully gone by ~3.5s — an entrance, never a wait. */
       root.querySelectorAll<SVGPathElement>('.door-star').forEach((el, i) => {
         const a = RING_POINTS[i].a
         gsap.set(el, {
@@ -95,18 +96,18 @@ export function Preloader() {
             y: 0,
             scale: starScale,
             opacity: 1,
-            duration: 0.6,
+            duration: 0.5,
             ease: 'back.out(1.8)',
           },
-          i * 0.07
+          i * 0.045
         )
       })
       tl.to(
         '.door-star',
-        { scale: starScale * 0.985, duration: 0.5, ease: 'power1.inOut' },
-        '+=0.35'
+        { scale: starScale * 0.985, duration: 0.4, ease: 'power1.inOut' },
+        '+=0.2'
       )
-        .to('.door-fade', { opacity: 0, y: -16, duration: 0.45, ease: 'power2.in' }, '+=0.9')
+        .to('.door-fade', { opacity: 0, y: -16, duration: 0.4, ease: 'power2.in' }, '+=0.4')
         .set(root, { pointerEvents: 'none' })
         /* the entrance takes the stage under the rising door — the hero
            reveal and the WebGL kiln start their work here, never while
@@ -114,7 +115,7 @@ export function Preloader() {
         .call(() => window.dispatchEvent(new Event('ar:door-lift')))
         .to(root, {
           yPercent: -100,
-          duration: 0.9,
+          duration: 0.8,
           ease: 'expo.inOut',
           onComplete: () => {
             try {
@@ -131,7 +132,20 @@ export function Preloader() {
         })
     }, root)
 
-    return () => ctx.revert()
+    /* safety net: however the browser throttles or starves the tab,
+       the door can never hold the museum hostage. If it has not lifted
+       on its own by ~4.5s it is lifted by force — the loading screen
+       never stays for five seconds. */
+    const watchdog = window.setTimeout(() => {
+      window.dispatchEvent(new Event('ar:door-lift'))
+      window.__entranceReady = false
+      setDone(true)
+    }, 4500)
+
+    return () => {
+      window.clearTimeout(watchdog)
+      ctx.revert()
+    }
   }, [visible, done, reduced])
 
   if (!visible || done) return null

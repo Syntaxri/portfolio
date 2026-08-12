@@ -54,14 +54,16 @@ export function EntranceScene() {
     }
     /* the hero waits for the door to lift (ar:door-lift) so the WebGL
        kiln never fights the preloader for the main thread. Returning
-       visitors skip the door entirely — then the fallback enters once
-       the page has had a beat to settle. */
-    let fallback = window.setTimeout(done, 1150)
+       visitors skip the door entirely — a short paint beat only, so
+       the entrance opens as soon as the page is ready, never behind
+       an artificial wait. */
+    let fallback = window.setTimeout(done, 400)
     const toLift = () => {
       /* a door is playing: wait for its lift, capped in case it is
-         lost (background tab, throttled frames) */
+         lost (listener race). The door force-lifts itself after 4.5s,
+         so the cap simply sits beyond that guarantee. */
       window.clearTimeout(fallback)
-      fallback = window.setTimeout(done, 7000)
+      fallback = window.setTimeout(done, 5500)
     }
     const onReady = toLift
     const onLift = () => {

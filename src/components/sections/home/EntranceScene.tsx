@@ -53,10 +53,9 @@ export function EntranceScene() {
       return
     }
     /* the hero waits for the door to lift (ar:door-lift) so the WebGL
-       kiln never fights the preloader for the main thread. Returning
-       visitors skip the door entirely — a short paint beat only, so
-       the entrance opens as soon as the page is ready, never behind
-       an artificial wait. */
+       kiln never fights the preloader for the main thread. The door
+       always plays on a fresh page load, so the entrance opens behind
+       it, never behind an artificial wait. */
     let fallback = window.setTimeout(done, 250)
     const toLift = () => {
       /* a door is playing: wait for its lift, capped in case it is

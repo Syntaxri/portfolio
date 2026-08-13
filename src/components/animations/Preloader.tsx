@@ -1,28 +1,19 @@
 'use client'
 
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { Monogram } from '@/components/museum/Monogram'
 import { starPath } from '@/lib/geometry'
 import { site } from '@/lib/data/site'
 
-/* returning visitors skip the door; sessionStorage keeps private-mode
-   tabs consistent. Neither changes after first paint — a static store is
-   enough. */
-function subscribeStorage(): () => void {
-  return () => {}
-}
-
-function readPreloaderSeen(): boolean {
-  if (typeof window === 'undefined') return false
-  try {
-    if (localStorage.getItem('ar-museum-v5') !== null) return true
-  } catch {
-    /* storage unavailable — fall back to tab-only memory */
-  }
-  return sessionStorage.getItem('ar-museum-v5') !== null
-}
+/**
+ * THE DOOR — the entrance sequence. The monogram mark while twenty-one
+ * stars gather as a ring around it — one for every year of the maker —
+ * then the door lifts. Short (about 3s in full, skippable with any
+ * click or key), always refired on every site load, and fully asleep
+ * under reduced motion.
+ */
 
 /* twenty-one stars — one for every year of the maker — gathered as a
    ring around the mark. Their ring slots; the assembly flies them in. */
@@ -32,23 +23,13 @@ const RING_POINTS = Array.from({ length: STAR_COUNT }, (_, i) => ({
   face: ['#1e4082', '#15695c', '#aa5226', '#8c6634'][i % 4],
 }))
 
-/**
- * THE DOOR — the entrance sequence. The monogram mark while twenty-one
- * stars gather as a ring around it — one for every year of the maker —
- * then the door lifts. Short (about 3s in full, skippable with any
- * click or key), skipped entirely for returning visitors, and fully
- * asleep under reduced motion.
- */
 export function Preloader() {
   const rootRef = useRef<HTMLDivElement>(null)
   const [done, setDone] = useState(false)
   const reduced = useReducedMotion()
-  const seen = useSyncExternalStore(subscribeStorage, readPreloaderSeen, () => false)
-
-  const visible = !seen
 
   useEffect(() => {
-    if (!visible || done) return
+    if (done) return
     const root = rootRef.current
     if (!root) return
 
@@ -66,14 +47,6 @@ export function Preloader() {
     const finish = () => {
       if (finished) return
       finished = true
-      try {
-        localStorage.setItem('ar-museum-v5', '1')
-      } catch {
-        /* storage unavailable (private mode) — session only */
-      }
-      sessionStorage.setItem('ar-museum-v5', '1')
-      /* the door is done — a later visit inside this session must
-         not wait for a lift that will never come */
       window.__entranceReady = false
       setDone(true)
     }
@@ -169,9 +142,9 @@ export function Preloader() {
       window.removeEventListener('keydown', skip)
       ctx.revert()
     }
-  }, [visible, done, reduced])
+  }, [done, reduced])
 
-  if (!visible || done) return null
+  if (done) return null
 
   return (
     <div

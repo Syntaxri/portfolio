@@ -97,6 +97,10 @@ describe('SmoothScrollProvider', () => {
       </SmoothScrollProvider>
     )
 
+    /* landing on the header is the provider's mount behaviour — clear
+       it so the assertion below isolates the anchor click itself */
+    scrollToSpy.mockClear()
+
     getByText('work').click()
 
     expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'auto', block: 'start' })

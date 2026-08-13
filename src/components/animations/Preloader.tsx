@@ -51,7 +51,7 @@ export function Preloader() {
       setDone(true)
     }
 
-    let tl: gsap.core.Timeline | undefined
+    const tl = gsap.timeline()
     const ctx = gsap.context(() => {
       /* the door is refired each day: the same door, a different weave —
          the glaze ring starts at a different point and the studs sit a
@@ -65,7 +65,6 @@ export function Preloader() {
         gsap.set(el, { fill: rotated[i % rotated.length] })
       })
 
-      tl = gsap.timeline()
       /* the ring builds itself from the top star, one after another,
          sweeping clockwise until the circle closes — never born whole.
          Each star is hidden and tucked in toward the mark with its own

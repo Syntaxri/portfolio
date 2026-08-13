@@ -48,7 +48,6 @@ export function CraftDashboard() {
   const [weave, setWeave] = useState(0)
   const [seed, setSeed] = useState(0)
   const [regens, setRegens] = useState(0)
-  const [ambience, setAmbience] = useState<'idle' | 'playing' | 'off'>('idle')
   const panelRef = useRef<HTMLDivElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
   const lastFocusRef = useRef<HTMLElement | null>(null)
@@ -91,7 +90,6 @@ export function CraftDashboard() {
   useEffect(() => {
     const off = onRoomChange((room) => {
       setRoomLabel(room.label)
-      setAmbience(museumState.ambience)
     })
     return off
   }, [])
@@ -183,7 +181,6 @@ export function CraftDashboard() {
           <Row label="Zellige seed" value={seed === 0 ? 'canonical' : String(seed)} />
           <Row label="Kiln fires" value={String(regens)} />
           <Row label="The loom" value={`${weave}% woven`} />
-          <Row label="Ambience" value={ambience === 'playing' ? 'playing' : ambience === 'off' ? 'off' : 'idle'} dim />
         </div>
 
         <p className="mt-3 border-t border-[rgba(196,196,255,0.12)] pt-2.5 font-mono text-[0.52rem] uppercase leading-relaxed tracking-[0.16em] text-[#6f6756]">

@@ -1,6 +1,6 @@
 /**
  * MUSEUM STATE — the shared, deliberately tiny wiring between the
- * installations and the chrome (conservation console, ambience, rooms).
+ * installations and the chrome (conservation console, rooms).
  * Not React state: these values change every frame and must never
  * re-render anything.
  */
@@ -43,8 +43,6 @@ export const glRegistry = {
   },
 }
 
-export type AmbienceState = 'idle' | 'playing' | 'off'
-
 export const museumState = {
   /** the room the visitor is standing in (label for the console) */
   roomLabel: 'The Atrium',
@@ -55,14 +53,13 @@ export const museumState = {
   zelligePieces: 0,
   /** the loom's weave progress 0..1 */
   weave: 0,
-  ambience: 'idle' as AmbienceState,
   /** last haptic pulse, in ms (shared throttle across the loom) */
   lastPulseAt: 0,
 }
 
 /* ---------------------------------------------------------------------------
  * ROOM WATCH — one IntersectionObserver, any number of listeners.
- * Both the dashboard and the ambience engine follow the visitor.
+ * The dashboard follows the visitor from room to room.
  * ------------------------------------------------------------------------- */
 
 export const MUSEUM_ROOMS = [

@@ -173,7 +173,7 @@ export function Preloader() {
         </svg>
         {/* the mark's drawn content sits a touch high of its box — the
             nudge sits its centroid exactly on the ring's centre */}
-        <div className="-translate-x-[3px] -translate-y-[10%]">
+        <div className="translate-x-[3%] -translate-y-[10%]">
           <Monogram className="door-fade h-24 w-24 text-accent" />
         </div>
       </div>

@@ -8,9 +8,6 @@
   "browserslist": [
     "defaults and supports es6-module"
   ],
-  "browserslist": [
-    "defaults and supports es6-module"
-  ],
   "scripts": {
     "dev": "next dev",
     "build": "node scripts/check-env.mjs && next build",

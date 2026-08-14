@@ -5,6 +5,12 @@
   "engines": {
     "node": ">=22"
   },
+  "browserslist": [
+    "defaults and supports es6-module"
+  ],
+  "browserslist": [
+    "defaults and supports es6-module"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "node scripts/check-env.mjs && next build",
@@ -17,8 +23,6 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
-    "@react-three/drei": "^10.7.8",
-    "@react-three/fiber": "^9.7.0",
     "gsap": "^3.15.0",
     "lenis": "^1.3.26",
     "next": "^16.3.0",

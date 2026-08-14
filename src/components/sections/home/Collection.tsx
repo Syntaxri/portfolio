@@ -51,7 +51,7 @@ export function Collection() {
                 className="block"
                 aria-label={`${flagship.title} — case study`}
               >
-                <ExhibitCover project={flagship} priority />
+                <ExhibitCover project={flagship} />
               </Link>
             </div>
             <div className="lg:col-span-5">

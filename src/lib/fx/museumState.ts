@@ -47,6 +47,8 @@ export const museumState = {
   /** the room the visitor is standing in (label for the console) */
   roomLabel: 'The Atrium',
   roomId: 'entrance',
+  /** the entrance door has lifted — the WebGL kiln may start its loop */
+  entranceOpen: false,
   /** fires of the kiln: every zellige regeneration */
   regens: 0,
   zelligeSeed: 0,

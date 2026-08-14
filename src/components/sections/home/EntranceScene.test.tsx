@@ -51,7 +51,9 @@ describe('EntranceScene', () => {
     vi.mocked(useReducedMotion).mockReturnValue(false)
     window.__entranceReady = true
     const { container } = render(<EntranceScene />)
-    expect(container.querySelector('[data-hero-reveal]')).toHaveStyle({ opacity: 0 })
+    /* the hero is painted from the first paint, hidden behind the door —
+       the entrance never waits for JS timing to register its LCP */
+    expect(container.querySelector('[data-hero-reveal]')).not.toHaveStyle({ opacity: 0 })
     act(() => {
       vi.advanceTimersByTime(8000)
     })
@@ -62,7 +64,7 @@ describe('EntranceScene', () => {
     vi.mocked(useReducedMotion).mockReturnValue(false)
     window.__entranceReady = true
     const { container } = render(<EntranceScene />)
-    expect(container.querySelector('[data-hero-reveal]')).toHaveStyle({ opacity: 0 })
+    expect(container.querySelector('[data-hero-reveal]')).not.toHaveStyle({ opacity: 0 })
     act(() => {
       window.dispatchEvent(new Event('ar:door-lift'))
     })

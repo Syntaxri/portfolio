@@ -47,15 +47,23 @@ export function EntranceScene() {
   const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const done = () => setEntered(true)
+    const done = () => {
+      setEntered(true)
+      /* the kiln's loop waits for the door to open — the Preloader
+         dispatches this on its lift, in case it never plays this
+         dispatch guarantees the installation still wakes */
+      if (!reduced) window.dispatchEvent(new Event('ar:door-lift'))
+    }
     if (reduced) {
       done()
       return
     }
-    /* the hero waits for the door to lift (ar:door-lift) so the WebGL
-       kiln never fights the preloader for the main thread. The door
-       always plays on a fresh page load, so the entrance opens behind
-       it, never behind an artificial wait. */
+    /* the hero waits for the door to lift (ar:door-lift) so the entrance
+       choreography never plays before the ceremony hands over. The kiln
+       itself is already mounted from the first paint — hidden behind the
+       opaque door — so its first frame (the page's LCP) is registered
+       immediately instead of waiting for the JS-driven lift on slow
+       devices. */
     let fallback = window.setTimeout(done, 250)
     const toLift = () => {
       /* a door is playing: wait for its lift, capped in case it is
@@ -216,7 +224,7 @@ export function EntranceScene() {
 
       <div className="absolute inset-0" aria-hidden="true">
         <WebGLErrorBoundary onFail={() => setGlFailed(true)}>
-          {!glFailed && entered && (
+          {!glFailed && (
             <div className="absolute inset-0" data-installation>
               <MosaicCanvas />
             </div>
@@ -257,7 +265,6 @@ export function EntranceScene() {
           <div
             className="flex items-center gap-4"
             data-hero-reveal
-            style={{ opacity: entered ? undefined : 0 }}
           >
             <Monogram className="h-12 w-12 text-accent-2" />
             <div>
@@ -270,7 +277,6 @@ export function EntranceScene() {
           <div
             className="mt-4 flex flex-col items-start gap-1.5"
             data-hero-reveal
-            style={{ opacity: entered ? undefined : 0 }}
           >
             <p className="label-muted label flex items-center gap-2">
               <span className="inline-block h-px w-6 bg-text-3" aria-hidden="true" />
@@ -288,7 +294,7 @@ export function EntranceScene() {
       </div>
 
       <div className="pointer-events-none relative z-10 mx-auto flex w-full max-w-7xl flex-1 items-end justify-end px-4 pb-6 sm:px-6">
-        <span className="label-muted label" data-hero-reveal style={{ opacity: entered ? undefined : 0 }}>
+        <span className="label-muted label" data-hero-reveal>
           {site.name} × {site.nickname} — {new Date().getFullYear()}
         </span>
       </div>

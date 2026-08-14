@@ -353,6 +353,7 @@ export function MosaicCanvas() {
     const easeOutExpo = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t))
 
     const tick = () => {
+      if (!started) return
       raf = requestAnimationFrame(tick)
       const dt = Math.min(clock.getDelta(), 0.05)
       const t = clock.elapsedTime
@@ -443,7 +444,21 @@ export function MosaicCanvas() {
 
       renderer.render(scene, camera)
     }
-    tick()
+    /* the kiln mounts hidden behind the door so its first frame — the
+       page's LCP — registers at once; then it idles (one static paint)
+       until the door actually lifts, so it never burns frames the
+       visitor can't see */
+    let started = museumState.entranceOpen
+    const onLift = () => {
+      museumState.entranceOpen = true
+      if (started) return
+      started = true
+      tick()
+    }
+    window.addEventListener('ar:door-lift', onLift)
+    /* one static frame now (the LCP paint); the loop waits for the lift */
+    renderer.render(scene, camera)
+    if (started) tick()
 
     const resize = () => {
       const w = canvas.clientWidth || 1
@@ -457,6 +472,7 @@ export function MosaicCanvas() {
 
     return () => {
       cancelAnimationFrame(raf)
+      window.removeEventListener('ar:door-lift', onLift)
       io.disconnect()
       glRegistry.unregister(glSource)
       window.removeEventListener('pointermove', onPointer)

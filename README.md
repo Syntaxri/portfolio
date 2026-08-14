@@ -27,9 +27,9 @@ Next, DevOps & Security, WebGL & Motion.
 **THE LOOM** (interlude between the Workshop and the Collection): a Zarbia
 rug woven in WebGL. Scrolling walks four chapters — Material (macro wool),
 Craft (the whole carpet hangs and bends), Culture (the pattern becomes a map
-from above), Digital (the wool dissolves into the museum's own geometric
-field). Both faces of the rug are drawn onto canvas at init; the camera
-choreography is a single scrubbed pose path.
+from above), Departure (the runner stays behind as you walk on). Both faces
+of the rug are drawn onto canvas at init; the camera choreography is a
+single scrubbed pose path.
 
 **ROOM 03 — THE COLLECTION**: six accessions in the arcade. WISLA hangs as
 the flagship; the web builds fill the shelves.
@@ -57,7 +57,8 @@ building?
 - The hero WebGL installation degrades to a flat CSS fallback.
 - The contact form posts to the secured `/api/contact` endpoint with a
   `mailto:` fallback.
-- Returning visitors skip the door via `ar-museum-v5`.
+- The preloader door refires on every site load — short, skippable with
+  any click or key.
 - Scroll choreography is Lenis + GSAP scrollState-driven.
 
 ## Commands

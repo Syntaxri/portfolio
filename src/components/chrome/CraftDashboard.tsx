@@ -22,7 +22,7 @@ interface GlRead {
 }
 
 const BUILD_BADGE =
-  'CI gate: lint · typecheck · 90 tests · production build — measured at build time, not in the browser'
+  'CI gate: lint · typecheck · 111 tests · production build — measured at build time, not in the browser'
 
 function Row({ label, value, dim = false }: { label: string; value: string; dim?: boolean }) {
   return (

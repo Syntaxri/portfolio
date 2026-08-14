@@ -64,7 +64,7 @@ const NOTES: CuratorNote[] = [
   {
     id: 'n6',
     tag: 'on the door',
-    body: '90 tests stand between a commit and the door — lint, typecheck, the suite and a production build, all in CI. If the pipeline coughs, nothing ships. That is the craft.',
+    body: '111 tests stand between a commit and the door — lint, typecheck, the suite and a production build, all in CI. If the pipeline coughs, nothing ships. That is the craft.',
     tilt: 'rotate-[0.3deg]',
   },
   {

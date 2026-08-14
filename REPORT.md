@@ -3,8 +3,8 @@
 Repository: `github.com/Syntaxri/portfolio` (remote `origin`, SSH)
 Branch: `main` · Working tree: clean at report time
 Author: Akram Rihani (Viaruq, `Syntaxri`)
-Report date: 2026-08-12 · First commit: 2026-03-14 · Latest commit: 2026-08-12
-Commit count: **85** · Single-author history
+Report date: 2026-08-13 · First commit: 2026-03-14 · Latest commit: 2026-08-13
+Commit count: **90** · Single-author history
 Production domain: **https://www.akramrihani.com** (canonical, www)
 
 ---
@@ -13,9 +13,9 @@ Production domain: **https://www.akramrihani.com** (canonical, www)
 
 A creative-developer portfolio rebuilt as **"The Moroccan digital museum of software craftsmanship"** — one continuous scroll through seven numbered "rooms" (Atrium → Fountain → Workshop → The Loom → Collection → Archive → Exit), delivered as a Next.js 16 App Router site with **two bespoke raw-Three.js WebGL installations** (the hero Zellige "kiln" mosaic and the Zarbia loom runner). Every piece of Zellige geometry — stars, walls, bands, the monogram, even the OpenGraph card — is **computed in code and never shipped as an image** (`src/lib/geometry.ts`, zero dependencies).
 
-A hardening pipeline stands between every commit and the door: ESLint, `tsc --noEmit`, a 21-file Vitest suite (**108 tests — 107 passing, 1 failing at report time**, see §17), and a production build, all enforced by GitHub Actions CI on push to `main` and on PRs.
+A hardening pipeline stands between every commit and the door: ESLint, `tsc --noEmit`, a 21-file Vitest suite (**111 tests, all passing**), and a production build, all enforced by GitHub Actions CI on push to `main` and on PRs.
 
-The museum is intentionally *interactive, not just animated*: the Zellige fires a new deterministic pattern when double-clicked ("the kiln"), the Archive is read by a cursor-following vault lamp, an ambient sound engine follows the visitor room to room (synthesized in Web Audio, zero audio files), the Loom pulses the phone's haptics as pattern segments lock, a conservation console (Ctrl+Shift+K) reports live FPS / draw calls / GPU truthfully, and typing `minttea` opens the curator's private notes.
+The museum is intentionally *interactive, not just animated*: the Zellige fires a new deterministic pattern when double-clicked ("the kiln", answered by a synthesized ceramic clink — the only sound in the museum, no audio files), the Archive is read by a cursor-following vault lamp, the Loom pulses the phone's haptics as pattern segments lock, a conservation console (Ctrl+Shift+K) reports live FPS / draw calls / GPU truthfully, and typing `minttea` opens the curator's private notes. A room-tone ambience engine was prototyped and **removed** (commit `68fe31e`): synthesized noise never sounded like a room, and a museum that hisses is worse than a silent one.
 
 Previous iteration (pre-rebuild): a two-mode "mode" site with password-gated Developer/Photography personas, glassmorphism, ParticleNetwork, Embla carousel and a music player — fully replaced by the museum concept (rebuild commit `9344a22`, ~10k insertions / ~5.2k deletions), and the legacy code is entirely gone from `src/`.
 
@@ -23,7 +23,7 @@ Previous iteration (pre-rebuild): a two-mode "mode" site with password-gated Dev
 
 ## 2. Repository & history
 
-### 2.1 Complete commit log (85 commits, oldest → newest)
+### 2.1 Complete commit log (90 commits, oldest → newest)
 
 **Legacy era — the two-mode site (2026-03-14 → 2026-06-28)
 
@@ -87,7 +87,7 @@ Previous iteration (pre-rebuild): a two-mode "mode" site with password-gated Dev
 | `c85e51d` | 06-28 | GitHub dynamic API — `any` cast, size → distinct_size → commits?.length fallback |
 | `bbc2497` | 06-28 | centered pill-shaped dock replaces full-width bottom bar |
 
-**Museum era (2026-08-08 → 2026-08-12)**
+**Museum era (2026-08-08 → 2026-08-13)**
 
 | Commit | Date | Subject |
 |---|---|---|
@@ -117,6 +117,14 @@ Previous iteration (pre-rebuild): a two-mode "mode" site with password-gated Dev
 | `ae69c64` | 08-12 | rename mandala → zellige; entrance hints before scroll; simplified preloader door; akramlogo favicon |
 | `3b41b01` | 08-12 | preloader door builds 21-star ring sweeping from one start; logo nudged up 10% |
 | `d3a791f` | 08-12 | fix: fresh loads land on the header; door flag cleared for late preloader visits |
+| `5bfe8bc` | 08-12 | threshold ceremony — kiln presentation, museum thesis, FIRED proof mark, orbit rings |
+| `4a47dcd` | 08-12 | perf: trim loading sequence — door lifts at ~2.8s, watchdog ceiling 4.5s, no-door fallback 400ms |
+| `7f6771a` | 08-12 | perf: entrance opens in ~3s — 3.5s watchdog with click/key skip, faster mosaic assembly |
+| `1f44251` | 08-13 | **preloader door refires on every site load** — returning-visitor storage skip removed |
+| `5b0a9ed` | 08-13 | fix: CI red for five commits — typecheck `tl` error + scroll-to-top mount beat the anchor test |
+| `bea2f81` | 08-13 | feat: real photographs for the three local client builds (Auto-École Michlifen, Azrou Design, Le Sapin) |
+| `590c3f3` | 08-13 | style: preloader monogram nudged 3% right of the ring centre |
+| `68fe31e` | 08-13 | **remove synthesized ambience** — the museum keeps only the kiln's ceramic clink |
 
 ### 2.2 Epochs in the tree
 
@@ -134,9 +142,7 @@ Previous iteration (pre-rebuild): a two-mode "mode" site with password-gated Dev
 |---|---|---|---|
 | `next` | ^16.3.0 | App Router framework, RSC, metadata API | yes |
 | `react` / `react-dom` | ^19.2.8 | UI runtime | yes |
-| `three` | ^0.185.1 | Raw WebGL scenes (**no R3F anywhere in `src/`**) | yes (MosaicCanvas, ZarbiaCanvas) |
-| `@react-three/fiber` | ^9.7.0 | declared | **never imported** |
-| `@react-three/drei` | ^10.7.8 | declared | **never imported** |
+| `three` | ^0.185.1 | Raw WebGL scenes (**pure Three.js — R3F/drei declared historically, removed 08-13**) | yes (MosaicCanvas, ZarbiaCanvas) |
 | `gsap` | ^3.15.0 | ScrollTrigger choreography, tweens | yes |
 | `lenis` | ^1.3.26 | smooth scrolling | yes |
 | `resend` | ^4.0.0 | contact-form email delivery | yes (`src/lib/email/`) |
@@ -164,7 +170,7 @@ npm run build        # node scripts/check-env.mjs && next build   (fail-fast env
 npm run start        # next start
 npm run lint         # eslint .
 npm run typecheck    # tsc --noEmit
-npm test             # vitest run     → 21 files / 108 tests (see §17)
+npm test             # vitest run     → 21 files / 111 tests (see §17)
 npm run test:watch   # vitest
 npm run format       # prettier --write .
 npm run format:check # prettier --check .
@@ -200,7 +206,7 @@ src/
 ├── components/
 │   ├── animations/          SmoothScroll (Lenis provider), CustomCursor, Magnetic,
 │   │                        PageTransition, Preloader (the door)
-│   ├── chrome/              Topbar, Footer, AmbienceControl, CraftDashboard
+│   ├── chrome/              Topbar, Footer, CraftDashboard
 │   │                        (conservation console), CuratorsKey, StabilityFactory
 │   ├── forms/               ContactForm, WaxSeal
 │   ├── museum/              Room + RoomDoor, RoomDirectory (chapter rail),
@@ -219,7 +225,7 @@ src/
 │   │                        projects.ts (six accessions)
 │   ├── email/               index.ts — Resend client wrapper, typed error codes
 │   ├── fx/                  museumState.ts (glRegistry + room observer + museumState),
-│   │                        ambience.ts (Web Audio engine), interactions (test-only at the moment)
+│   │                        ambience.ts (the kiln's clink only), interactions (test-only at the moment)
 │   ├── network/             getClientIp.ts
 │   ├── rateLimit/           index.ts (MemoryRateLimitStore, store selection),
 │   │                        redisStore.ts (Upstash KV REST adapter)
@@ -335,7 +341,7 @@ The single source of truth for every star, wall, band, and the monogram — cons
 ### 7.1 ROOM 00 — THE ATRIUM (`EntranceScene.tsx`)
 
 - Full-viewport section with `zellige-wall` + `mashrabiya` layers; the WebGL MosaicCanvas is **dynamically imported, `ssr: false`**, wrapped in `WebGLErrorBoundary`; the `.mosaic-fallback` gradients sit underneath and take over if GL fails (`glFailed`).
-- **Entrance choreography coordination with the door**: the hero listens for `ar:entrance-ready` (preloader began) and `ar:door-lift` (door lifted). If no door is playing it enters after a 1150 ms settle; if a door is playing it waits for lift with a 7000 ms cap (covers background tabs / throttled frames). A stale `window.__entranceReady` flag no longer deadlocks the entrance (fix `d3a791f`).
+- **Entrance choreography coordination with the door**: the hero listens for `ar:entrance-ready` (preloader began) and `ar:door-lift` (door lifted). If no door is playing it enters after a 250 ms paint beat; if a door is playing it waits for lift with a 4500 ms cap (the door force-lifts itself at 3.5 s, so the cap simply sits beyond that guarantee, covering background tabs / throttled frames). A stale `window.__entranceReady` flag no longer deadlocks the entrance (fix `d3a791f`).
 - On entry: `data-hero-reveal` elements rise (1s power3.out, stagger 0.09) and `no-cursor` is set.
 - Scrolling grinds the hero content (yPercent -14, opacity → 0.25, scrub, `top top → bottom 30%`).
 - Content: Room-00 label + monogram (top-left, pinned), `Scroll — the zellige unlocks` hint, `Double-click the zellige — the kiln fires a new pattern` hint (only while GL lives), bottom-right `{name} × {nickname} — {year}`.
@@ -350,12 +356,12 @@ The single source of truth for every star, wall, band, and the monogram — cons
 
 ### 7.3 ROOM 02 — THE WORKSHOP (`Workshop.tsx`)
 
-Four craft panels as "cedar doors" (`crafts` data): **Craft I Java Backend** (cobalt) — Spring Boot, Spring Security, RBAC, JPA, MySQL, REST; **Craft II TS·React·Next** (teal) — RSC, Tailwind, Accessibility, Performance; **Craft III DevOps & Security** (terra) — Linux, Git, CI/CD, Deployment, Auth, Security, Monitoring; **Craft IV WebGL & Motion** (brass) — Three.js, React Three Fiber (named in the skills list despite R3F being unused in this repo), GSAP, ScrollTrigger, Lenis, WebGL. Each: index numeral + star that rotates 22.5° on hover, glaze-colored `--glaze` CSS var, skills as `tile-tag`s, serif "plate" line over a glaze-tinted rule.
+Four craft panels as "cedar doors" (`crafts` data): **Craft I Java Backend** (cobalt) — Spring Boot, Spring Security, RBAC, JPA, MySQL, REST; **Craft II TS·React·Next** (teal) — RSC, Tailwind, Accessibility, Performance; **Craft III DevOps & Security** (terra) — Linux, Git, CI/CD, Deployment, Auth, Security, Monitoring; **Craft IV WebGL & Motion** (brass) — Three.js, React Three Fiber (named in the skill list — a toolbelt claim, not a dependency; the repo is pure Three.js after the 08-13 dep removal), GSAP, ScrollTrigger, Lenis, WebGL. Each: index numeral + star that rotates 22.5° on hover, glaze-colored `--glaze` CSS var, skills as `tile-tag`s, serif "plate" line over a glaze-tinted rule.
 
 ### 7.4 THE LOOM — the interlude (`LoomRoom.tsx` + `ZarbiaCanvas.tsx`)
 
 - A 420vh scroll tunnel with a sticky `100svh` compose: the rug hangs as a backdrop; **desktop** shows a paper reading column (left, inset to `max(1.5rem, (100vw−80rem)/2+1.5rem)`) while **mobile** shows one `loom-card` per chapter (keyed remount → entrance animation) or, in static view (reduced motion / GL failed), all four chapters static.
-- Chapters (renamed from README's "Digital" to **Departure**): 01 Material — "Close to the wool…"; 02 Craft — "The whole Zarbia at once…"; 03 Culture — "The weave holds its geometry at every distance…"; 04 Departure — "The runner stays behind as you walk on…". `aria-current="step"` on the active chapter.
+- Chapters: 01 Material — "Close to the wool…"; 02 Craft — "The whole Zarbia at once…"; 03 Culture — "The weave holds its geometry at every distance…"; 04 Departure — "The runner stays behind as you walk on…". `aria-current="step"` on the active chapter.
 - GSAP `timeline` with `scrub: 0.5`, `start 'top top' / end 'bottom bottom'`, tweening a ref-only `ZarbiaControl.p` 0→1 (no React renders per scroll frame); `museumState.weave` published for the console.
 - **Haptics**: `weavePulse(step)` — 24 ms pulse when `step % 16 === 0` (a quarter of the 64-step runner locks), else 7 ms; throttled to one pulse / 90 ms shared module-wide (`museumState.lastPulseAt`), only when `navigator.vibrate` exists.
 - `staticView = reduced || glFailed` swaps to `.mosaic-fallback` + static chapters.
@@ -413,36 +419,30 @@ The dark room (`dark`, `room-dark`, `bg-walnut`):
 ### 9.1 `museumState.ts` — shared, deliberately non-React state
 
 - `glRegistry`: a `Set<GlSource>` of live-canvas reporters; `snapshot()` sums draw calls + triangles, counts canvases, lazily fetches one GPU string (`canvases` grows during the entrance only while hero GL is alive).
-- `museumState`: `roomLabel/roomId` (IntersectionObserver-driven), `regens`, `zelligeSeed`, `zelligePieces`, `weave`, `ambience`, `lastPulseAt` (shared haptic throttle).
-- **Room watch**: one IntersectionObserver on `#main section[id]` (thresholds 0.15/0.4/0.65/0.9) picks the most-visible room and fans out to `onRoomChange` listeners (used by AmbienceControl and the dashboard); auto-disconnects when the last listener leaves.
+- `museumState`: `roomLabel/roomId` (IntersectionObserver-driven), `regens`, `zelligeSeed`, `zelligePieces`, `weave`, `lastPulseAt` (shared haptic throttle).
+- **Room watch**: one IntersectionObserver on `#main section[id]` (thresholds 0.15/0.4/0.65/0.9) picks the most-visible room and fans out to `onRoomChange` listeners (used by the dashboard); auto-disconnects when the last listener leaves.
 
-### 9.2 `ambience.ts` — synthesized Web Audio (no audio files)
+### 9.2 `ambience.ts` — the kiln's ceramic clink (the only sound in the museum)
 
-- Two acoustic rooms: **the museum** — bandpass 620 Hz / Q 0.45 white-noise air + highpass 60 Hz floor + a 0.06 Hz LFO "tide" (gain modulation ±0.0005); **the archive** — brown-noise rumble (integrated noise) through lowpass 150 Hz + a 320 Hz / Q 1.4 bandpass "press" whose frequency is LFO-modulated at 0.14 Hz (±110 Hz) — "a distant machine, not a beat".
-- `ensureAmbience()` is the only gate: requires a user gesture (`pointerdown`/`keydown`, once), prefers `webkitAudioContext` fallback, builds the graph, fades museum bus to 0.5, resumes.
-- `setAmbientRoom(id)`: crossfade museum 0.5↔0.28 / archive 0↔1 over 1.2 s (`setTargetAtTime`).
-- `setAmbience(false)` fades master to 0 over 0.4 s then suspends the context after 1.2 s; pref persisted as `ar-ambience` (`'on'` only); `visibilitychange` suspends/resumes silently; reduced-motion users start silent but can still opt in.
+- The former room-tone ambience engine (noise-synthesized "museum hall" and "archive vault", `ar-ambience` pref, mute button in the Topbar) was removed in `68fe31e`: synthesized noise never sounded like a room — white noise reads as hiss, brown noise as rumble, and a museum that hisses is worse than a silent one. The verdict was filed as a product decision, not a bug.
+- What survives: `playKilnClink()` — one short, quiet ceramic confirmation when the Zellige kiln fires: a 2150 Hz triangle "body" note dropping to 0.55× over 160 ms plus a 3200 Hz sine glaze partial (0.09 s). Created lazily inside the double-click gesture, its own `AudioContext`, every node stops itself within 160 ms — nothing is retained between firings.
 
-### 9.3 `AmbienceControl.tsx` — one brass button
-
-`aria-pressed`, read pref on mount, follows room changes while on, "Ambience on/off" label with glowing dot. Rendered in the Topbar (desktop) and the mobile directory.
-
-### 9.4 `CraftDashboard.tsx` — the conservation console
+### 9.3 `CraftDashboard.tsx` — the conservation console
 
 - Opens with **Ctrl/Cmd+Shift+K** or the footer "Conservation console" link (`ar:toggle-console` event); Escape closes; focus-trapped-lite (restores focus to the trigger).
-- Live loop (8-frame cadence) reading FPS (EMA with α 0.08), `glRegistry.snapshot()`, scroll % (`scrollState.progress`), weave %, zellige seed, kiln fires, ambience state — **"nothing here is fabricated; anything the browser cannot truthfully say is shown as —"** (GPU is masked when it's a SwiftShader string).
+- Live loop (8-frame cadence) reading FPS (EMA with α 0.08), `glRegistry.snapshot()`, scroll % (`scrollState.progress`), weave %, zellige seed, kiln fires — **"nothing here is fabricated; anything the browser cannot truthfully say is shown as —"** (GPU is masked when it's a SwiftShader string).
 - FPS dot color: ≥50 green `rgba(108,178,148,1)`, ≥30 brass `rgba(205,160,88,1)`, else ember `rgba(198,92,58,1)`.
-- Build-time badge: "CI gate: lint · typecheck · 90 tests · production build — measured at build time, not in the browser" (⚠ stale count — the suite is now 108 tests, see §17).
+- Build-time badge: "CI gate: lint · typecheck · 111 tests · production build — measured at build time, not in the browser".
 
-### 9.5 `CuratorsKey.tsx` — the staff door
+### 9.4 `CuratorsKey.tsx` — the staff door
 
 - Type **`minttea`** anywhere (letters only, case-insensitive, ignores modifier keys and form fields) and the notes overlay opens; `appendPhrase` is pure & exported for tests (last-7 window buffer).
-- Eight handwritten "notes" tilt-cards on ruled stationery (repeating 28px line gradient), wax-tack dot per card, each one a real detail from the build: geometry grammar, the 33-piece kiln, "20,000 fibre strokes", the box-shadow vault lamp, the guarded visitors' book, "90 tests … that is the craft", transform/opacity-only motion under reduced motion, the 24 ms loom pulse.
+- Eight handwritten "notes" tilt-cards on ruled stationery (repeating 28px line gradient), wax-tack dot per card, each one a real detail from the build: geometry grammar, the 33-piece kiln, "20,000 fibre strokes", the box-shadow vault lamp, the guarded visitors' book, "111 tests … that is the craft", transform/opacity-only motion under reduced motion, the 24 ms loom pulse.
 - Sign-off: "The museum has no locked rooms — only doors you haven't knocked on yet."
 
-### 9.6 Chrome details
+### 9.5 Chrome details
 
-- `Topbar`: sticky, blur + hairline after 24 px scroll; logo = Monogram + name; desktop nav = Collection / Craft / Archive links + "Start a project" pill + AmbienceControl; mobile = hamburger → full-height directory dialog (rooms 00–05, `role="dialog"`, Escape closes, body scroll-locked). Anchors go through `useLenis().scrollTo(href.slice(1), { offset: -64 })`; route changes close the menu.
+- `Topbar`: sticky, blur + hairline after 24 px scroll; logo = Monogram + name; desktop nav = Collection / Craft / Archive links + "Start a project" pill; mobile = hamburger → full-height directory dialog (rooms 00–05, `role="dialog"`, Escape closes, body scroll-locked). Anchors go through `useLenis().scrollTo(href.slice(1), { offset: -64 })`; route changes close the menu.
 - `RoomDirectory`: right-edge chapter rail (desktop, `lg:` only), IntersectionObserver with `-30%/-45%` root margins tracks the current room, sapphire stud scales ×1.25 when active; hidden off-home and for reduced motion.
 - `CustomCursor`: dot (1.5px, difference-blend) + rotated-square ring (difference-blend) with `gsap.quickTo` (dot 0.08 s, ring 0.38 s); over interactive elements the ring swells to 1.45; over `[data-cursor]` (the exhibit doors) it becomes a solid brass plaque — "View exhibit" — and the label flips in. Reverts `no-cursor` on unmount; touch & reduced-motion users never see it (hook `useIsTouch` = `(pointer: coarse)`).
 - `Magnetic`: pointer-relative offset, strength 0.35 default, disabled for touch/reduced motion (wraps the exit's CTA etc.).
@@ -455,11 +455,12 @@ The dark room (`dark`, `room-dark`, `bg-walnut`):
 
 ## 10. The preloader door (`Preloader.tsx`)
 
-- **Returning visitors skip it**: `ar-museum-v5` checked in localStorage first, sessionStorage as the private-mode fallback, via `useSyncExternalStore` (static read — never changes post-paint).
+- **Refires on every site load** (commit `1f44251`): the returning-visitor skip (`ar-museum-v5` in localStorage/sessionStorage) was removed — the door is part of the theatre, not a first-visit tax. Nothing is persisted anymore.
 - The door: **21 stars — one for every year of the maker** — placed on a ring (RING_POINTS: 21 slots × `2π/21`, faces cycling cobalt/teal/terra/brass), each drawn from `starPath(r=76, 13/5.2)`.
 - **Daily deterministic variant**: `Math.floor(Date.now()/86_400_000) % 3` rotates the glaze order (the door is "the same door, a different weave — deterministic for the whole day, so nothing ever flickers") and adjusts star scale (0.96 or 1.04).
-- Assembly: every star is pre-hid and tucked toward the mark with its own `gsap.set` (so a single staggered tween never flashes the whole ring on frame one), then launched to its slot `i*0.07` s apart with `back.out(1.8)` — *sweeping clockwise from the top star until the circle closes*; a collective 0.985 settle beat; the monogram (nudged `-translate-x-[3px] -translate-y-[10%]` so its drawn centroid sits on the ring's exact center — commit `3b41b01`) and the label bars fade up, then the whole door lifts (yPercent −100, 0.9 s `expo.inOut`).
-- **Events**: sets `window.__entranceReady = true` + dispatches `ar:entrance-ready` as soon as the timeline is armed; dispatches `ar:door-lift` the moment the Hero can take the stage (`pointerEvents:none` first). On complete: persists both storage flags and **clears `__entranceReady`** so a later in-session visit never waits for a lift that already happened (fix `d3a791f`).
+- Assembly: every star is pre-hid and tucked toward the mark with its own `gsap.set` (so a single staggered tween never flashes the whole ring on frame one), then launched to its slot `i*0.03` s apart with `back.out(1.8)` — *sweeping clockwise from the top star until the circle closes*; a collective 0.985 settle beat; the monogram (nudged `translate-x-[3%] -translate-y-[10%]` so its drawn centroid sits on the ring's exact center — commits `3b41b01` + `590c3f3`) and the label bars fade up, then the whole door lifts (yPercent −100, 0.7 s `expo.inOut`), handing the stage over at ~2.1 s and fully gone by ~2.9 s.
+- **Nothing holds the entrance hostage**: any click or key skips straight to the lift, and a watchdog force-lifts at **3.5 s** even if the browser throttles the ceremony into a stall — the visitor's first gesture is always enough.
+- **Events**: sets `window.__entranceReady = true` + dispatches `ar:entrance-ready` as soon as the timeline is armed; dispatches `ar:door-lift` the moment the Hero can take the stage (`pointerEvents:none` first). On complete it **clears `__entranceReady`** so a later in-session visit never waits for a lift that already happened (fix `d3a791f`).
 - Reduced motion: door never renders its timeline — content done with a 0 ms timeout.
 - Labels: top bar "The museum of software craftsmanship · ©year", footer "The kiln is ready · www.akramrihani.com".
 
@@ -480,7 +481,7 @@ The dark room (`dark`, `room-dark`, `bg-walnut`):
 9. **Error envelope** — `{ success:false, error:{ code, message, fields? } }`; server logs include code + detail, clients only get safe copy.
 10. **Client** — mirrors validation rules, per-field error states with `--ok/--err` color tokens, `role="alert"`, `aria-invalid`, `noValidate`; on network failure resolves to `mailto:` fallback (subject/body encoded) after 400 ms; 429 resets after 3 s, other errors after 6 s; success shows the **WaxSeal** stamp ("Received — sealed with the keeper's mark. Answer within 24 hours.") and clears the form.
 
-Env files: `.env.local` (gitignored; live Resend key `re_ZbjV3gJY…`, `CONTACT_EMAIL=kssakram92@gmail.com`, Upstash REST URL + write token). `.env.example` documents `RESEND_API_KEY`, `CONTACT_EMAIL`, the five `UPSTASH_REDIS_KV_*` values, and the legacy `GITHUB_TOKEN`.
+Env files: `.env.local` (gitignored; live Resend key `re_ZbjV3gJY…`, `CONTACT_EMAIL=kssakram92@gmail.com`, Upstash REST URL + write token). `.env.example` documents `RESEND_API_KEY`, `CONTACT_EMAIL` and the five `UPSTASH_REDIS_KV_*` values (legacy `GITHUB_TOKEN` removed 08-13).
 
 ---
 
@@ -500,7 +501,7 @@ Env files: `.env.local` (gitignored; live Resend key `re_ZbjV3gJY…`, `CONTACT_
 - Quality tiers: `useQuality` (coarse → low; ≤4 cores or ≤4GB deviceMemory → medium; else high; defaults `{dpr, particles}` = high [1,1.75]/900, medium [1,1.25]/500, low [1,1]/250 — the canvases currently use their own inline `detectTier`, the hook's particle budget pattern remains from the audit era).
 - `next/image` everywhere with intrinsic `width/height` or `fill` + `sizes` (no CLS); AVIF/WebP negotiation; lazily read GPU strings; IntersectionObserver pause for both canvases; WebGLErrorBoundary isolates GL failures so DOM content always survives (fix `4082c56`); scroll-time blur rasterization removed (`bc3a683`); canvas remount discipline.
 - Vault lamp & cursor: `willChange: transform`/transform-only — zero repaints.
-- Haptics: throttled, platform-gated; ambience: suspended when the tab hides.
+- Haptics: throttled, platform-gated.
 
 ---
 
@@ -516,7 +517,7 @@ Env files: `.env.local` (gitignored; live Resend key `re_ZbjV3gJY…`, `CONTACT_
 
 ## 14. Accessibility & UX details
 
-- Skip-target `<main id="main" tabIndex={-1}>`; keyboard: all interactive elements are real buttons/links; the cursor is decorative and the DOM never loses native focus (`no-cursor` is reverted on unmount; `StabilityFactory` marks the document hydrated with `html[data-stable]` + `.stabled` — note the `.stabled` class has no CSS consumer yet, it exists as a hydration marker); VaultLight tracks `focusin`; canvas is a labelled `role="img"` fired by Enter/Space; `aria-current="step"` on loom chapters; `aria-pressed` on ambience/rail; `role="alert"` for form errors; `aria-label`s on every decorative control; `role="dialog"` + `aria-modal` on the mobile directory, console and curator notes (Escape + focus return); `maximumScale: 5` viewport (zoom allowed); fonts ≥0.6rem after audit A–F; heading levels audited (h1 per room, h2 sections, h3 panels); reduced-motion makes *everything* available, just stilled ("nothing is skipped, ever").
+- Skip-target `<main id="main" tabIndex={-1}>`; keyboard: all interactive elements are real buttons/links; the cursor is decorative and the DOM never loses native focus (`no-cursor` is reverted on unmount; `StabilityFactory` marks the document hydrated with `html[data-stable]` + `.stabled` — note the `.stabled` class has no CSS consumer yet, it exists as a hydration marker); VaultLight tracks `focusin`; canvas is a labelled `role="img"` fired by Enter/Space; `aria-current="step"` on loom chapters; `role="alert"` for form errors; `aria-label`s on every decorative control; `role="dialog"` + `aria-modal` on the mobile directory, console and curator notes (Escape + focus return); `maximumScale: 5` viewport (zoom allowed); fonts ≥0.6rem after audit A–F; heading levels audited (h1 per room, h2 sections, h3 panels); reduced-motion makes *everything* available, just stilled ("nothing is skipped, ever").
 - Field probing UX details: I-beam cursor on inputs, animated hamburger, hover ring scales, `mashrabiya`/`grain` overlay tuned to 0.028 opacity exactly to keep text contrast.
 
 ---
@@ -527,13 +528,13 @@ Env files: `.env.local` (gitignored; live Resend key `re_ZbjV3gJY…`, `CONTACT_
 
 - Vitest 4, `environment: 'node'` default with per-file `// @vitest-environment jsdom` where needed, `globals: true`, alias `@`, React plugin; setup: `@testing-library/jest-dom/vitest`, a `MockIntersectionObserver` (no-op paths) and stubs for `matchMedia`/`scrollTo` gaps; `restoreMocks` + `clearMocks`.
 
-### 15.2 Inventory — 21 files, 108 tests at report time
+### 15.2 Inventory — 21 files, 111 tests, all passing
 
 | File | Pass/Total |
 |---|---|
 | `env.test.ts` | 6/6 |
 | `geometry.test.ts` | 10/10 |
-| `SmoothScroll.test.tsx` | **5/6 — 1 failing** (§17) |
+| `SmoothScroll.test.tsx` | 6/6 |
 | `ContactForm.test.tsx` | 3/3 |
 | `RoomDirectory.test.tsx` | 2/2 |
 | `WebGLErrorBoundary.test.tsx` | 2/2 |
@@ -569,18 +570,22 @@ One job `lint-typecheck-test` on `ubuntu-latest` (15 min timeout): `checkout@v4`
 
 ---
 
-## 17. Known issues & observations (report time, 2026-08-12)
+## 17. Known issues & observations (report time, 2026-08-13)
 
-1. **The suite is red by one test.** `SmoothScroll.test.tsx → "reduced-motion anchors scroll to the requested element natively, not the page top"` fails: the test (line 85–105) asserts `window.scrollTo` is *never* called in the reduced-motion anchor path, but commit `d3a791f` added `window.scrollTo({ top: 0, behavior: 'auto' })` to the route-change effect (`SmoothScroll.tsx:139-141`, the "fresh loads land on the header" fix). On mount the provider now synchronously resets scroll, so the spy fires once (call `{behavior:'auto', top:0}`). **CI on `main` would currently fail at `npm test`.** The fix is a one-liner: make the assertion tolerate the header-reset call, or guard that specific effect in tests.
-2. **Stale claims in the UI/README**: `CraftDashboard.BUILD_BADGE` says "90 tests" (currently 108); README says "83 tests" and calls the loom's fourth chapter "Digital" (code: **Departure**); README's stack note "no R3F" contradicts the Workshop skill chip "React Three Fiber" (intentional as a *skill* listing, but worth a comment).
-3. **`@react-three/fiber` and `@react-three/drei` are declared but never imported** — raw Three.js only (`three` is the real dependency). Either ship pure Three and drop them, or keep them with an explicit comment (the `970d437` commit message references R3F v9, suggesting they may be residual).
-4. **`GITHUB_TOKEN` still documented** in `.env.example` — residue of the pre-rebuild GitHub-API lab (`c85e51d`); nothing in `src/` reads it today.
-5. `.env.local` holds live secrets (Resend + Upstash write token) — correctly gitignored; rotation best practice: Upstash `WRITE` token scope, `re_…` key granularity.
-6. `tsconfig.tsbuildinfo` present (incremental builds, gitignored); harmless.
-7. The Vitest v4 "ESM-as-CJS" configLoader notice appears on startup — harmless today, Vite flags it as a future default change.
-8. No `prefers-color-scheme` dark mode by design: the site is deliberately a light museum with the Archive's `.room-dark` as the only darkness.
-9. Rate-limit store design note (documented in `redisStore.ts`): TTL refresh on every request means an attacker's own retries extend their block by the full window — a feature, not a bug.
-10. `useQuality`/`qualityDefaults` (particle budgets) are now orphaned by the two canvases' inline `detectTier` — kept as the canonical tiering vocabulary but not consumed; a small consolidation opportunity.
+1. **The five-commit red spell is over.** Between 08-12 16:22 and 08-13 13:12, CI failed on every push from two separate bugs, both fixed in `5b0a9ed`: (a) *Test* — `SmoothScroll.test.tsx` "reduced-motion anchors scroll to the requested element natively, not the page top" asserted `window.scrollTo` is never called, but commit `d3a791f`'s "fresh loads land on the header" added a mount-time `window.scrollTo({top: 0})` in the reduced-motion branch (`SmoothScroll.tsx`); the test now clears the spy after mount, isolating the anchor click itself. (b) *Typecheck* — commit `7f6771a` hoisted the door timeline into a `let tl` assigned inside a closure, which TypeScript cannot narrow (`TS18048 'tl' is possibly 'undefined'`); the timeline is now declared `const` outside the `gsap.context` closure. The suite is green and CI passes on `main`.
+2. **Stale claims cleaned (08-13)**: `CraftDashboard.BUILD_BADGE` now reads 111 tests; README updated to the same count, the loom's fourth chapter renamed **Departure** to match code, and the stale `ar-museum-v5` note replaced with "refires on every site load". The Workshop skill chip "React Three Fiber" remains — it is a *skills listed on the maker's toolbelt*, not a dependency claim (see item 3).
+3. **R3F/drei removed (08-13)** — `@react-three/fiber` and `@react-three/drei` were declared but never imported; uninstalled along with their transitive graph. The installations are pure Three.js; the README's "no R3F" claim is now literally true of `package.json` too.
+4. **Scaffold assets removed (08-13)**: `public/next.svg`, `globe.svg`, `file.svg`, `window.svg` and the duplicate `public/site.webmanifest` deleted; the App Router manifest (`src/app/site.webmanifest`) kept and its icon list corrected to the real files (`akramlogo.png`, `icon-192x192.png`, `icon-512x512.png` + `start_url`).
+5. **`GITHUB_TOKEN` dropped from `.env.example`** — residue of the pre-rebuild GitHub-API lab (`c85e51d`); nothing in `src/` reads it (item 4 in the previous report).
+6. `.env.local` holds live secrets (Resend + Upstash write token) — correctly gitignored; rotation best practice: Upstash `WRITE` token scope, `re_…` key granularity.
+7. `tsconfig.tsbuildinfo` present (incremental builds, gitignored); harmless.
+8. The Vitest v4 "ESM-as-CJS" configLoader notice appears on startup — harmless today, Vite flags it as a future default change.
+9. No `prefers-color-scheme` dark mode by design: the site is deliberately a light museum with the Archive's `.room-dark` as the only darkness.
+10. Rate-limit store design note (documented in `redisStore.ts`): TTL refresh on every request means an attacker's own retries extend their block by the full window — a feature, not a bug.
+11. `useQuality`/`qualityDefaults` (particle budgets) are now orphaned by the two canvases' inline `detectTier` — kept as the canonical tiering vocabulary but not consumed; a small consolidation opportunity.
+12. The ambience engine's synthesizer was retired (`68fe31e`) — §9.2 records the verdict. The `ar-museum-v5` preloader skip and its storage writes are likewise gone (`1f44251`).
+13. The three local client builds (INV. IV–VI) now carry real photograph galleries; the collection shelf tiles show actual screenshots instead of procedural Zellige stand-ins (`bea2f81`).
+14. The preloader monogram sits 3% right of the ring centre (`590c3f3`) — a deliberate optical centring: the mark's drawn content is heavier on its left, so the centroid lands dead-centre.
 
 ---
 
@@ -596,11 +601,11 @@ One job `lint-typecheck-test` on `ubuntu-latest` (15 min timeout): `checkout@v4`
 | INV. I | WISLA Platform | 2024 | Enterprise Application | Backend Engineering | cobalt | flagship | 3 challenges+metrics (19/20, 3 roles, Spring Boot, MySQL·JPA), 8 archive frames |
 | INV. II | Palais Amghass | 2025 | Hotel Experience | Frontend · Motion | brass | yes | live `palais-amghass.vercel.app`, 2-frame gallery (1600×940), WebGL orbit, "image budget for valley bandwidth" |
 | INV. III | NextHobby | 2025 | Web Platform | Design + Build | teal | yes | live `nexthobby.vercel.app`, 3-frame gallery, rentals/payments |
-| INV. IV | Auto-École Michlifen | 2026 | Local Business | Design + Build | terra | no | live, phone-first lead capture |
-| INV. V | Azrou Design | 2026 | Business Web | Design + Build | cobalt | no | live studio portfolio |
-| INV. VI | Le Sapin | 2026 | Local Business | Design + Build | ivory | no | live establishment site |
+| INV. IV | Auto-École Michlifen | 2026 | Local Business | Design + Build | terra | no | live `auto-ecole-michlifen.vercel.app`, phone-first lead capture, **9-frame gallery** (~1907×891–996) |
+| INV. V | Azrou Design | 2026 | Business Web | Design + Build | cobalt | no | live `azrou-design.vercel.app`, studio portfolio, **6-frame gallery** (1900×994) |
+| INV. VI | Le Sapin | 2026 | Local Business | Design + Build | ivory | no | live `le-sapin.vercel.app`, establishment site, **7-frame gallery** (1900×994) |
 
 Helpers: `getProject(slug)`, `getNextProject(slug)` (wrap-around), `isFlagship(slug)`.
 
 ### 18.3 Asset inventory (`public/`)
-`akramlogo.png`, `apple-touch-icon.png`, `icon-192/512`, `next.svg` (unused scaffold), `globe.svg`, `file.svg`, `window.svg` (scaffold), `robots.txt`, `site.webmanifest`, `Akram-Rihani-CV.pdf`, and 17 work screenshots: WISLA ×8 (light/dark dashboards across roles + offers + applications), Palais Amghass ×7 (home, chambres, reservations, table, experiences, testimonial, hamam), NextHobby ×5 (home, explore, rent, payments, form).
+`akramlogo.png`, `apple-touch-icon.png`, `icon-192x192.png`, `icon-512x512.png`, `robots.txt`, `Akram-Rihani-CV.pdf` (scaffold `next/globe/file/window.svg` and the duplicated `site.webmanifest` removed 08-13; manifest lives in `src/app/site.webmanifest`), and 42 work screenshots — all screenshots converted to JPEG (quality 82) at import, per the image-budget discipline: WISLA ×8 (light/dark dashboards across roles + offers + applications), Palais Amghass ×7 (home, chambres, reservations, table, experiences, testimonial, hamam), NextHobby ×5 (home, explore, rent, payments, form), Auto-École Michlifen ×9 (hero, offer, code, licence categories, infos, lead form, FAQ, siya9a exam, map), Azrou Design ×6 (hero → footer, 1900×994), Le Sapin ×7 (hero, door animation, pâtisserie, gâteaux, birthday cakes, café & pizzeria, footer).

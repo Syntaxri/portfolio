@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  productionBrowserSourceMaps: true,
   images: {
     formats: ['image/avif', 'image/webp'],
     qualities: [75, 82],
@@ -25,6 +26,16 @@ const nextConfig = {
       {
         key: 'Strict-Transport-Security',
         value: 'max-age=31536000; includeSubDomains; preload',
+      },
+      {
+        key: 'Cross-Origin-Opener-Policy',
+        value: 'same-origin',
+      },
+      /* defensive depth on top of COOP: no other origin may ever draw
+         over this window, and response bodies stay same-origin */
+      {
+        key: 'Cross-Origin-Embedder-Policy',
+        value: 'require-corp',
       },
     ]
 

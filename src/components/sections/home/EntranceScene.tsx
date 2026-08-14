@@ -47,12 +47,19 @@ export function EntranceScene() {
   const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    /* the kiln's loop waits for the door to open — announced at most
+       once: the Preloader's own lift, or this fallback when it never
+       plays. Re-dispatching inside the door-lift listener itself would
+       recurse synchronously until the stack gave out. */
+    let announced = false
+    const announceLift = () => {
+      if (announced) return
+      announced = true
+      if (!reduced) window.dispatchEvent(new Event('ar:door-lift'))
+    }
     const done = () => {
       setEntered(true)
-      /* the kiln's loop waits for the door to open — the Preloader
-         dispatches this on its lift, in case it never plays this
-         dispatch guarantees the installation still wakes */
-      if (!reduced) window.dispatchEvent(new Event('ar:door-lift'))
+      announceLift()
     }
     if (reduced) {
       done()

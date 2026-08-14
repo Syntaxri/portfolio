@@ -51,6 +51,12 @@
     --ok: rgb(var(--ok-rgb));
     --err: rgb(var(--err-rgb));
 
+    /* button fills — the brass is deepened so ivory text clears AA
+       (6.2:1 on plaster); the dark room inverts to walnut on brass */
+    --btn-rgb: 104 76 38;
+    --btn: rgb(var(--btn-rgb));
+    --btn-fg: var(--ivory);
+
     /* type */
     --font-sans: 'Archivo', system-ui, sans-serif;
     --font-serif: 'Fraunces', Georgia, serif;
@@ -90,6 +96,11 @@
     --accent-2: rgb(var(--accent-2-rgb));
     --gold: rgb(var(--gold-rgb));
     --ok: rgb(var(--ok-rgb));
+
+    /* dark rooms: walnut ink on the bright brass clears AA (6.3:1) */
+    --btn-rgb: 197 149 76;
+    --btn: rgb(var(--btn-rgb));
+    --btn-fg: var(--walnut);
   }
 
   * {
@@ -237,9 +248,9 @@
     align-items: center;
     justify-content: center;
     gap: 0.6rem;
-    background: var(--accent-2);
-    color: var(--ivory);
-    border: 1px solid var(--accent-2);
+    background: var(--btn);
+    color: var(--btn-fg);
+    border: 1px solid var(--btn);
     padding: 0.85rem 1.5rem;
     border-radius: 0.3rem;
     font-family: var(--font-mono);
@@ -257,8 +268,17 @@
   .btn:hover {
     background: var(--accent);
     border-color: var(--accent);
+    color: var(--ivory);
     box-shadow: 0 4px 24px rgba(var(--accent-rgb), 0.22);
     transform: translateY(-1px);
+  }
+
+  /* dark rooms keep their brass — the ink inlay brightens on hover */
+  .room-dark .btn:hover {
+    background: var(--btn);
+    border-color: var(--btn);
+    color: var(--btn-fg);
+    filter: brightness(1.12);
   }
 
   .btn-ghost {

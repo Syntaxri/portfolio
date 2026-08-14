@@ -65,10 +65,8 @@ export function Footer() {
                   rel={s.href.startsWith('http') ? 'noreferrer' : undefined}
                   className="group inline-flex items-baseline gap-3 font-mono text-[0.7rem] tracking-[0.16em] text-text-2 transition-colors hover:text-accent"
                 >
-                  <span className="text-text-3">{s.label}</span>
-                  <span className="opacity-60 transition-opacity group-hover:opacity-100">
-                    {s.handle}
-                  </span>
+                  <span className="text-text-3 transition-colors group-hover:text-text-2">{s.label}</span>
+                  <span>{s.handle}</span>
                 </a>
               </li>
             ))}

@@ -58,10 +58,31 @@ export function LoomRoom() {
   const reduced = useReducedMotion()
   const [glFailed, setGlFailed] = useState(false)
   const [active, setActive] = useState(0)
+  /* the loom is 400vh down the page — its WebGL scene (two large canvas
+     paints, a plane, shader compile) is deferred until the visitor is
+     within ~two viewports of it, so a fresh load never pays for the rug
+     it can't see yet */
+  const [near, setNear] = useState(false)
   const control = useRef<ZarbiaControl>({ p: 0 })
   const wrapRef = useRef<HTMLDivElement>(null)
   const staticView = reduced || glFailed
   const stepRef = useRef(-1)
+
+  useEffect(() => {
+    if (reduced) return
+    const wrap = wrapRef.current
+    if (!wrap) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        setNear(true)
+        io.disconnect()
+      },
+      { rootMargin: '200% 0px 200% 0px' }
+    )
+    io.observe(wrap)
+    return () => io.disconnect()
+  }, [reduced])
 
   useEffect(() => {
     if (reduced) return
@@ -109,7 +130,7 @@ export function LoomRoom() {
           {/* the cloth */}
           <div className="absolute inset-0" aria-hidden="true">
             <WebGLErrorBoundary onFail={() => setGlFailed(true)}>
-              {!glFailed && !reduced && <ZarbiaCanvas control={control} />}
+              {!glFailed && !reduced && near && <ZarbiaCanvas control={control} />}
             </WebGLErrorBoundary>
             {staticView && <div className="mosaic-fallback" aria-hidden="true" />}
           </div>

@@ -24,7 +24,7 @@
     --surface-rgb: 247 243 234; /* paper / tadelakt highlight */
     --text-rgb: 28 26 22; /* ink */
     --text-2-rgb: 82 76 65;
-    --text-3-rgb: 111 102 86;
+    --text-3-rgb: 96 88 74; /* ≥ 4.5:1 on the plaster — AA for small labels */
     --accent-rgb: 30 64 130; /* Fes cobalt glaze */
     --accent-2-rgb: 140 102 52; /* aged brass */
     --gold-rgb: 168 122 54;

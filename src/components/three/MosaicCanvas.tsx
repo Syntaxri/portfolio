@@ -357,10 +357,10 @@ export function MosaicCanvas() {
       const dt = Math.min(clock.getDelta(), 0.05)
       const t = clock.elapsedTime
 
-      if (!visible) {
-        renderer.render(scene, camera)
-        return
-      }
+      /* the entrance is offscreen: stop paying for it entirely — the
+         composition is static, no motion, no render. It wakes up clean
+         on the way back in. */
+      if (!visible) return
 
       pointer.x += (pointer.tx - pointer.x) * Math.min(1, dt * 2.2)
       pointer.y += (pointer.ty - pointer.y) * Math.min(1, dt * 2.2)

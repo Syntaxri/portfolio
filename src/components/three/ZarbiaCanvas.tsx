@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
+import { useQualityTier } from '@/hooks/useQuality'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { glRegistry, museumState } from '@/lib/fx/museumState'
 
@@ -197,7 +198,7 @@ function rugPaint(ctx: CanvasRenderingContext2D, F: RugPalette, fringe: boolean)
   /* short ivory fringe at both ends */
   if (fringe) {
     ctx.strokeStyle = F.ivory
-    for (let i = 0; i < 520; i++) {
+    for (let i = 0; i < 240; i++) {
       const x = Math.random() * 1536
       const top = Math.random() < 0.5
       const y = top ? 4 + Math.random() * 26 : 994 + Math.random() * 26
@@ -215,7 +216,7 @@ function rugPaint(ctx: CanvasRenderingContext2D, F: RugPalette, fringe: boolean)
   wavyRect(ctx, 84, 61, 1368, 902, 5)
   ctx.fill()
   ctx.globalAlpha = 0.35
-  for (let i = 0; i < 900; i++) {
+  for (let i = 0; i < 350; i++) {
     ctx.fillStyle = F.ivoryDark
     ctx.fillRect(88 + Math.random() * 1360, 65 + Math.random() * 894, 1 + Math.random() * 2, 1 + Math.random() * 3)
   }
@@ -332,7 +333,7 @@ function rugPaint(ctx: CanvasRenderingContext2D, F: RugPalette, fringe: boolean)
 
   /* subtle warp-and-weft tone variation across the red */
   ctx.lineWidth = 1
-  for (let i = 0; i < 900; i++) {
+  for (let i = 0; i < 350; i++) {
     const x = 358 + Math.random() * 820
     const y = 185 + Math.random() * 654
     const len = 8 + Math.random() * 26
@@ -403,7 +404,7 @@ function drawWool(): HTMLCanvasElement {
   const ctx = c.getContext('2d')!
   rugPaint(ctx, PAL, true)
   /* the pile — thousands of fine threads over the pattern */
-  for (let i = 0; i < 20000; i++) {
+  for (let i = 0; i < 7000; i++) {
     fiberStroke(ctx, Math.random() * 1536, Math.random() * 1024, 2 + Math.random() * 5, 0.02 + Math.random() * 0.05)
   }
   return c
@@ -416,7 +417,7 @@ function drawPile(): HTMLCanvasElement {
   c.height = 1024
   const ctx = c.getContext('2d')!
   rugPaint(ctx, PILE, false)
-  for (let i = 0; i < 16000; i++) {
+  for (let i = 0; i < 6000; i++) {
     fiberStroke(ctx, Math.random() * 1536, Math.random() * 1024, 2 + Math.random() * 5, 0.03 + Math.random() * 0.07)
   }
   return c
@@ -436,6 +437,7 @@ export interface ZarbiaControl {
 export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<ZarbiaControl> }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const reduced = useReducedMotion()
+  const quality = useQualityTier()
 
   useEffect(() => {
     if (reduced) return
@@ -468,8 +470,11 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
     const root = new THREE.Group()
     scene.add(root)
 
-    /* the long Atlas runner */
-    const geo = new THREE.PlaneGeometry(6.4, 3.2, 96, 48)
+    /* the long Atlas runner — 96 × 48 woof segments (48 × 24 on weak
+       devices, where the normals recompute is halved) */
+    const segW = quality === 'low' ? 48 : 96
+    const segH = quality === 'low' ? 24 : 48
+    const geo = new THREE.PlaneGeometry(6.4, 3.2, segW, segH)
     const flat = new Float32Array(geo.attributes.position.array)
     const baseZ = new Float32Array(geo.attributes.position.array)
     const uv = geo.attributes.uv.array as Float32Array
@@ -532,14 +537,17 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
     glRegistry.register(glSource)
 
     let raf = 0
+    let normalBudget = 0
     const clock = new THREE.Clock()
 
     const tick = () => {
       raf = requestAnimationFrame(tick)
       const dt = Math.min(clock.getDelta(), 0.05)
       const t = clock.elapsedTime
+      /* the loom is offscreen: stop paying for it entirely — no motion,
+         no normals, no render. It wakes up clean on the way back in. */
       if (!visible) {
-        renderer.render(scene, camera)
+        normalBudget = 0
         return
       }
 
@@ -573,7 +581,11 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
         arr[i + 2] = baseZ[i + 2]
       }
       geo.attributes.position.needsUpdate = true
-      geo.computeVertexNormals()
+      /* the wave is ~0.03u tall — recomputing vertex normals every frame
+         is invisible and expensive; the weave gets fresh normals every
+         sixth frame and the light still turns with it */
+      normalBudget++
+      if (normalBudget % 6 === 0) geo.computeVertexNormals()
 
       /* the runner lets the visitor walk on */
       const fade = smooth((p - 0.55) / 0.45)
@@ -605,7 +617,7 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
       rugMat.dispose()
       renderer.dispose()
     }
-  }, [reduced, control])
+  }, [reduced, control, quality])
 
   if (reduced) return null
 

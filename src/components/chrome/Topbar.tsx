@@ -169,6 +169,7 @@ export function Topbar() {
                   href={s.href}
                   target={s.href.startsWith('http') ? '_blank' : undefined}
                   rel={s.href.startsWith('http') ? 'noreferrer' : undefined}
+                  aria-label={`${s.label} — from the directory`}
                   className="font-mono text-[0.7rem] tracking-[0.14em] text-text-2 hover:text-accent"
                 >
                   {s.label}

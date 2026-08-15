@@ -7,7 +7,7 @@ export const site = {
   email: 'hello@akramrihani.com',
   location: 'Azrou, Morocco',
   from: 'Morocco',
-  availability: 'Open for freelance',
+  availability: 'Open to work',
   thesis: 'I build ideas into real things.',
   domain: 'www.akramrihani.com',
   timezone: 'Africa/Casablanca',

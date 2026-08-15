@@ -15,7 +15,7 @@ describe('Fountain', () => {
     for (const word of ['Curiosity', 'Engineering', 'Projects', 'Products']) {
       expect(screen.getByText(word)).toBeTruthy()
     }
-    expect(screen.getByText(/Open for freelance/)).toBeTruthy()
+    expect(screen.getByText(/Open to work/)).toBeTruthy()
   })
 
   it('teaches the grammar of the workshop', () => {

@@ -51,6 +51,16 @@ const nextConfig = {
     // Skipped in `next dev`: React dev mode requires eval() for its
     // debugging features, and HMR relies on inline/eval — the strict
     // policy is a production guarantee only.
+    // The living room hangs live builds on its wall: frame-src lists
+    // exactly the doors it may open. Keep it in step with the
+    // liveUrl fields of src/lib/data/projects.ts.
+    const liveFrames = [
+      'https://palais-amghass.vercel.app',
+      'https://nexthobby.vercel.app',
+      'https://auto-ecole-michlifen.vercel.app',
+      'https://azrou-design.vercel.app',
+      'https://le-sapin.vercel.app',
+    ].join(' ')
     if (process.env.NODE_ENV === 'production') {
       headers.push({
         key: 'Content-Security-Policy',
@@ -61,6 +71,7 @@ const nextConfig = {
           "img-src 'self' data: blob:",
           "font-src 'self' data:",
           "connect-src 'self'",
+          `frame-src ${liveFrames}`,
           "frame-ancestors 'none'",
           "base-uri 'self'",
           "form-action 'self'",

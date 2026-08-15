@@ -31,12 +31,11 @@ const nextConfig = {
         key: 'Cross-Origin-Opener-Policy',
         value: 'same-origin',
       },
-      /* defensive depth on top of COOP: no other origin may ever draw
-         over this window, and response bodies stay same-origin */
-      {
-        key: 'Cross-Origin-Embedder-Policy',
-        value: 'require-corp',
-      },
+      /* COEP (require-corp) was once added as defensive depth, but it
+         silently kills any cross-origin iframe that does not opt into
+         CORP — the Living Room's live builds cannot hands-off CORP.
+         Dropped: the museum loads no other cross-origin resources, so
+         nothing is lost, and the projector wall may stay open. */
     ]
 
     // Content-Security-Policy is set here (not in middleware) and keeps

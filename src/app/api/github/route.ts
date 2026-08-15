@@ -8,6 +8,10 @@ import { site } from '@/lib/data/site'
  * unauthenticated), so the route caches upstream behind `revalidate`
  * and hands the browser stale-while-revalidate headers — the console
  * polls /api/github freely without ever touching GitHub itself.
+ * A GITHUB_TOKEN (fine-grained, repository: read) raises the ceiling
+ * to 5000 requests an hour; without one the ledger reads public data
+ * only. When GitHub fails after a good reading, the route serves the
+ * last known payload so the console never blanks.
  */
 
 const GH_API = 'https://api.github.com'
@@ -16,7 +20,10 @@ const GH_HEADERS = {
   Accept: 'application/vnd.github+json',
   'X-GitHub-Api-Version': '2022-11-28',
 }
-const REVALIDATE_SECONDS = 300
+const REVALIDATE_SECONDS = 600
+
+const TOKEN = process.env.GITHUB_TOKEN
+const ghHeaders = TOKEN ? { ...GH_HEADERS, Authorization: `Bearer ${TOKEN}` } : GH_HEADERS
 
 interface GhProfile {
   login?: unknown
@@ -44,10 +51,27 @@ interface GhEvent {
   payload?: { commits?: unknown[]; ref?: unknown; action?: unknown; size?: unknown }
 }
 
+interface LedgerPayload {
+  profile: {
+    login: string | null
+    name: string | null
+    avatarUrl: string | null
+    location: string | null
+    bio: string | null
+    followers: number
+    publicRepos: number
+  } | null
+  repos: { name: string | null; description: string | null; language: string | null; stars: number; pushedAt: string | null; url: string | null }[]
+  events: { repo: string | null; createdAt: string | null; commits: { message: string | null; sha: string | null }[]; size: number }[]
+}
+
+/* the last fully-good reading, for when GitHub goes quiet */
+let lastGood: LedgerPayload | null = null
+
 async function gh<T>(path: string): Promise<T | null> {
   try {
     const res = await fetch(`${GH_API}${path}`, {
-      headers: GH_HEADERS,
+      headers: ghHeaders,
       next: { revalidate: REVALIDATE_SECONDS },
       signal: AbortSignal.timeout(8000),
     })
@@ -69,8 +93,7 @@ export async function GET(): Promise<Response> {
     gh<GhEvent[]>(`/users/${u}/events/public?per_page=30`),
   ])
 
-  /* only carry what the console renders — no extra surface */
-  const payload = {
+  const payload: LedgerPayload = {
     profile: profile
       ? {
           login: str(profile.login),
@@ -108,8 +131,13 @@ export async function GET(): Promise<Response> {
       })),
   }
 
-  return Response.json(payload, {
-    status: profile ? 200 : 502,
+  /* only a fully-good reading refreshes the memory; a total silence
+     falls back to it so the ledger keeps its face */
+  if (profile && repos && events) lastGood = payload
+  const served: LedgerPayload | null = profile || repos || events ? payload : lastGood
+
+  return Response.json(served, {
+    status: served ? 200 : 502,
     headers: {
       'Cache-Control': `public, s-maxage=${REVALIDATE_SECONDS}, stale-while-revalidate=3600`,
     },

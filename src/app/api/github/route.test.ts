@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { GET } from './route'
 
 type FetchResult = {
@@ -71,12 +71,47 @@ describe('GET /api/github', () => {
 
   it('carries a short cache so browser polls never touch GitHub directly', async () => {
     const res = await GET()
-    expect(res.headers.get('cache-control')).toContain('s-maxage=300')
+    expect(res.headers.get('cache-control')).toContain('s-maxage=600')
   })
 
-  it('fails honestly (502) when GitHub is unreachable', async () => {
+  it('fails honestly (502) when GitHub is unreachable and nothing was served before', async () => {
+    /* a fresh module instance carries no memory of a good reading */
+    vi.resetModules()
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(respond(null, false))))
+    const { GET: freshGet } = await import('./route')
+    const res = await freshGet()
+    expect(res.status).toBe(502)
+  })
+
+  it('serves the last good reading when GitHub goes quiet after a success', async () => {
+    /* the earlier success seeded the memory; now every call fails */
     vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(respond(null, false))))
     const res = await GET()
-    expect(res.status).toBe(502)
+    expect(res.status).toBe(200)
+    const body = (await res.json()) as { profile: { login: string } }
+    expect(body.profile.login).toBe('Syntaxri')
+  })
+
+  it('carries the token when one is configured', async () => {
+    vi.resetModules()
+    vi.stubEnv('GITHUB_TOKEN', 'ghp_test')
+    const fetchMock = vi.fn((input: string | URL | Request, init?: RequestInit) => {
+      const url = String(input)
+      const body = url.includes('/repos?')
+        ? []
+        : url.includes('/events/public?')
+          ? []
+          : { login: 'Syntaxri', name: 'Akram Rihani', avatar_url: 'https://avatars.example/me.png', followers: 1, public_repos: 1 }
+      return Promise.resolve(respond(body))
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    const { GET: tokenGet } = await import('./route')
+    await tokenGet()
+    const init = fetchMock.mock.calls[0][1] as unknown as { headers?: { Authorization?: string } }
+    expect(init?.headers?.Authorization).toBe('Bearer ghp_test')
+  })
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
   })
 })

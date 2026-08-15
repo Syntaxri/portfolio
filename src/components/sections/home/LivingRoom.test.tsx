@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen, fireEvent, cleanup } from '@testing-library/react'
+import { render, screen, fireEvent, cleanup, within } from '@testing-library/react'
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { LivingRoom } from './LivingRoom'
 
@@ -71,5 +71,14 @@ describe('LivingRoom', () => {
     ).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: /close the living room/i }))
     expect(screen.queryByRole('dialog')).toBeNull()
+  })
+
+  it('files the accession details in the room window', async () => {
+    render(<LivingRoom />)
+    fireEvent.click(screen.getByRole('button', { name: /enter the living room/i }))
+    const dialog = await screen.findByRole('dialog', { name: /Palais Amghass — live/ })
+    expect(within(dialog).getByRole('link', { name: /read the case study/i })).toBeTruthy()
+    expect(within(dialog).getByText(/INV\. II/)).toBeTruthy()
+    expect(within(dialog).getByText(/Frontend · Motion/)).toBeTruthy()
   })
 })

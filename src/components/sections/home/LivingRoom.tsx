@@ -350,27 +350,84 @@ export function LivingRoom() {
               </div>
             </div>
 
-            <div className="relative mt-2 aspect-[16/9.5] max-h-[76vh] overflow-hidden bg-[#14100b]">
-              {current.cover && (
-                <Image
-                  src={current.cover}
-                  alt={`${current.title} — the door behind the live page`}
-                  fill
-                  sizes="96vw"
-                  priority
-                  className="object-cover"
+            <div className="mt-2 flex flex-col gap-3 lg:flex-row">
+              {/* the stage */}
+              <div className="relative min-w-0 flex-1 aspect-[16/10] max-h-[70vh] overflow-hidden bg-[#14100b]">
+                {current.cover && (
+                  <Image
+                    src={current.cover}
+                    alt={`${current.title} — the door behind the live page`}
+                    fill
+                    sizes="96vw"
+                    priority
+                    className="object-cover"
+                  />
+                )}
+                <iframe
+                  key={`${current.liveUrl}-room`}
+                  src={current.liveUrl}
+                  title={`${current.title} — live`}
+                  aria-label={`${current.title} — live`}
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  onLoad={() => setLit(true)}
+                  className={`living-frame ${lit ? 'is-lit' : ''} border-0`}
                 />
-              )}
-              <iframe
-                key={`${current.liveUrl}-room`}
-                src={current.liveUrl}
-                title={`${current.title} — live`}
-                aria-label={`${current.title} — live`}
-                referrerPolicy="strict-origin-when-cross-origin"
-                onLoad={() => setLit(true)}
-                className={`living-frame ${lit ? 'is-lit' : ''} border-0`}
-              />
-              <div className={`living-beam ${lit ? 'is-lit' : ''}`} aria-hidden="true" />
+                <div className={`living-beam ${lit ? 'is-lit' : ''}`} aria-hidden="true" />
+              </div>
+
+              {/* the file card — what hangs here, in short */}
+              <aside
+                aria-label={`${current.title} — accession file`}
+                className="w-full shrink-0 border border-[rgba(197,165,90,0.25)] bg-[#1b140b] p-4 lg:w-[19rem] lg:max-h-[70vh] lg:overflow-y-auto"
+              >
+                <p className="label-accent label mb-1">Accession file</p>
+                <h3 className="room-title !text-[1.45rem] text-[#e9e3d4]">{current.title}</h3>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <span className="plaque plaque-accent">{current.accession}</span>
+                  <span className="plaque border-[rgba(233,227,212,0.25)] bg-surface text-[#cfc7b4]">
+                    {current.category}
+                  </span>
+                  <span className="plaque border-[rgba(233,227,212,0.25)] bg-surface text-[#cfc7b4]">
+                    {current.year}
+                  </span>
+                </div>
+                <p className="mt-4 max-w-[46ch] text-sm leading-relaxed text-[#cfc7b4]">
+                  {current.description}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {current.tags.slice(0, 6).map((t) => (
+                    <span
+                      key={t}
+                      className="rounded-sm border border-[rgba(233,227,212,0.18)] px-2 py-0.5 font-mono text-[0.55rem] uppercase tracking-[0.14em] text-[#b3ab96]"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-4 flex items-baseline justify-between border-t border-[rgba(233,227,212,0.12)] pt-3">
+                  <span className="label-muted label">Role</span>
+                  <span className="font-mono text-[0.66rem] tracking-[0.08em] text-[#e9e3d4]">
+                    {current.role}
+                  </span>
+                </div>
+                <div className="mt-4 flex flex-col gap-2.5">
+                  <Link
+                    href={`/work/${current.slug}`}
+                    className="btn-ghost w-full justify-center"
+                    onClick={() => setOpen(false)}
+                  >
+                    Read the case study →
+                  </Link>
+                  <a
+                    href={current.liveUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="label text-center text-[#c5a75a] transition-colors hover:text-[#e9e3d4]"
+                  >
+                    {current.liveUrl?.replace('https://', '')} ↗
+                  </a>
+                </div>
+              </aside>
             </div>
 
             <div className="mt-3 grid grid-cols-1 gap-2 border-t border-[rgba(197,165,90,0.2)] pt-3 sm:grid-cols-3 lg:grid-cols-5">

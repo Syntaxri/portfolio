@@ -82,13 +82,11 @@ export function Collection() {
 
         {/* featured arcade */}
         <div className="mt-24 space-y-20">
-          {main.map((p, i) => (
+          {main.map((p) => (
             <Reveal key={p.slug}>
               <article
                 data-rv
-                className={`grid gap-8 lg:grid-cols-12 lg:items-center ${
-                  i % 2 === 1 ? 'lg:[&>*:first-child]:order-2' : ''
-                }`}
+                className="grid gap-8 lg:grid-cols-12 lg:items-center"
                 aria-labelledby={`exhibit-${p.slug}`}
               >
                 <div className="lg:col-span-7">

@@ -8,8 +8,8 @@ import { Monogram } from '@/components/museum/Monogram'
 import { site, socials } from '@/lib/data/site'
 
 const ROOMS = [
+  { href: '/#craft', label: 'Workshop' },
   { href: '/#collection', label: 'Collection' },
-  { href: '/#craft', label: 'Craft' },
   { href: '/#archive', label: 'Archive' },
 ] as const
 

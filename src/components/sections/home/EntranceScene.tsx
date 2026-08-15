@@ -335,18 +335,6 @@ export function EntranceScene() {
                 </span>
               </div>
             </div>
-
-            {/* the small print under the exhibit — hints, not messaging */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <p className="label label-muted">Scroll — the zellige unlocks</p>
-              {!glFailed && (
-                <p className="label label-muted text-center sm:text-right">
-                  <span className="sm:hidden">Double-tap</span>
-                  <span className="hidden sm:inline">Double-click</span> the zellige — the kiln
-                  fires a new pattern
-                </p>
-              )}
-            </div>
           </div>
         </div>
 

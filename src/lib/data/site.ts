@@ -1,6 +1,5 @@
 export const site = {
   name: 'Akram Rihani',
-  nickname: 'Viaruq',
   monogram: 'A/V',
   role: 'Software Engineer',
   roles: ['Software Engineer', 'Digital Product Builder', 'WebGL & Motion'],
@@ -16,7 +15,7 @@ export const site = {
   linkedin: 'https://www.linkedin.com/in/riihaniakram/',
   instagram: 'https://www.instagram.com/viaruq',
   strapline:
-    'The Moroccan digital museum of software craftsmanship. Akram Rihani (Viaruq) — a software engineer in Azrou who turns ideas into real products: Java backends that hold, web experiences that move, systems that ship.',
+    'The Moroccan digital museum of software craftsmanship. Akram Rihani — a software engineer in Azrou who turns ideas into real products: Java backends that hold, web experiences that move, systems that ship.',
 } as const
 
 export const socials = [

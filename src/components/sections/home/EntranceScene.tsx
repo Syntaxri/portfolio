@@ -6,7 +6,7 @@ import Link from 'next/link'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { useLenis } from '@/components/animations/SmoothScroll'
+import { useLenis, NAV_SCROLL_OFFSET } from '@/components/animations/SmoothScroll'
 import { WebGLErrorBoundary } from '@/components/three/WebGLErrorBoundary'
 import { site } from '@/lib/data/site'
 
@@ -53,7 +53,7 @@ export function EntranceScene() {
   const go = (e: React.MouseEvent, href: string) => {
     if (!href.startsWith('/#')) return
     e.preventDefault()
-    scrollTo(href.slice(1), { offset: -64 })
+    scrollTo(href.slice(1), { offset: -NAV_SCROLL_OFFSET })
   }
 
   useEffect(() => {
@@ -352,7 +352,7 @@ export function EntranceScene() {
 
         <div className="pointer-events-none relative z-10 flex justify-end">
           <span className="label label-muted" data-hero-reveal>
-            {site.name} × {site.nickname} — {new Date().getFullYear()}
+            {site.name} — {new Date().getFullYear()}
           </span>
         </div>
       </div>

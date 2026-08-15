@@ -77,7 +77,7 @@ function GlazeTint({ project }: { project: Project }) {
 }
 
 /**
- * The face of an exhibit: the photograph inside its arch frame, or — for
+ * The face of an exhibit: the photograph inside its frame, or — for
  * pieces still awaiting their photographs — a composed Zellige wall in the
  * project's glazes. Honest either way: no fabricated screenshots.
  */

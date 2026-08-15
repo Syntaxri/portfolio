@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useLenis } from '@/components/animations/SmoothScroll'
+import { useLenis, NAV_SCROLL_OFFSET } from '@/components/animations/SmoothScroll'
 import { Monogram } from '@/components/museum/Monogram'
 import { site, socials } from '@/lib/data/site'
 
@@ -54,14 +54,16 @@ export function Topbar() {
     if (!href.startsWith('/#')) return
     e.preventDefault()
     setOpen(false)
-    scrollTo(href.slice(1), { offset: -64 })
+    scrollTo(href.slice(1), { offset: -NAV_SCROLL_OFFSET })
   }
 
   return (
     <>
       <header
-        className={`sticky top-0 z-40 w-full transition-colors duration-500 ${
-          scrolled ? 'border-b border-[rgba(28,26,22,0.14)] bg-bg/90 backdrop-blur-md' : 'border-b border-transparent'
+        className={`sticky top-3 z-40 mx-auto mt-3 w-[calc(100%-1.5rem)] max-w-7xl rounded-2xl border transition-all duration-500 sm:top-4 sm:mt-4 sm:w-[calc(100%-2rem)] ${
+          scrolled
+            ? 'border-[rgba(28,26,22,0.14)] bg-bg/85 shadow-[0_14px_36px_-18px_rgba(50,40,20,0.3)] backdrop-blur-xl'
+            : 'border-[rgba(28,26,22,0.08)] bg-bg/55 backdrop-blur-lg'
         }`}
       >
         <nav

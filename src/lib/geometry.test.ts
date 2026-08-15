@@ -69,6 +69,51 @@ describe('zelligePieces', () => {
     }
   })
 
+  it('stays on the canonical weave for the first bracket of seeds', () => {
+    for (let seed = 0; seed < 24; seed++) {
+      const pieces = zelligePieces(false, seed)
+      expect(pieces.filter((p) => p.kind === 'diamond')).toHaveLength(8)
+      expect(pieces.filter((p) => p.kind === 'square' && p.scale > 0.5)).toHaveLength(8)
+      expect(pieces.filter((p) => p.kind === 'cross')).toHaveLength(0)
+      expect(pieces).toHaveLength(33)
+    }
+  })
+
+  it('opens the Crown, Spindle and Fetti weaves past the first bracket', () => {
+    const crowns = zelligePieces(false, 24)
+    /* crown: tall diamonds, a ring of keps, studs */
+    expect(crowns.filter((p) => p.kind === 'diamond')).toHaveLength(8)
+    expect(crowns.filter((p) => p.kind === 'cross')).toHaveLength(8)
+    expect(crowns.filter((p) => p.kind === 'square' && p.scale < 0.5)).toHaveLength(16)
+
+    const spindles = zelligePieces(false, 48)
+    /* spindle: a comb of ivory squares, a cage of keps, far studs */
+    expect(spindles.filter((p) => p.kind === 'square' && p.scale < 0.5)).toHaveLength(32)
+    expect(spindles.filter((p) => p.kind === 'cross')).toHaveLength(8)
+
+    const fettis = zelligePieces(false, 72)
+    /* fetti: keps embracing the heart, a dust of ivory squares */
+    expect(fettis.filter((p) => p.kind === 'cross')).toHaveLength(8)
+    expect(fettis.filter((p) => p.kind === 'diamond')).toHaveLength(16)
+    expect(fettis.filter((p) => p.kind === 'square')).toHaveLength(16)
+
+    /* the weaves round-robin after the third bracket */
+    expect(zelligePieces(false, 96).filter((p) => p.kind === 'diamond')).toHaveLength(8)
+  })
+
+  it('keeps every weave inside the ring rules', () => {
+    for (let seed = 24; seed < 96; seed++) {
+      const pieces = zelligePieces(false, seed)
+      expect(pieces[0]).toMatchObject({ kind: 'star', radius: 0, glaze: 'cobalt' })
+      /* no tile rides past the rim */
+      expect(Math.max(...pieces.map((p) => p.radius))).toBeLessThan(6)
+      /* every glaze stays in the kiln palette */
+      for (const p of pieces) {
+        expect(['cobalt', 'teal', 'terra', 'ivory', 'brass']).toContain(p.glaze)
+      }
+    }
+  })
+
   it('starPoints stay a closed, valid eight-point star', () => {
     const pts = starPoints(10, 4)
     expect(pts).toHaveLength(16)

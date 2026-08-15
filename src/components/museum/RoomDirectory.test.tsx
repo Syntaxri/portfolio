@@ -16,6 +16,7 @@ vi.mock('@/hooks/useReducedMotion', () => ({
 
 vi.mock('@/components/animations/SmoothScroll', () => ({
   useLenis: () => ({ scrollTo: mockScrollTo }),
+  NAV_SCROLL_OFFSET: 80,
 }))
 
 describe('RoomDirectory', () => {

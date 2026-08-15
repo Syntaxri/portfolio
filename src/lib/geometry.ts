@@ -143,12 +143,18 @@ export function zelligePieces(onMobile: boolean, seed = 0): ZelligePiece[] {
   /* seeded fires rotate the whole composition and re-tint the rings while
      keeping the zellige rules intact: rings never cross radii, glazes stay
      in the kiln's palette, and the central star is always the lock.
-     seed 0 is the canonical first firing — byte-identical to before. */
+     seed 0 is the canonical first firing — byte-identical to before.
+     The first twenty-four seeds stay on the canonical weave; afterwards
+     the kiln opens three more weaves in round-robin — each a different
+     tile arrangement, but the same craft rules. */
   const spin = seed === 0 ? 0 : Math.floor(rnd() * 4) * (Math.PI / 16)
   const glazePhase = seed === 0 ? 0 : Math.floor(rnd() * 4)
   const studMotive = seed === 0 ? 0 : Math.floor(rnd() * 3)
   const jit = (base: number, spread: number) =>
     seed === 0 ? base : base + (rnd() - 0.5) * spread
+  const weave = onMobile || seed === 0 ? 0 : Math.floor(seed / 24) % 4
+  /* the glaze alternation shared by every weave's paired rings */
+  const alt = (i: number) => ((i + glazePhase) % 2 ? 'teal' : 'terra') as 'teal' | 'terra'
 
   /* the central star — the lock of the whole composition */
   pieces.push({ kind: 'star', radius: 0, angle: 0, rotation: spin, scale: 1, glaze: 'cobalt', order: 0 })
@@ -177,6 +183,162 @@ export function zelligePieces(onMobile: boolean, seed = 0): ZelligePiece[] {
         scale: 0.55,
         glaze: 'ivory',
         order: 4 + i * 0.25,
+      })
+    }
+    return pieces
+  }
+
+  if (weave === 1) {
+    /* THE CROWN — the keeper sits in a ring of tall diamonds, ivory
+       keps between the points, brass studs tight along a nearer rim */
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4
+      pieces.push({
+        kind: 'diamond',
+        radius: jit(3.0, 0.18),
+        angle: a + spin,
+        rotation: Math.PI / 4,
+        scale: jit(0.92, 0.05),
+        glaze: alt(i),
+        order: 1 + i * 0.3,
+      })
+    }
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4 + Math.PI / 8
+      pieces.push({
+        kind: 'cross',
+        radius: jit(3.7, 0.18),
+        angle: a + spin,
+        rotation: spin + (i % 2) * (Math.PI / 8),
+        scale: jit(0.85, 0.04),
+        glaze: 'ivory',
+        order: 3 + i * 0.25,
+      })
+    }
+    for (let i = 0; i < 16; i++) {
+      const a = (i * Math.PI) / 8 + Math.PI / 16
+      const stud = (i * Math.PI) / 8
+      const accent =
+        studMotive === 1 ? i % 4 === 0 : studMotive === 2 ? i % 5 === 2 : i % 3 === 1
+      pieces.push({
+        kind: 'square',
+        radius: jit(4.5, 0.18),
+        angle: a + spin,
+        rotation: stud,
+        scale: jit(0.3, 0.04),
+        glaze: accent ? 'cobalt' : 'brass',
+        order: 5 + i * 0.12,
+      })
+    }
+    return pieces
+  }
+
+  if (weave === 2) {
+    /* THE SPINDLE — two fine combs of ivory catching a ring of keps,
+       a cobalt-and-ivory band, and studs far on the rim */
+    for (let i = 0; i < 16; i++) {
+      const a = (i * Math.PI) / 8 + Math.PI / 16
+      pieces.push({
+        kind: 'square',
+        radius: jit(3.2, 0.16),
+        angle: a + spin,
+        rotation: Math.PI / 4,
+        scale: jit(0.4, 0.03),
+        glaze: 'ivory',
+        order: 1 + i * 0.18,
+      })
+    }
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4
+      pieces.push({
+        kind: 'cross',
+        radius: jit(3.65, 0.16),
+        angle: a + spin,
+        rotation: spin + (i % 2) * (Math.PI / 8),
+        scale: jit(0.9, 0.04),
+        glaze: alt(i),
+        order: 3 + i * 0.25,
+      })
+    }
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4 + Math.PI / 8
+      pieces.push({
+        kind: 'diamond',
+        radius: jit(4.15, 0.16),
+        angle: a + spin,
+        rotation: Math.PI / 4,
+        scale: jit(1.05, 0.05),
+        glaze: (i + glazePhase) % 2 ? 'cobalt' : 'ivory',
+        order: 4 + i * 0.25,
+      })
+    }
+    for (let i = 0; i < 16; i++) {
+      const a = (i * Math.PI) / 8
+      const stud = (i * Math.PI) / 8
+      const accent =
+        studMotive === 1 ? i % 4 === 0 : studMotive === 2 ? i % 5 === 2 : i % 3 === 1
+      pieces.push({
+        kind: 'square',
+        radius: jit(4.85, 0.16),
+        angle: a + spin,
+        rotation: stud,
+        scale: jit(0.28, 0.03),
+        glaze: accent ? 'cobalt' : 'brass',
+        order: 6 + i * 0.12,
+      })
+    }
+    return pieces
+  }
+
+  if (weave === 3) {
+    /* THE FETTI — keps and diamonds meshing outward, no studs, a dust
+       of ivory squares and a brass ring catching the farthest light */
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4
+      pieces.push({
+        kind: 'cross',
+        radius: jit(3.25, 0.16),
+        angle: a + spin,
+        rotation: spin + (i % 2) * (Math.PI / 8),
+        scale: jit(0.95, 0.04),
+        glaze: alt(i),
+        order: 1 + i * 0.3,
+      })
+    }
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4 + Math.PI / 8
+      pieces.push({
+        kind: 'diamond',
+        radius: jit(3.85, 0.16),
+        angle: a + spin,
+        rotation: Math.PI / 4,
+        scale: jit(0.8, 0.04),
+        glaze: 'ivory',
+        order: 3 + i * 0.25,
+      })
+    }
+    for (let i = 0; i < 16; i++) {
+      const a = (i * Math.PI) / 8
+      pieces.push({
+        kind: 'square',
+        radius: jit(4.45, 0.16),
+        angle: a + spin,
+        rotation: Math.PI / 4,
+        scale: jit(0.42, 0.03),
+        glaze: 'ivory',
+        order: 5 + i * 0.15,
+      })
+    }
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4 + Math.PI / 8
+      pieces.push({
+        kind: 'diamond',
+        radius: jit(5.0, 0.16),
+        angle: a + spin,
+        rotation: Math.PI / 4,
+        scale: jit(0.58, 0.03),
+        glaze: 'brass',
+        order: 7 + i * 0.2,
       })
     }
     return pieces

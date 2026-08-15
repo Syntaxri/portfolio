@@ -46,7 +46,7 @@ export function Footer() {
           <div className="mb-4 flex items-center gap-3">
             <Monogram className="h-6 w-6 text-accent-2" />
             <span className="font-mono text-[0.62rem] uppercase tracking-[0.24em] text-text-2">
-              {site.name} × {site.nickname}
+              {site.name}
             </span>
           </div>
           <p className="serif max-w-[28ch] text-2xl leading-snug text-text-2">
@@ -114,6 +114,13 @@ export function Footer() {
               className="font-mono text-[0.6rem] uppercase tracking-[0.18em] text-text-3 transition-colors hover:text-accent"
             >
               Conservation console
+            </button>
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event('ar:toggle-github'))}
+              className="font-mono text-[0.6rem] uppercase tracking-[0.18em] text-text-3 transition-colors hover:text-accent"
+            >
+              GitHub ledger
             </button>
           </div>
         </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { useLenis } from '@/components/animations/SmoothScroll'
+import { useLenis, NAV_SCROLL_OFFSET } from '@/components/animations/SmoothScroll'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 const PLAN = [
@@ -57,7 +57,7 @@ export function RoomDirectory() {
           <button
             key={p.id}
             type="button"
-            onClick={() => scrollTo(`#${p.id}`, { offset: -64 })}
+            onClick={() => scrollTo(`#${p.id}`, { offset: -NAV_SCROLL_OFFSET })}
             className="group flex items-center gap-3 py-0.5"
             aria-pressed={isActive}
             aria-label={`Room ${p.n} — ${p.label}`}

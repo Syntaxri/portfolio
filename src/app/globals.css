@@ -362,11 +362,11 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 0.9 5.9 4.1 9 5 5.9 5.9 5 9.1 4.1 5.9 1 5 4.1 4.1 Z' fill='%23c4c4ff'/%3E%3C/svg%3E");
   }
 
-  /* --- horseshoe arch frame (the museum doors) ----------------------------- */
+  /* --- exhibit frame (rounded rectangle, hairline inlay) -------------------- */
   .arch-frame {
     position: relative;
     overflow: hidden;
-    border-radius: 50% 50% 0.7rem 0.7rem / 135% 135% 0.7rem 0.7rem;
+    border-radius: 1rem;
     border: 1px solid rgba(var(--text-rgb), 0.16);
     background: var(--surface);
     box-shadow: 0 18px 50px -22px rgba(50, 40, 20, 0.35);
@@ -377,7 +377,7 @@
     content: '';
     position: absolute;
     inset: 0.55rem;
-    border-radius: 50% 50% 0.3rem 0.3rem / 135% 135% 0.3rem 0.3rem;
+    border-radius: 0.6rem;
     border: 1px solid rgba(var(--accent-2-rgb), 0.35);
     pointer-events: none;
     transition:
@@ -387,12 +387,11 @@
 
   .arch-frame:hover {
     border-color: rgba(var(--accent-rgb), 0.55);
-    border-radius: 0.5rem;
   }
 
   .arch-frame:hover::after {
     inset: 0.35rem;
-    border-radius: 0.32rem;
+    border-radius: 0.45rem;
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -35,8 +35,8 @@ function detectTier() {
   return Math.min(window.devicePixelRatio, 2)
 }
 
-function starGeometry(outer: number, inner: number, depth: number): THREE.ExtrudeGeometry {
-  const shape = new THREE.Shape(starPoints(outer, inner, 8).map((p) => new THREE.Vector2(p.x, p.y)))
+function starGeometry(outer: number, inner: number, depth: number, points = 8): THREE.ExtrudeGeometry {
+  const shape = new THREE.Shape(starPoints(outer, inner, points).map((p) => new THREE.Vector2(p.x, p.y)))
   shape.closePath()
   return new THREE.ExtrudeGeometry(shape, {
     depth,
@@ -46,6 +46,9 @@ function starGeometry(outer: number, inner: number, depth: number): THREE.Extrud
     bevelSegments: 1,
   })
 }
+
+/* the kep: a four-point star — the kiln's second vocabulary */
+const kepGeometry = (size: number, depth: number) => starGeometry(size, size * 0.36, depth, 4)
 
 function diamondGeometry(size: number, depth: number): THREE.ExtrudeGeometry {
   const s = new THREE.Shape()
@@ -122,10 +125,13 @@ interface RigidPiece {
   targetRot: number
 }
 
-/** depth band per ring, so no two overlapping faces ever share a z-plane */
+/** depth band per ring, so no two overlapping faces ever share a z-plane
+ *  (typedef order: diamond 0, square 0.18, stud 0.34, kep 0.42,
+ *  star 0.5–0.66) */
 function layerZ(p: ZelligePiece): number {
   if (p.kind === 'star') return 0.5
   if (p.kind === 'diamond') return 0
+  if (p.kind === 'cross') return 0.42
   /* studs are small squares riding the outer rim */
   return p.scale < 0.5 ? 0.34 : 0.18
 }
@@ -182,7 +188,7 @@ export function MosaicCanvas() {
     const root = new THREE.Group()
     scene.add(root)
 
-    const DEPTH = { star: 0.16, diamond: 0.16, square: 0.14 }
+    const DEPTH = { star: 0.16, diamond: 0.16, square: 0.14, kep: 0.12 }
 
     let rigids: RigidPiece[] = []
 
@@ -222,6 +228,10 @@ export function MosaicCanvas() {
           case 'star':
             geometry = starGeometry(2.4, 1.05, DEPTH.star)
             break
+          case 'cross':
+            /* the kep carries its own scale in the weave data */
+            geometry = kepGeometry(1.15 * p.scale, DEPTH.kep)
+            break
           case 'diamond':
             geometry = diamondGeometry(1.5, DEPTH.diamond)
             break
@@ -229,7 +239,7 @@ export function MosaicCanvas() {
             geometry = squareGeometry(0.75, DEPTH.square)
         }
         const mesh = new THREE.Mesh(geometry, material)
-        mesh.scale.setScalar(p.scale)
+        if (p.kind !== 'cross') mesh.scale.setScalar(p.scale)
         group.add(mesh)
         root.add(group)
 
@@ -259,7 +269,9 @@ export function MosaicCanvas() {
       }
     }
 
-    build(0)
+    /* the first firing, the one the entrance greets with: the keeper's
+       favourite seed — Fetti weave, ringed crosses, dust of ivory */
+    build(1743179309)
 
     /* pointer parallax */
     const pointer = { x: 0, y: 0, tx: 0, ty: 0 }

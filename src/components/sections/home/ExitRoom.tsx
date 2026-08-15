@@ -89,7 +89,7 @@ export function ExitRoom() {
             The exhibition has ended — the door stays open.
           </p>
           <p className="label-muted label mt-3">
-            {site.name} · {site.nickname} — built in Azrou · {new Date().getFullYear()}
+            {site.name} — built in Azrou · {new Date().getFullYear()}
           </p>
           <div className="mt-8">
             <a href={`mailto:${site.email}`} className="btn">

@@ -18,6 +18,11 @@ interface LenisContextValue {
 
 const LenisContext = createContext<LenisContextValue | null>(null)
 
+/* how far a room's top sits below the floating glass bar when it sticks:
+   bar height 4rem + its 12–16px stick gap. Every anchor jump through the
+   site (nav, hero CTAs, the floor plan) lands with this much headroom. */
+export const NAV_SCROLL_OFFSET = 80
+
 /* scroll positions per route — remembered so browser back/forward can
    restore the page where the reader left it (Next doesn't restore it for
    us on history traversal) */

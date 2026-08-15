@@ -10,6 +10,7 @@ import { CustomCursor } from '@/components/animations/CustomCursor'
 import { Preloader } from '@/components/animations/Preloader'
 import { PageTransition } from '@/components/animations/PageTransition'
 import { CraftDashboard } from '@/components/chrome/CraftDashboard'
+import { GitHubConsole } from '@/components/chrome/GitHubConsole'
 import { CuratorsKey } from '@/components/chrome/CuratorsKey'
 import { site } from '@/lib/data/site'
 
@@ -127,6 +128,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Preloader />
           <PageTransition />
           <CraftDashboard />
+          <GitHubConsole />
           <CuratorsKey />
         </SmoothScrollProvider>
       </body>

@@ -6,6 +6,7 @@ import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 vi.mock('@/components/animations/SmoothScroll', () => ({
   useLenis: () => ({ scrollTo: vi.fn() }),
+  NAV_SCROLL_OFFSET: 80,
 }))
 
 vi.mock('@/hooks/useReducedMotion', () => ({

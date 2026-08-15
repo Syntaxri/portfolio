@@ -538,12 +538,13 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
 
     let raf = 0
     let normalBudget = 0
-    const clock = new THREE.Clock()
+    const timer = new THREE.Timer()
 
     const tick = () => {
       raf = requestAnimationFrame(tick)
-      const dt = Math.min(clock.getDelta(), 0.05)
-      const t = clock.elapsedTime
+      timer.update()
+      const dt = Math.min(timer.getDelta(), 0.05)
+      const t = timer.getElapsed()
       /* the loom is offscreen: stop paying for it entirely — no motion,
          no normals, no render. It wakes up clean on the way back in. */
       if (!visible) {

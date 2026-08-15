@@ -30,9 +30,9 @@ describe('EntranceScene', () => {
     window.__entranceReady = false
   })
 
-  it('names the room as the page heading', () => {
+  it('names the keeper as the page heading', () => {
     render(<EntranceScene />)
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Room 00/i)
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Akram Rihani/i)
   })
 
   it('renders a static fallback so the room survives without WebGL', () => {

@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { useLenis } from '@/components/animations/SmoothScroll'
 import { WebGLErrorBoundary } from '@/components/three/WebGLErrorBoundary'
-import { Monogram } from '@/components/museum/Monogram'
 import { site } from '@/lib/data/site'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -18,14 +19,16 @@ const MosaicCanvas = dynamic(() => import('@/components/three/MosaicCanvas').the
 
 /**
  * ROOM 00 — THE ATRIUM.
- * The entrance installation: after the preloader door lifts, a Zellige
- * composition is presented out of the kiln — warm light spilling, the
- * camera stepping forward, pieces locking into place from the outside
- * in. When the object settles, the museum's thesis is spoken; hairline
- * orbit rings turn around it at clockwork pace. A double-click fires
- * the kiln again — the star flares, the room clinks, a FIRED proof mark
- * flashes. Scroll grinds the composition apart and the visitor walks
- * into the museum.
+ * The entrance installation. The door plate names the keeper first —
+ * Akram Rihani, creative developer and digital craftsman — and the
+ * museum speaks around him: the room number, the thesis, the kiln.
+ * The Zellige composition is presented out of the kiln on the right:
+ * warm light spilling, the camera stepping forward, pieces locking into
+ * place from the outside in. When the object settles, the museum's
+ * thesis is spoken; hairline orbit rings turn around it at clockwork
+ * pace. A double-click fires the kiln again — the star flares, the
+ * room clinks, a FIRED proof mark flashes. Scroll grinds the
+ * composition apart and the visitor walks into the museum.
  */
 
 /* the entrance choreography, in one place:
@@ -45,6 +48,13 @@ export function EntranceScene() {
   const thesisVisible = reduced || thesisShown
   const sceneRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+  const { scrollTo } = useLenis()
+
+  const go = (e: React.MouseEvent, href: string) => {
+    if (!href.startsWith('/#')) return
+    e.preventDefault()
+    scrollTo(href.slice(1), { offset: -64 })
+  }
 
   useEffect(() => {
     /* the kiln's loop waits for the door to open — announced at most
@@ -182,128 +192,169 @@ export function EntranceScene() {
       <div className="zellige-wall" aria-hidden="true" />
       <div className="mashrabiya" aria-hidden="true" />
 
-      {/* hairline orbit rings — instrumentation behind the artifact,
-          turning at clockwork pace, never touching the composition */}
-      <div className="orbs" aria-hidden="true">
-        <div className="orb-pos orb-a h-[58vmin] w-[58vmin]">
-          <svg viewBox="0 0 100 100" className="h-full w-full">
-            <circle cx="50" cy="50" r="49" className="orb-circle" strokeWidth={0.55} opacity={0.32} />
-            <circle
-              cx="50"
-              cy="50"
-              r="49"
-              className="orb-circle"
-              strokeWidth={1.1}
-              opacity={0.55}
-              strokeDasharray="6 302"
-            />
-          </svg>
-        </div>
-        <div className="orb-pos orb-b h-[71vmin] w-[71vmin]">
-          <svg viewBox="0 0 100 100" className="h-full w-full">
-            <circle cx="50" cy="50" r="49" className="orb-circle" strokeWidth={0.5} opacity={0.24} />
-            <circle
-              cx="50"
-              cy="50"
-              r="49"
-              className="orb-circle"
-              strokeWidth={1}
-              opacity={0.45}
-              strokeDasharray="8 300"
-            />
-          </svg>
-        </div>
-        <div className="orb-pos orb-c h-[84vmin] w-[84vmin]">
-          <svg viewBox="0 0 100 100" className="h-full w-full">
-            <circle cx="50" cy="50" r="49" className="orb-circle" strokeWidth={0.45} opacity={0.16} />
-            <circle
-              cx="50"
-              cy="50"
-              r="49"
-              className="orb-circle"
-              strokeWidth={0.9}
-              opacity={0.35}
-              strokeDasharray="10 298"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <div className="absolute inset-0" aria-hidden="true">
-        <WebGLErrorBoundary onFail={() => setGlFailed(true)}>
-          {!glFailed && (
-            <div className="absolute inset-0" data-installation>
-              <MosaicCanvas />
-            </div>
-          )}
-        </WebGLErrorBoundary>
-        <div className="mosaic-fallback" aria-hidden="true" />
-      </div>
-
-      {/* the kiln's proof mark — stamped over the room, then gone.
-          keyed: every firing restamps a fresh mark */}
-      <div className="pointer-events-none absolute inset-x-0 top-[56%] z-20 flex justify-center">
-        <span
-          key={fireCount}
-          className={`fired-mark ${fireCount ? 'is-fired' : ''}`}
-          style={fireCount ? undefined : { opacity: 0 }}
-        >
-          Fired
-        </span>
-      </div>
-
-      {/* the museum's thesis — spoken once the mandala has settled */}
       <div
-        data-place-thesis
-        className="pointer-events-none absolute inset-x-0 top-[70%] z-10 px-4 text-center"
+        ref={contentRef}
+        className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 pb-5 pt-14 sm:px-6 sm:pt-20"
       >
-        <div
-          className={`thesis-reveal ${thesisVisible ? 'is-shown' : ''}`}
-          data-thesis-reveal
-          style={thesisVisible ? undefined : { opacity: 0 }}
-        >
-          <p className="thesis-eyebrow">The museum begins</p>
-          <p className="thesis-line">This museum has no walls — only craft.</p>
+        {/* the door plate — world-building, kept small so the keeper
+            speaks first */}
+        <div className="flex items-start justify-between gap-4" data-hero-reveal>
+          <div>
+            <p className="label label-accent">Room 00 — the atrium</p>
+            <p className="label label-muted mt-1.5">
+              The museum of software craftsmanship · Azrou, Morocco
+            </p>
+          </div>
+          <div className="hidden items-center gap-2.5 pt-1 md:flex">
+            <span className="ping-dot" aria-hidden="true" />
+            <span className="label label-muted">{site.availability}</span>
+          </div>
         </div>
-      </div>
 
-      <div className="pointer-events-none relative z-10 w-full flex-1 px-4 pt-4 sm:px-6 sm:pt-5">
-        <div ref={contentRef} className="max-w-4xl">
-          <div
-            className="flex items-center gap-4"
-            data-hero-reveal
-          >
-            <Monogram className="h-12 w-12 text-accent-2" />
-            <div>
-              <h1 className="label-accent label">Room 00 — the atrium</h1>
-              <p className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.22em] text-text-3">
-                The museum of software craftsmanship · Azrou, Morocco
-              </p>
+        <div className="grid flex-1 items-center gap-y-12 py-10 lg:grid-cols-12 lg:gap-x-4 lg:gap-y-0">
+          {/* the keeper's plaque — who, what, why, and the way in */}
+          <div className="lg:col-span-6 xl:col-span-6">
+            <h1
+              data-hero-reveal
+              className="text-[clamp(2.5rem,6.5vw,5.5rem)] font-extrabold uppercase leading-[0.9]"
+            >
+              Akram Rihani
+            </h1>
+
+            <p
+              data-hero-reveal
+              className="mt-4 font-sans text-[clamp(0.9rem,1.5vw,1.1rem)] font-semibold uppercase tracking-[0.12em] text-text-2"
+            >
+              Full-Stack Software Developer
+            </p>
+
+            <p
+              data-hero-reveal
+              className="serif mt-5 max-w-[54ch] text-[clamp(1.05rem,1.6vw,1.35rem)] leading-[1.5] text-text-2"
+            >
+              I engineer robust, scalable software solutions across the full technology stack,
+              from intuitive user interfaces to reliable backend systems and data infrastructure.
+            </p>
+
+            <div className="mt-7 flex flex-wrap items-center gap-3" data-hero-reveal>
+              <Link href="/#collection" onClick={(e) => go(e, '/#collection')} className="btn">
+                Explore work
+                <span aria-hidden="true">→</span>
+              </Link>
+              <Link href="/#exit" onClick={(e) => go(e, '/#exit')} className="btn-ghost">
+                Start a project
+                <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+
+            {/* the thesis — spoken once the mandala has settled */}
+            <div data-place-thesis className="mt-8">
+              <div
+                className={`thesis-reveal ${thesisVisible ? 'is-shown' : ''}`}
+                data-thesis-reveal
+                style={thesisVisible ? undefined : { opacity: 0 }}
+              >
+                <p className="thesis-eyebrow">The museum begins</p>
+                <p className="thesis-line text-[clamp(1rem,1.6vw,1.3rem)]">
+                  This museum has no walls — only craft.
+                </p>
+              </div>
             </div>
           </div>
-          <div
-            className="mt-4 flex flex-col items-start gap-1.5"
-            data-hero-reveal
-          >
-            <p className="label-muted label flex items-center gap-2">
-              <span className="inline-block h-px w-6 bg-text-3" aria-hidden="true" />
-              Scroll — the zellige unlocks
-            </p>
-            {!glFailed && (
-              <p className="label-muted label">
-                <span className="sm:hidden">Double-tap</span>
-                <span className="hidden sm:inline">Double-click</span> the zellige — the kiln fires a new
-                pattern
-              </p>
-            )}
+
+          {/* the installation — the room's centrepiece, on its plinth */}
+          <div className="relative lg:col-span-6">
+            <div className="relative mx-auto aspect-square w-full max-w-[min(100%,66svh)]">
+              {/* hairline orbit rings — instrumentation behind the artifact,
+                  turning at clockwork pace, never touching the composition */}
+              <div className="absolute inset-0" aria-hidden="true">
+                <div className="orb-pos orb-a h-[78%] w-[78%]">
+                  <svg viewBox="0 0 100 100" className="h-full w-full">
+                    <circle cx="50" cy="50" r="49" className="orb-circle" strokeWidth={0.55} opacity={0.32} />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="49"
+                      className="orb-circle"
+                      strokeWidth={1.1}
+                      opacity={0.55}
+                      strokeDasharray="6 302"
+                    />
+                  </svg>
+                </div>
+                <div className="orb-pos orb-b h-[92%] w-[92%]">
+                  <svg viewBox="0 0 100 100" className="h-full w-full">
+                    <circle cx="50" cy="50" r="49" className="orb-circle" strokeWidth={0.5} opacity={0.24} />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="49"
+                      className="orb-circle"
+                      strokeWidth={1}
+                      opacity={0.45}
+                      strokeDasharray="8 300"
+                    />
+                  </svg>
+                </div>
+                <div className="orb-pos orb-c h-[106%] w-[106%]">
+                  <svg viewBox="0 0 100 100" className="h-full w-full">
+                    <circle cx="50" cy="50" r="49" className="orb-circle" strokeWidth={0.45} opacity={0.16} />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="49"
+                      className="orb-circle"
+                      strokeWidth={0.9}
+                      opacity={0.35}
+                      strokeDasharray="10 298"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <div className="absolute inset-0">
+                <WebGLErrorBoundary onFail={() => setGlFailed(true)}>
+                  {!glFailed && (
+                    <div className="absolute inset-0" data-installation>
+                      <MosaicCanvas />
+                    </div>
+                  )}
+                  <div className="mosaic-fallback" aria-hidden="true" />
+                </WebGLErrorBoundary>
+              </div>
+
+              {/* the kiln's proof mark — stamped over the room, then gone.
+                  keyed: every firing restamps a fresh mark */}
+              <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
+                <span
+                  key={fireCount}
+                  className={`fired-mark ${fireCount ? 'is-fired' : ''}`}
+                  style={fireCount ? undefined : { opacity: 0 }}
+                >
+                  Fired
+                </span>
+              </div>
+            </div>
+
+            {/* the small print under the exhibit — hints, not messaging */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <p className="label label-muted">Scroll — the zellige unlocks</p>
+              {!glFailed && (
+                <p className="label label-muted text-center sm:text-right">
+                  <span className="sm:hidden">Double-tap</span>
+                  <span className="hidden sm:inline">Double-click</span> the zellige — the kiln
+                  fires a new pattern
+                </p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="pointer-events-none relative z-10 mx-auto flex w-full max-w-7xl flex-1 items-end justify-end px-4 pb-6 sm:px-6">
-        <span className="label-muted label" data-hero-reveal>
-          {site.name} × {site.nickname} — {new Date().getFullYear()}
-        </span>
+        <div className="pointer-events-none relative z-10 flex justify-end">
+          <span className="label label-muted" data-hero-reveal>
+            {site.name} × {site.nickname} — {new Date().getFullYear()}
+          </span>
+        </div>
       </div>
     </section>
   )

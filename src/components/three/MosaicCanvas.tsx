@@ -349,14 +349,15 @@ export function MosaicCanvas() {
     glRegistry.register(glSource)
 
     let raf = 0
-    const clock = new THREE.Clock()
+    const timer = new THREE.Timer()
     const easeOutExpo = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t))
 
     const tick = () => {
       if (!started) return
       raf = requestAnimationFrame(tick)
-      const dt = Math.min(clock.getDelta(), 0.05)
-      const t = clock.elapsedTime
+      timer.update()
+      const dt = Math.min(timer.getDelta(), 0.05)
+      const t = timer.getElapsed()
 
       /* the entrance is offscreen: stop paying for it entirely — the
          composition is static, no motion, no render. It wakes up clean

@@ -11,6 +11,7 @@ const ROOMS = [
   { href: '/#craft', label: 'Workshop' },
   { href: '/#collection', label: 'Collection' },
   { href: '/#archive', label: 'Archive' },
+  { href: '/#living', label: 'Living' },
 ] as const
 
 /**
@@ -147,7 +148,8 @@ export function Topbar() {
               { href: '/#craft', label: 'The Workshop', n: '02' },
               { href: '/#collection', label: 'The Collection', n: '03' },
               { href: '/#archive', label: 'The Archive', n: '04' },
-              { href: '/#exit', label: 'The Exit', n: '05' },
+              { href: '/#living', label: 'The Living Room', n: '05' },
+              { href: '/#exit', label: 'The Exit', n: '06' },
             ].map((r) => (
               <a
                 key={r.label}

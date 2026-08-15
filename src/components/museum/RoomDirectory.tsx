@@ -11,7 +11,8 @@ const PLAN = [
   { id: 'craft', n: '02', label: 'Workshop' },
   { id: 'collection', n: '03', label: 'Collection' },
   { id: 'archive', n: '04', label: 'Archive' },
-  { id: 'exit', n: '05', label: 'Exit' },
+  { id: 'living', n: '05', label: 'Living' },
+  { id: 'exit', n: '06', label: 'Exit' },
 ] as const
 
 /**

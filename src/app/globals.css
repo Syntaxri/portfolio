@@ -838,6 +838,82 @@
   }
 }
 
+/* ------------------------------------------------------- the living room */
+.living-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: rgba(197, 149, 76, 1);
+  box-shadow: 0 0 10px rgba(197, 149, 76, 0.9);
+  animation: living-pulse 1.6s ease-in-out infinite;
+}
+
+.living-dot.is-lit {
+  background: rgba(108, 180, 148, 1);
+  box-shadow: 0 0 10px rgba(108, 180, 148, 0.95);
+  animation: none;
+}
+
+@keyframes living-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* the street lamp that warms the frame while the page answers */
+.living-beam {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    120% 90% at 50% 28%,
+    rgba(255, 207, 158, 0.16),
+    rgba(255, 207, 158, 0) 62%
+  );
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+
+.living-beam.is-lit {
+  opacity: 1;
+}
+
+/* the live page — invisible until it has arrived, then it simply is */
+.living-frame {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.8s ease 0.2s;
+}
+
+.living-frame.is-lit {
+  opacity: 1;
+}
+
+/* the projector rising to a room-sized window */
+@keyframes living-pop {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.975);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.living-pop {
+  animation: living-pop 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
 /* ---------------------------------------------------------------- keyframes */
 @keyframes spin {
   to {

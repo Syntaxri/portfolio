@@ -4,11 +4,13 @@ import { Workshop } from '@/components/sections/home/Workshop'
 import { LoomRoom } from '@/components/sections/home/LoomRoom'
 import { Collection } from '@/components/sections/home/Collection'
 import { Archive } from '@/components/sections/home/Archive'
+import { LivingRoom } from '@/components/sections/home/LivingRoom'
 import { ExitRoom } from '@/components/sections/home/ExitRoom'
 
 /**
  * THE MUSEUM — one continuous walk:
- * Atrium → Fountain → Workshop → The Loom → Collection → Archive → Exit.
+ * Atrium → Fountain → Workshop → The Loom → Collection → Archive →
+ * Living Room → Exit.
  */
 export default function Home() {
   return (
@@ -19,6 +21,7 @@ export default function Home() {
       <LoomRoom />
       <Collection />
       <Archive />
+      <LivingRoom />
       <ExitRoom />
     </>
   )

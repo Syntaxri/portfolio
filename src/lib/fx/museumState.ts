@@ -71,7 +71,8 @@ export const MUSEUM_ROOMS = [
   { id: 'loom', label: 'The Loom' },
   { id: 'collection', label: 'Room 03 — The Collection' },
   { id: 'archive', label: 'Room 04 — The Archive' },
-  { id: 'exit', label: 'Room 05 — The Exit' },
+  { id: 'living', label: 'Room 05 — The Living Room' },
+  { id: 'exit', label: 'Room 06 — The Exit' },
 ] as const
 
 export interface MuseumRoom {

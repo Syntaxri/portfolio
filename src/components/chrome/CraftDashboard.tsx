@@ -6,7 +6,7 @@ import { scrollState } from '@/lib/animations/scrollState'
 import { Monogram } from '@/components/museum/Monogram'
 
 /**
- * THE CONSERVATION CONSOLE — Ctrl+Shift+K (or the footer link).
+ * THE CONSERVATION CONSOLE — Ctrl+Shift+K.
  * The museum's engineering monitoring panel: real FPS, real draw calls
  * from the live canvases, the current room, the zellige's seed and the
  * kiln fires, the loom's weave, and a clearly-labeled build-time badge.

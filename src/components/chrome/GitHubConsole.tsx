@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { site } from '@/lib/data/site'
 
 /**
- * THE KEEPER'S LEDGER — Ctrl+Shift+G (or the footer link).
+ * THE KEEPER'S LEDGER — Ctrl+Shift+G.
  * The museum's second console: the live GitHub record behind the work.
  * Reaches /api/github (a cached proxy — the browser never talks to
  * GitHub itself), polls every minute while open, and shows exactly what

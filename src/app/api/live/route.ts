@@ -11,7 +11,7 @@ import { projects } from '@/lib/data/projects'
  */
 
 const ORIGIN = 'https://akramrihani.com'
-const REVALIDATE_SECONDS = 600
+const REVALIDATE_SECONDS = 60
 
 async function probe(url: string): Promise<{ embeddable: boolean; reason: string }> {
   try {

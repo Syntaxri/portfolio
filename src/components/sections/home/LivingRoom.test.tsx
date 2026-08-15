@@ -46,13 +46,21 @@ describe('LivingRoom', () => {
     expect(screen.getAllByText(/Palais Amghass/).length).toBeGreaterThan(0)
   })
 
-  it('ranks the other live builds in the stalls', () => {
+  it('hangs every live build in the rack', () => {
     render(<LivingRoom />)
-    /* the hero hangs first; the other live builds follow in the stalls */
-    expect(screen.getByText(/every other live build/)).toBeTruthy()
-    for (const title of ['NextHobby', 'Auto-École Michlifen', 'Azrou Design', 'Le Sapin']) {
-      expect(screen.getByText(title)).toBeTruthy()
+    for (const title of ['Palais Amghass', 'NextHobby', 'Auto-École Michlifen', 'Azrou Design', 'Le Sapin']) {
+      expect(screen.getByRole('button', { name: new RegExp(`${title} — hang this build in the frame`) })).toBeTruthy()
     }
+  })
+
+  it('swaps the frame when another door is picked', async () => {
+    render(<LivingRoom />)
+    /* nexthobby reports locked — the stage tells the truth about it */
+    fireEvent.click(screen.getByRole('button', { name: /NextHobby — hang this build in the frame/ }))
+    expect(await screen.findByText('NextHobby lives at its own address.')).toBeTruthy()
+    /* and the palais door answers again */
+    fireEvent.click(screen.getByRole('button', { name: /Palais Amghass — hang this build in the frame/ }))
+    expect(await screen.findByRole('button', { name: /Palais Amghass — enter the living room/ })).toBeTruthy()
   })
 
   it('lets the visitor into the room-sized window and out again', async () => {

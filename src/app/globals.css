@@ -856,6 +856,12 @@
   animation: none;
 }
 
+.living-dot.is-locked {
+  background: rgba(160, 91, 60, 0.7);
+  box-shadow: none;
+  animation: none;
+}
+
 @keyframes living-pulse {
   0%,
   100% {

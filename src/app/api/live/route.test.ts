@@ -52,6 +52,6 @@ describe('GET /api/live', () => {
 
   it('carries the same short cache discipline as the ledger', async () => {
     const res = await GET()
-    expect(res.headers.get('cache-control')).toContain('s-maxage=600')
+    expect(res.headers.get('cache-control')).toContain('s-maxage=60')
   })
 })

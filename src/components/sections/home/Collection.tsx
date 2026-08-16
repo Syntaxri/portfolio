@@ -18,7 +18,7 @@ function ExhibitMeta({ project, children }: { project: Project; children?: React
 }
 
 /**
- * ROOM 03 — THE COLLECTION.
+ * ROOM 04 — COLLECTION OF WORKS.
  * Six accessions hang along the arcade: the flagship in the place of
  * honour, then the web builds. Every piece is a door into its room.
  */
@@ -28,12 +28,12 @@ export function Collection() {
   const shelves = projects.filter((p) => !p.featured)
 
   return (
-    <Room id="collection" number="03" name="THE COLLECTION" dark={false} className="bg-bg">
+    <Room id="collection" number="04" name="COLLECTION OF WORKS" dark={false} className="bg-bg">
       <div className="zellige-wall" aria-hidden="true" />
       <div className="section-pad mx-auto max-w-7xl px-4 sm:px-6">
         <RoomDoor
-          number="03"
-          name="The Collection."
+          number="04"
+          name="Collection of Works."
           catalog="Six accessions, curated — real builds only. The flagship hangs first, the web builds fill the arcade."
         />
 

@@ -9,19 +9,19 @@ import { ExitRoom } from '@/components/sections/home/ExitRoom'
 
 /**
  * THE MUSEUM — one continuous walk:
- * Atrium → Fountain → Workshop → The Loom → Collection → Archive →
- * Living Room → Exit.
+ * Atrium → Living Room → Fountain → Workshop → The Loom → Collection → Archive →
+ * Exit.
  */
 export default function Home() {
   return (
     <>
       <EntranceScene />
+      <LivingRoom />
       <Fountain />
       <Workshop />
       <LoomRoom />
       <Collection />
       <Archive />
-      <LivingRoom />
       <ExitRoom />
     </>
   )

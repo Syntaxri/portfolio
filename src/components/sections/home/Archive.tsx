@@ -48,7 +48,7 @@ const ARCHIVE_FRAMES = [
 ] as const
 
 /**
- * ROOM 04 — THE ARCHIVE.
+ * ROOM 05 — ARCHIVE OF MEMORY.
  * The museum's technical reading room: the engineering of the flagship
  * exhibit, documented in the dark, where the details have the light.
  */
@@ -56,13 +56,13 @@ export function Archive() {
   const wisla = getProject('wisla-platform')!
 
   return (
-    <Room id="archive" number="04" name="THE ARCHIVE" dark className="bg-walnut">
+    <Room id="archive" number="05" name="ARCHIVE OF MEMORY" dark className="bg-walnut">
       <div className="zellige-wall" aria-hidden="true" />
       <VaultLight rootId="archive" />
       <div className="section-pad mx-auto max-w-7xl px-4 sm:px-6">
         <RoomDoor
-          number="04"
-          name="The Archive."
+          number="05"
+          name="Archive of Memory."
           catalog="The deep exhibit: WISLA — enterprise web application, backend engineering. The lights go down; the details come out."
         />
 

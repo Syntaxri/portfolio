@@ -65,14 +65,14 @@ export const museumState = {
  * ------------------------------------------------------------------------- */
 
 export const MUSEUM_ROOMS = [
-  { id: 'entrance', label: 'Room 00 — The Atrium' },
-  { id: 'courtyard', label: 'Room 01 — The Fountain' },
-  { id: 'craft', label: 'Room 02 — The Workshop' },
+  { id: 'entrance', label: 'Room 00 — Gallery of Origins' },
+  { id: 'living', label: 'Room 01 — Hall of Living Code' },
+  { id: 'courtyard', label: 'Room 02 — Fountain Court' },
+  { id: 'craft', label: 'Room 03 — Workshop of Systems' },
   { id: 'loom', label: 'The Loom' },
-  { id: 'collection', label: 'Room 03 — The Collection' },
-  { id: 'archive', label: 'Room 04 — The Archive' },
-  { id: 'living', label: 'Room 05 — The Living Room' },
-  { id: 'exit', label: 'Room 06 — The Exit' },
+  { id: 'collection', label: 'Room 04 — Collection of Works' },
+  { id: 'archive', label: 'Room 05 — Archive of Memory' },
+  { id: 'exit', label: 'Room 06 — Threshold' },
 ] as const
 
 export interface MuseumRoom {

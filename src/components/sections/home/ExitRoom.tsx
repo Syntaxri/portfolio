@@ -8,18 +8,18 @@ import { ContactForm } from '@/components/forms/ContactForm'
 import { site, socials } from '@/lib/data/site'
 
 /**
- * ROOM 06 — THE EXIT.
+ * ROOM 06 — THRESHOLD.
  * The last room of the museum: the lights stay gentle, the space opens,
  * and the visitors' book waits by the door. One question remains.
  */
 export function ExitRoom() {
   return (
-    <Room id="exit" number="06" name="THE EXIT" dark={false} className="bg-bg-2">
+    <Room id="exit" number="06" name="THRESHOLD" dark={false} className="bg-bg-2">
       <div className="mashrabiya" aria-hidden="true" />
       <div className="section-pad mx-auto max-w-7xl px-4 sm:px-6">
         <Reveal className="max-w-[760px]">
           <div data-rv>
-            <p className="label-accent label">Room 06 — the exit</p>
+            <p className="label-accent label">Room 06 — Threshold</p>
             <h2 className="display-title mt-6 text-[clamp(2.6rem,7vw,6rem)] text-text">
               Have an idea worth building?
             </h2>

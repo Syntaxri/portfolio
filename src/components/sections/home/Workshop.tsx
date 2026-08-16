@@ -12,18 +12,18 @@ const GLAZE_HEX: Record<string, string> = {
 }
 
 /**
- * ROOM 02 — THE WORKSHOP.
+ * ROOM 03 — WORKSHOP OF SYSTEMS.
  * Four disciplines, taught as crafts. Each panel is a cedar door into a
  * branch of the trade — the numeral on the lintel, the glazes in the inlay.
  */
 export function Workshop() {
   return (
-    <Room id="craft" number="02" name="THE WORKSHOP" dark={false} className="bg-bg-2">
+    <Room id="craft" number="03" name="WORKSHOP OF SYSTEMS" dark={false} className="bg-bg-2">
       <div className="zellige-wall" aria-hidden="true" />
       <div className="section-pad mx-auto max-w-7xl px-4 sm:px-6">
         <RoomDoor
-          number="02"
-          name="The Workshop."
+          number="03"
+          name="Workshop of Systems."
           catalog="Four disciplines, practised like crafts — because systems are only as strong as the hands that cut them."
         />
 

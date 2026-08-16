@@ -18,7 +18,7 @@ const MosaicCanvas = dynamic(() => import('@/components/three/MosaicCanvas').the
 })
 
 /**
- * ROOM 00 — THE ATRIUM.
+ * ROOM 00 — GALLERY OF ORIGINS.
  * The entrance installation. The door plate names the keeper first —
  * Akram Rihani, creative developer and digital craftsman — and the
  * museum speaks around him: the room number, the thesis, the kiln.
@@ -211,7 +211,7 @@ export function EntranceScene() {
             speaks first */}
         <div className="flex items-start justify-between gap-4" data-hero-reveal>
           <div>
-            <p className="label label-accent">Room 00 — the atrium</p>
+            <p className="label label-accent">Room 00 — Gallery of Origins</p>
             <p className="label label-muted mt-1.5">The museum of software craftsmanship · Azrou, Morocco</p>
           </div>
           <div className="hidden items-center gap-2.5 pt-1 md:flex">

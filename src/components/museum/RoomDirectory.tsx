@@ -6,13 +6,13 @@ import { useLenis, NAV_SCROLL_OFFSET } from '@/components/animations/SmoothScrol
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 const PLAN = [
-  { id: 'entrance', n: '00', label: 'Atrium' },
-  { id: 'courtyard', n: '01', label: 'Fountain' },
-  { id: 'craft', n: '02', label: 'Workshop' },
-  { id: 'collection', n: '03', label: 'Collection' },
-  { id: 'archive', n: '04', label: 'Archive' },
-  { id: 'living', n: '05', label: 'Living' },
-  { id: 'exit', n: '06', label: 'Exit' },
+  { id: 'entrance', n: '00', label: 'Gallery of Origins' },
+  { id: 'living', n: '01', label: 'Hall of Living Code' },
+  { id: 'courtyard', n: '02', label: 'Fountain Court' },
+  { id: 'craft', n: '03', label: 'Workshop of Systems' },
+  { id: 'collection', n: '04', label: 'Collection of Works' },
+  { id: 'archive', n: '05', label: 'Archive of Memory' },
+  { id: 'exit', n: '06', label: 'Threshold' },
 ] as const
 
 /**

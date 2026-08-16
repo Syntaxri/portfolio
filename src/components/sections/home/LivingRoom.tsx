@@ -20,7 +20,7 @@ interface WallEntry {
 }
 
 /**
- * ROOM 05 — THE LIVING ROOM.
+ * ROOM 01 — HALL OF LIVING CODE.
  * The museum's arcade of things that are still running: every live build
  * hangs on the wall, inside the frame it really lives in. One stage, one
  * rack — pick a door and the wall answers with that build, running as it
@@ -125,12 +125,12 @@ export function LivingRoom() {
   }
 
   return (
-    <Room id="living" number="05" name="THE LIVING ROOM" className="bg-bg">
+    <Room id="living" number="01" name="HALL OF LIVING CODE" className="bg-bg">
       <div className="zellige-wall" aria-hidden="true" />
       <div className="section-pad mx-auto max-w-7xl px-4 sm:px-6">
         <RoomDoor
-          number="05"
-          name="The Living Room."
+          number="01"
+          name="Hall of Living Code."
           catalog="No photographs — the real thing. The live builds hang on the wall, each running exactly as it runs on the internet; the nearest one first."
         />
 

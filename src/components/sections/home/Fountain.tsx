@@ -36,7 +36,7 @@ function FountainArt() {
 }
 
 /**
- * ROOM 01 — THE FOUNTAIN.
+ * ROOM 02 — FOUNTAIN COURT.
  * The story of the maker, told in four steps across the water, and the
  * seven rules taken from the Moroccan workshop that the whole museum is
  * built under.
@@ -62,12 +62,12 @@ export function Fountain() {
   ]
 
   return (
-    <Room id="courtyard" number="01" name="THE FOUNTAIN" dark={false} className="bg-bg">
+    <Room id="courtyard" number="02" name="FOUNTAIN COURT" dark={false} className="bg-bg">
       <div className="zellige-wall" aria-hidden="true" />
       <div className="section-pad mx-auto max-w-7xl px-4 sm:px-6">
         <RoomDoor
-          number="01"
-          name="The Fountain."
+          number="02"
+          name="Fountain Court."
           catalog="Every museum has a founding story. This one is four steps, and they all lead to the same place: an idea, made real."
         />
 

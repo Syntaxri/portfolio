@@ -149,13 +149,13 @@ export function Topbar() {
           </div>
           <div className="flex flex-1 flex-col justify-center gap-2 px-6">
             {[
-              { href: '/', label: 'The Atrium', n: '00' },
-              { href: '/#courtyard', label: 'The Fountain', n: '01' },
-              { href: '/#craft', label: 'The Workshop', n: '02' },
-              { href: '/#collection', label: 'The Collection', n: '03' },
-              { href: '/#archive', label: 'The Archive', n: '04' },
-              { href: '/#living', label: 'The Living Room', n: '05' },
-              { href: '/#exit', label: 'The Exit', n: '06' },
+              { href: '/', label: 'Gallery of Origins', n: '00' },
+              { href: '/#living', label: 'Hall of Living Code', n: '01' },
+              { href: '/#courtyard', label: 'Fountain Court', n: '02' },
+              { href: '/#craft', label: 'Workshop of Systems', n: '03' },
+              { href: '/#collection', label: 'Collection of Works', n: '04' },
+              { href: '/#archive', label: 'Archive of Memory', n: '05' },
+              { href: '/#exit', label: 'Threshold', n: '06' },
               { href: '/about', label: 'The Keeper', n: 'A/V' },
             ].map((r) => (
               <a

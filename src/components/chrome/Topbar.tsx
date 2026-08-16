@@ -84,6 +84,12 @@ export function Topbar() {
           </Link>
 
           <div className="hidden items-center gap-8 md:flex">
+            <Link
+              href="/about"
+              className="relative py-1 font-mono text-[0.62rem] uppercase tracking-[0.2em] text-text-2 transition-colors hover:text-accent hover:after:absolute hover:after:inset-x-0 hover:after:-bottom-0.5 hover:after:h-px hover:after:bg-accent/60"
+            >
+              About
+            </Link>
             {ROOMS.map((r) => (
               <Link
                 key={r.href}
@@ -150,6 +156,7 @@ export function Topbar() {
               { href: '/#archive', label: 'The Archive', n: '04' },
               { href: '/#living', label: 'The Living Room', n: '05' },
               { href: '/#exit', label: 'The Exit', n: '06' },
+              { href: '/about', label: 'The Keeper', n: 'A/V' },
             ].map((r) => (
               <a
                 key={r.label}

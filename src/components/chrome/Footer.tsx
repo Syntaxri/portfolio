@@ -49,9 +49,13 @@ export function Footer() {
               {site.name}
             </span>
           </div>
-          <p className="serif max-w-[28ch] text-2xl leading-snug text-text-2">
-            {site.thesis}
-          </p>
+          <p className="serif max-w-[28ch] text-2xl leading-snug text-text-2">{site.thesis}</p>
+          <Link
+            href="/about"
+            className="mt-4 inline-block font-mono text-[0.62rem] uppercase tracking-[0.2em] text-accent transition-opacity hover:opacity-75"
+          >
+            The keeper&apos;s file →
+          </Link>
         </div>
 
         <div>

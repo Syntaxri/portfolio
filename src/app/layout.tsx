@@ -12,6 +12,7 @@ import { PageTransition } from '@/components/animations/PageTransition'
 import { CraftDashboard } from '@/components/chrome/CraftDashboard'
 import { GitHubConsole } from '@/components/chrome/GitHubConsole'
 import { CuratorsKey } from '@/components/chrome/CuratorsKey'
+import { JsonLd } from '@/components/seo/JsonLd'
 import { site } from '@/lib/data/site'
 
 const archivo = Archivo({
@@ -45,10 +46,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(`https://${site.domain}`),
   title: {
-    default: `${site.name} — The Museum of Software Craftsmanship`,
+    default: `${site.name} — ${site.jobTitle}`,
     template: `%s · ${site.name}`,
   },
-  description: site.strapline,
+  description: site.metaDescription,
   applicationName: site.name,
   authors: [{ name: site.name, url: `https://${site.domain}` }],
   creator: site.name,
@@ -81,14 +82,14 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: `https://${site.domain}`,
     siteName: site.name,
-    title: `${site.name} — The Museum of Software Craftsmanship`,
-    description: site.strapline,
+    title: `${site.name} — ${site.jobTitle}`,
+    description: site.metaDescription,
     images: ['/opengraph-image'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${site.name} — The Museum of Software Craftsmanship`,
-    description: site.strapline,
+    title: `${site.name} — ${site.jobTitle}`,
+    description: site.metaDescription,
     creator: site.instagram,
     images: ['/opengraph-image'],
   },
@@ -115,6 +116,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body
         className={`${archivo.variable} ${fraunces.variable} ${spaceMono.variable} no-cursor`}
       >
+        <JsonLd />
         <SmoothScrollProvider>
           <StabilityFactory />
           <Topbar />

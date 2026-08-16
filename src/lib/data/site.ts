@@ -1,6 +1,9 @@
 export const site = {
   name: 'Akram Rihani',
   monogram: 'A/V',
+  jobTitle: 'Full-Stack Software Developer',
+  metaDescription:
+    'Akram Rihani — full-stack software developer in Azrou, Morocco. Java & Spring Boot backends, Next.js & React interfaces, WebGL motion, shipped end to end.',
   role: 'Software Engineer',
   roles: ['Software Engineer', 'Digital Product Builder', 'WebGL & Motion'],
   email: 'hello@akramrihani.com',

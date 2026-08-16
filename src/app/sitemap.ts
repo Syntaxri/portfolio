@@ -7,7 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()
 
   const staticPages = [
-    { url: base, lastModified: now, changeFrequency: 'weekly' as const, priority: 1 },
+    { url: `${base}/`, lastModified: now, changeFrequency: 'weekly' as const, priority: 1 },
   ]
 
   const projectPages = projects.map((p) => ({

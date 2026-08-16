@@ -43,6 +43,10 @@ export function EntranceScene() {
   const [entered, setEntered] = useState(false)
   const [thesisShown, setThesisShown] = useState(false)
   const [fireCount, setFireCount] = useState(0)
+  /* the kiln does not wake until the door hands the stage over: its
+     module is heavy (three.js), and the door is opaque — nothing but
+     the choreography is owed to the first seconds */
+  const [canvasOn, setCanvasOn] = useState(false)
   const reduced = useReducedMotion()
   /* reduced motion: the thesis is simply part of the static room */
   const thesisVisible = reduced || thesisShown
@@ -55,6 +59,13 @@ export function EntranceScene() {
     e.preventDefault()
     scrollTo(href.slice(1), { offset: -NAV_SCROLL_OFFSET })
   }
+
+  useEffect(() => {
+    if (reduced) return
+    const toLift = () => setCanvasOn(true)
+    window.addEventListener('ar:door-lift', toLift)
+    return () => window.removeEventListener('ar:door-lift', toLift)
+  }, [reduced])
 
   useEffect(() => {
     /* the kiln's loop waits for the door to open — announced at most
@@ -201,9 +212,7 @@ export function EntranceScene() {
         <div className="flex items-start justify-between gap-4" data-hero-reveal>
           <div>
             <p className="label label-accent">Room 00 — the atrium</p>
-            <p className="label label-muted mt-1.5">
-              The museum of software craftsmanship · Azrou, Morocco
-            </p>
+            <p className="label label-muted mt-1.5">The museum of software craftsmanship · Azrou, Morocco</p>
           </div>
           <div className="hidden items-center gap-2.5 pt-1 md:flex">
             <span className="ping-dot" aria-hidden="true" />
@@ -232,8 +241,8 @@ export function EntranceScene() {
               data-hero-reveal
               className="serif mt-5 max-w-[54ch] text-[clamp(1.05rem,1.6vw,1.35rem)] leading-[1.5] text-text-2"
             >
-              I engineer robust, scalable software solutions across the full technology stack,
-              from intuitive user interfaces to reliable backend systems and data infrastructure.
+              I engineer robust, scalable software solutions across the full technology stack, from intuitive
+              user interfaces to reliable backend systems and data infrastructure.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-3" data-hero-reveal>
@@ -314,9 +323,9 @@ export function EntranceScene() {
 
               <div className="absolute inset-0">
                 <WebGLErrorBoundary onFail={() => setGlFailed(true)}>
-                  {!glFailed && (
+                  {!glFailed && canvasOn && (
                     <div className="absolute inset-0" data-installation>
-                      <MosaicCanvas />
+                      <MosaicCanvas autostart={entered} />
                     </div>
                   )}
                   <div className="mosaic-fallback" aria-hidden="true" />

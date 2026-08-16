@@ -1,7 +1,23 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import * as THREE from 'three'
+import {
+  AmbientLight,
+  BufferGeometry,
+  Color,
+  DirectionalLight,
+  ExtrudeGeometry,
+  Group,
+  Mesh,
+  MeshStandardMaterial,
+  PerspectiveCamera,
+  Scene,
+  Shape,
+  Timer,
+  Vector2,
+  Vector3,
+  WebGLRenderer,
+} from 'three'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { zelligePieces, starPoints, GLAZE_HEX, type ZelligePiece } from '@/lib/geometry'
 import { glRegistry, museumState } from '@/lib/fx/museumState'
@@ -35,10 +51,10 @@ function detectTier() {
   return Math.min(window.devicePixelRatio, 2)
 }
 
-function starGeometry(outer: number, inner: number, depth: number, points = 8): THREE.ExtrudeGeometry {
-  const shape = new THREE.Shape(starPoints(outer, inner, points).map((p) => new THREE.Vector2(p.x, p.y)))
+function starGeometry(outer: number, inner: number, depth: number, points = 8): ExtrudeGeometry {
+  const shape = new Shape(starPoints(outer, inner, points).map((p) => new Vector2(p.x, p.y)))
   shape.closePath()
-  return new THREE.ExtrudeGeometry(shape, {
+  return new ExtrudeGeometry(shape, {
     depth,
     bevelEnabled: true,
     bevelThickness: 0.035,
@@ -50,14 +66,14 @@ function starGeometry(outer: number, inner: number, depth: number, points = 8): 
 /* the kep: a four-point star — the kiln's second vocabulary */
 const kepGeometry = (size: number, depth: number) => starGeometry(size, size * 0.36, depth, 4)
 
-function diamondGeometry(size: number, depth: number): THREE.ExtrudeGeometry {
-  const s = new THREE.Shape()
+function diamondGeometry(size: number, depth: number): ExtrudeGeometry {
+  const s = new Shape()
   s.moveTo(0, size)
   s.lineTo(size, 0)
   s.lineTo(0, -size)
   s.lineTo(-size, 0)
   s.closePath()
-  return new THREE.ExtrudeGeometry(s, {
+  return new ExtrudeGeometry(s, {
     depth,
     bevelEnabled: true,
     bevelThickness: 0.035,
@@ -66,14 +82,14 @@ function diamondGeometry(size: number, depth: number): THREE.ExtrudeGeometry {
   })
 }
 
-function squareGeometry(size: number, depth: number): THREE.ExtrudeGeometry {
-  const s = new THREE.Shape()
+function squareGeometry(size: number, depth: number): ExtrudeGeometry {
+  const s = new Shape()
   s.moveTo(-size, -size)
   s.lineTo(size, -size)
   s.lineTo(size, size)
   s.lineTo(-size, size)
   s.closePath()
-  return new THREE.ExtrudeGeometry(s, {
+  return new ExtrudeGeometry(s, {
     depth,
     bevelEnabled: true,
     bevelThickness: 0.03,
@@ -83,7 +99,7 @@ function squareGeometry(size: number, depth: number): THREE.ExtrudeGeometry {
 }
 
 /** lazily resolved GPU label — guarded, and only on demand */
-function gpuLabel(renderer: THREE.WebGLRenderer): string | null {
+function gpuLabel(renderer: WebGLRenderer): string | null {
   try {
     const gl = renderer.getContext()
     const ext = gl.getExtension('WEBGL_debug_renderer_info') as {
@@ -98,16 +114,16 @@ function gpuLabel(renderer: THREE.WebGLRenderer): string | null {
 }
 
 interface RigidPiece {
-  group: THREE.Group
-  mesh: THREE.Mesh
-  material: THREE.MeshStandardMaterial
-  baseColor: THREE.Color
+  group: Group
+  mesh: Mesh
+  material: MeshStandardMaterial
+  baseColor: Color
   /** the idle glaze shadow — restored every frame so the kiln flash can
    *  never leave a permanent mark on the material */
-  baseEmissive: THREE.Color
-  glowColor: THREE.Color
-  start: THREE.Vector3
-  final: THREE.Vector3
+  baseEmissive: Color
+  glowColor: Color
+  start: Vector3
+  final: Vector3
   startRot: number
   finalRot: number
   delay: number
@@ -141,16 +157,23 @@ const NEAR_RADIUS = 3.4
 /** the strongest the composition leans, per piece */
 const NEAR_STRENGTH = 0.07
 
+/* idle pacing: while nothing moves, the hall breathes at ~6fps — the
+   drift and the light tide are slow, so the cadence is invisible; the
+   moment the visitor interacts, the kiln is still presenting, or a
+   flash is cooling, the loop runs at full frame rate again */
+const IDLE_FRAME_DIVISOR = 10
+const ACTIVE_AFTER_MS = 1200
+
 /* the presentation: for ~1.35s the composition is shown arriving —
    pulled out of the kiln while it is still warm, the camera stepping
    forward a little as it settles on its plinth. */
 const REVEAL_DURATION = 1.35
-const KILN_WARM = new THREE.Color('#ffcf9e')
-const KILN_FLASH = new THREE.Color('#ff9a4d')
+const KILN_WARM = new Color('#ffcf9e')
+const KILN_FLASH = new Color('#ff9a4d')
 /* the haptic confirmation reuses the loom's shared throttle (ms) */
 const KILN_PULSE_MIN_MS = 90
 
-export function MosaicCanvas() {
+export function MosaicCanvas({ autostart = false }: { autostart?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const reduced = useReducedMotion()
 
@@ -162,7 +185,7 @@ export function MosaicCanvas() {
     const tier = detectTier()
     const mobile = window.innerWidth < 768
 
-    const renderer = new THREE.WebGLRenderer({
+    const renderer = new WebGLRenderer({
       canvas,
       antialias: true,
       alpha: true,
@@ -171,21 +194,21 @@ export function MosaicCanvas() {
     renderer.setClearColor(0x000000, 0)
     renderer.setPixelRatio(tier)
 
-    const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 60)
+    const scene = new Scene()
+    const camera = new PerspectiveCamera(42, 1, 0.1, 60)
     camera.position.set(0, 0.25, 16.9)
     camera.lookAt(0, 0, 0)
 
-    const warm = new THREE.DirectionalLight(0xffe8c8, 2.1)
+    const warm = new DirectionalLight(0xffe8c8, 2.1)
     warm.position.set(4, 5.5, 7)
     scene.add(warm)
-    const azul = new THREE.DirectionalLight(0x8fb0ff, 0.9)
+    const azul = new DirectionalLight(0x8fb0ff, 0.9)
     azul.position.set(-6, -2.5, 5)
     scene.add(azul)
-    const fill = new THREE.AmbientLight(0xfff6e6, 0.85)
+    const fill = new AmbientLight(0xfff6e6, 0.85)
     scene.add(fill)
 
-    const root = new THREE.Group()
+    const root = new Group()
     scene.add(root)
 
     const DEPTH = { star: 0.16, diamond: 0.16, square: 0.14, kep: 0.12 }
@@ -209,13 +232,13 @@ export function MosaicCanvas() {
 
       for (let i = 0; i < pieces.length; i++) {
         const p = pieces[i]
-        const group = new THREE.Group()
+        const group = new Group()
         group.position.set(Math.cos(p.angle) * p.radius, Math.sin(p.angle) * p.radius - 0.15, 0)
         group.rotation.z = p.rotation
 
         const hex = GLAZE_HEX[p.glaze]
         const dark = GLAZE_HEX[`${p.glaze}Dark` as keyof typeof GLAZE_HEX]
-        const material = new THREE.MeshStandardMaterial({
+        const material = new MeshStandardMaterial({
           color: hex,
           flatShading: true,
           roughness: 0.55,
@@ -223,7 +246,7 @@ export function MosaicCanvas() {
           emissive: dark,
           emissiveIntensity: 0.12,
         })
-        let geometry: THREE.BufferGeometry
+        let geometry: BufferGeometry
         switch (p.kind) {
           case 'star':
             geometry = starGeometry(2.4, 1.05, DEPTH.star)
@@ -238,22 +261,22 @@ export function MosaicCanvas() {
           default:
             geometry = squareGeometry(0.75, DEPTH.square)
         }
-        const mesh = new THREE.Mesh(geometry, material)
+        const mesh = new Mesh(geometry, material)
         if (p.kind !== 'cross') mesh.scale.setScalar(p.scale)
         group.add(mesh)
         root.add(group)
 
         const final = group.position.clone()
-        const start = new THREE.Vector3().copy(final).multiplyScalar(2.35)
-        const baseColor = new THREE.Color(hex)
-        const baseEmissive = new THREE.Color(dark)
+        const start = new Vector3().copy(final).multiplyScalar(2.35)
+        const baseColor = new Color(hex)
+        const baseEmissive = new Color(dark)
         rigids.push({
           group,
           mesh,
           material,
           baseColor,
           baseEmissive,
-          glowColor: baseColor.clone().lerp(new THREE.Color('#fff8ea'), 0.22),
+          glowColor: baseColor.clone().lerp(new Color('#fff8ea'), 0.22),
           start,
           final,
           startRot: p.rotation + (Math.PI / 2) * (i % 2 === 0 ? 1 : -1),
@@ -278,6 +301,7 @@ export function MosaicCanvas() {
     const onPointer = (e: PointerEvent) => {
       pointer.tx = (e.clientX / window.innerWidth - 0.5) * 2
       pointer.ty = (e.clientY / window.innerHeight - 0.5) * 2
+      lastActivity = performance.now()
     }
     window.addEventListener('pointermove', onPointer, { passive: true })
 
@@ -335,8 +359,10 @@ export function MosaicCanvas() {
 
     /* scroll breakup */
     let scroll = 0
+    let lastActivity = performance.now()
     const onScroll = () => {
       scroll = Math.min(window.scrollY / window.innerHeight, 1.25)
+      lastActivity = performance.now()
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -361,7 +387,8 @@ export function MosaicCanvas() {
     glRegistry.register(glSource)
 
     let raf = 0
-    const timer = new THREE.Timer()
+    let frame = 0
+    const timer = new Timer()
     const easeOutExpo = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t))
 
     const tick = () => {
@@ -375,6 +402,12 @@ export function MosaicCanvas() {
          composition is static, no motion, no render. It wakes up clean
          on the way back in. */
       if (!visible) return
+      /* while the visitor rests, the hall keeps its slow tide at a low
+         cadence; full speed the moment anything engages it */
+      frame++
+      const engaged =
+        performance.now() - lastActivity < ACTIVE_AFTER_MS || t < REVEAL_DURATION + 0.4 || flash > 0.001
+      if (!engaged && frame % IDLE_FRAME_DIVISOR !== 0) return
 
       pointer.x += (pointer.tx - pointer.x) * Math.min(1, dt * 2.2)
       pointer.y += (pointer.ty - pointer.y) * Math.min(1, dt * 2.2)
@@ -457,11 +490,10 @@ export function MosaicCanvas() {
 
       renderer.render(scene, camera)
     }
-    /* the kiln mounts hidden behind the door so its first frame — the
-       page's LCP — registers at once; then it idles (one static paint)
-       until the door actually lifts, so it never burns frames the
-       visitor can't see */
-    let started = museumState.entranceOpen
+    /* the kiln mounts as the door lifts (the room hands the stage over);
+       the entrance choreography always descends from the same starting
+       beat, whether the lift event carried it in or autostart did */
+    let started = museumState.entranceOpen || autostart
     const onLift = () => {
       museumState.entranceOpen = true
       if (started) return
@@ -469,7 +501,8 @@ export function MosaicCanvas() {
       tick()
     }
     window.addEventListener('ar:door-lift', onLift)
-    /* one static frame now (the LCP paint); the loop waits for the lift */
+    /* one static frame so the stage is never blank, then the loop only
+       runs once the door is up */
     renderer.render(scene, camera)
     if (started) tick()
 
@@ -496,7 +529,7 @@ export function MosaicCanvas() {
       disposePieces()
       renderer.dispose()
     }
-  }, [reduced])
+  }, [reduced, autostart])
 
   if (reduced) return null
 

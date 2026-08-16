@@ -43,10 +43,22 @@ export function VaultLight({ rootId }: VaultLightProps) {
     const isCoarse = window.matchMedia('(pointer: coarse)').matches
     const idlePatrolMs = 2600
 
+    /* the vault light never burns frames for a room the visitor has
+       left: the loop rests entirely while the Archive is offscreen */
+    let near = false
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        near = entry.isIntersecting
+      },
+      { rootMargin: '12% 0px 12% 0px' }
+    )
+    io.observe(root)
+
     const lerp = (a: number, b: number, k: number) => a + (b - a) * k
 
     const frame = () => {
       raf = requestAnimationFrame(frame)
+      if (!near) return
       const now = performance.now()
       if (now - lastInteraction > idlePatrolMs) {
         /* the lamp never leaves a visitor stranded: a slow circuit of
@@ -97,6 +109,7 @@ export function VaultLight({ rootId }: VaultLightProps) {
 
     return () => {
       cancelAnimationFrame(raf)
+      io.disconnect()
       root.removeEventListener('pointermove', onPointerMove)
       root.removeEventListener('pointerdown', onPointerDown)
       root.removeEventListener('focusin', onFocus)
@@ -130,10 +143,7 @@ export function VaultLight({ rootId }: VaultLightProps) {
       />
       {/* a second, uniform dimness so the far corners read as depth,
           not a flat curtain over the lamp */}
-      <div
-        className="absolute inset-0"
-        style={{ background: 'rgba(8, 6, 4, 0.34)' }}
-      />
+      <div className="absolute inset-0" style={{ background: 'rgba(8, 6, 4, 0.34)' }} />
     </div>
   )
 }

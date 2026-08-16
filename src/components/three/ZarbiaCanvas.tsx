@@ -1,7 +1,19 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import * as THREE from 'three'
+import {
+  AmbientLight,
+  CanvasTexture,
+  DirectionalLight,
+  Group,
+  Mesh,
+  MeshStandardMaterial,
+  PerspectiveCamera,
+  PlaneGeometry,
+  Scene,
+  Timer,
+  WebGLRenderer,
+} from 'three'
 import { useQualityTier } from '@/hooks/useQuality'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { glRegistry, museumState } from '@/lib/fx/museumState'
@@ -21,9 +33,7 @@ import { glRegistry, museumState } from '@/lib/fx/museumState'
 function detectTier() {
   const coarse = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches
   const cores =
-    typeof navigator !== 'undefined' && navigator.hardwareConcurrency
-      ? navigator.hardwareConcurrency
-      : 8
+    typeof navigator !== 'undefined' && navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 8
   if (coarse) return Math.min(window.devicePixelRatio, 1.5)
   if (cores <= 4) return Math.min(window.devicePixelRatio, 1.5)
   return Math.min(window.devicePixelRatio, 2)
@@ -57,13 +67,7 @@ const PILE: Record<keyof typeof PAL, string> = {
 
 type RugPalette = typeof PAL | typeof PILE
 
-function fiberStroke(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  len: number,
-  a: number
-) {
+function fiberStroke(ctx: CanvasRenderingContext2D, x: number, y: number, len: number, a: number) {
   ctx.strokeStyle = `rgba(28, 26, 22, ${a})`
   ctx.lineWidth = 1 + Math.random() * 0.9
   ctx.beginPath()
@@ -72,14 +76,7 @@ function fiberStroke(
   ctx.stroke()
 }
 
-function wavyRect(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  amp = 4
-) {
+function wavyRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, amp = 4) {
   const seg = 5
   ctx.beginPath()
   for (let e = 0; e < 4; e++) {
@@ -111,14 +108,7 @@ function wavyRect(
   ctx.closePath()
 }
 
-function rhombus(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  rx: number,
-  ry: number,
-  rot = 0
-) {
+function rhombus(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx: number, ry: number, rot = 0) {
   ctx.save()
   ctx.translate(cx, cy)
   ctx.rotate(rot)
@@ -218,7 +208,12 @@ function rugPaint(ctx: CanvasRenderingContext2D, F: RugPalette, fringe: boolean)
   ctx.globalAlpha = 0.35
   for (let i = 0; i < 350; i++) {
     ctx.fillStyle = F.ivoryDark
-    ctx.fillRect(88 + Math.random() * 1360, 65 + Math.random() * 894, 1 + Math.random() * 2, 1 + Math.random() * 3)
+    ctx.fillRect(
+      88 + Math.random() * 1360,
+      65 + Math.random() * 894,
+      1 + Math.random() * 2,
+      1 + Math.random() * 3
+    )
   }
   ctx.globalAlpha = 1
 
@@ -405,7 +400,13 @@ function drawWool(): HTMLCanvasElement {
   rugPaint(ctx, PAL, true)
   /* the pile — thousands of fine threads over the pattern */
   for (let i = 0; i < 7000; i++) {
-    fiberStroke(ctx, Math.random() * 1536, Math.random() * 1024, 2 + Math.random() * 5, 0.02 + Math.random() * 0.05)
+    fiberStroke(
+      ctx,
+      Math.random() * 1536,
+      Math.random() * 1024,
+      2 + Math.random() * 5,
+      0.02 + Math.random() * 0.05
+    )
   }
   return c
 }
@@ -418,7 +419,13 @@ function drawPile(): HTMLCanvasElement {
   const ctx = c.getContext('2d')!
   rugPaint(ctx, PILE, false)
   for (let i = 0; i < 6000; i++) {
-    fiberStroke(ctx, Math.random() * 1536, Math.random() * 1024, 2 + Math.random() * 5, 0.03 + Math.random() * 0.07)
+    fiberStroke(
+      ctx,
+      Math.random() * 1536,
+      Math.random() * 1024,
+      2 + Math.random() * 5,
+      0.03 + Math.random() * 0.07
+    )
   }
   return c
 }
@@ -428,6 +435,12 @@ const smooth = (a: number) => {
   const t = clamp01(a)
   return t * t * (3 - 2 * t)
 }
+
+/* resting weave pacing: same idle cadence as the entrance installation —
+   the wool's breath is slow, so a lower frame rate is invisible until
+   the visitor steers the loom */
+const IDLE_FRAME_DIVISOR = 10
+const ACTIVE_AFTER_MS = 1200
 
 export interface ZarbiaControl {
   /** scroll progress through the loom, 0..1 */
@@ -444,7 +457,7 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const renderer = new THREE.WebGLRenderer({
+    const renderer = new WebGLRenderer({
       canvas,
       antialias: true,
       alpha: true,
@@ -453,28 +466,28 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
     renderer.setClearColor(0x000000, 0)
     renderer.setPixelRatio(detectTier())
 
-    const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(50, 1, 0.05, 60)
+    const scene = new Scene()
+    const camera = new PerspectiveCamera(50, 1, 0.05, 60)
     camera.position.set(0, 0.35, 4.8)
     camera.lookAt(0, 0, 0)
 
     /* light: a warm kiln light from the left, a cool glaze rim from the back */
-    const warm = new THREE.DirectionalLight(0xffe9c9, 2.4)
+    const warm = new DirectionalLight(0xffe9c9, 2.4)
     warm.position.set(3.5, 5, 6)
     scene.add(warm)
-    const rim = new THREE.DirectionalLight(0x8fb0ff, 0.8)
+    const rim = new DirectionalLight(0x8fb0ff, 0.8)
     rim.position.set(-5, 2, -4)
     scene.add(rim)
-    scene.add(new THREE.AmbientLight(0xfff3df, 0.5))
+    scene.add(new AmbientLight(0xfff3df, 0.5))
 
-    const root = new THREE.Group()
+    const root = new Group()
     scene.add(root)
 
     /* the long Atlas runner — 96 × 48 woof segments (48 × 24 on weak
        devices, where the normals recompute is halved) */
     const segW = quality === 'low' ? 48 : 96
     const segH = quality === 'low' ? 24 : 48
-    const geo = new THREE.PlaneGeometry(6.4, 3.2, segW, segH)
+    const geo = new PlaneGeometry(6.4, 3.2, segW, segH)
     const flat = new Float32Array(geo.attributes.position.array)
     const baseZ = new Float32Array(geo.attributes.position.array)
     const uv = geo.attributes.uv.array as Float32Array
@@ -493,11 +506,11 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
         Math.sin(nx * Math.PI * 14) * 0.004 * Math.sin(ny * Math.PI * 12)
     }
 
-    const wool = new THREE.CanvasTexture(drawWool())
+    const wool = new CanvasTexture(drawWool())
     wool.anisotropy = 4
-    const pile = new THREE.CanvasTexture(drawPile())
+    const pile = new CanvasTexture(drawPile())
 
-    const rugMat = new THREE.MeshStandardMaterial({
+    const rugMat = new MeshStandardMaterial({
       map: wool,
       bumpMap: pile,
       bumpScale: 0.055,
@@ -506,7 +519,7 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
       transparent: true,
       depthWrite: true,
     })
-    const rug = new THREE.Mesh(geo, rugMat)
+    const rug = new Mesh(geo, rugMat)
     root.add(rug)
 
     /* pointer parallax */
@@ -514,6 +527,7 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
     const onPointer = (e: PointerEvent) => {
       pointer.tx = (e.clientX / window.innerWidth - 0.5) * 2
       pointer.ty = (e.clientY / window.innerHeight - 0.5) * 2
+      lastActivity = performance.now()
     }
     window.addEventListener('pointermove', onPointer, { passive: true })
 
@@ -538,7 +552,10 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
 
     let raf = 0
     let normalBudget = 0
-    const timer = new THREE.Timer()
+    let frame = 0
+    let lastP = control.current.p
+    let lastActivity = performance.now()
+    const timer = new Timer()
 
     const tick = () => {
       raf = requestAnimationFrame(tick)
@@ -551,11 +568,18 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
         normalBudget = 0
         return
       }
+      /* resting weave: the wool keeps breathing at a low cadence (~10fps); the
+         moment the visitor steers it — pointer or scroll — the loom
+         runs at full frame rate again */
+      const p = control.current.p
+      const steered = Math.abs(p - lastP) > 0.0005 || performance.now() - lastActivity < ACTIVE_AFTER_MS
+      lastP = p
+      frame++
+      if (!steered && frame % IDLE_FRAME_DIVISOR !== 0) return
 
       pointer.x += (pointer.tx - pointer.x) * Math.min(1, dt * 2.4)
       pointer.y += (pointer.ty - pointer.y) * Math.min(1, dt * 2.4)
 
-      const p = control.current.p
       museumState.weave = p
 
       /* the camera never moves — the room holds still around the runner */

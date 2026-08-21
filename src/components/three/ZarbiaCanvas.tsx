@@ -1,34 +1,68 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
+  ACESFilmicToneMapping,
+  AdditiveBlending,
   AmbientLight,
+  Box3,
+  BufferAttribute,
+  BufferGeometry,
   CanvasTexture,
+  Color,
   DirectionalLight,
+  DoubleSide,
   Group,
-  Mesh,
+  MathUtils,
   MeshStandardMaterial,
   PerspectiveCamera,
-  PlaneGeometry,
+  Points,
   Scene,
+  ShaderMaterial,
+  Sprite,
+  SpriteMaterial,
   Timer,
+  Vector3,
   WebGLRenderer,
 } from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { useQualityTier } from '@/hooks/useQuality'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { glRegistry, museumState } from '@/lib/fx/museumState'
 
 /*
- * ZARBIA — the loom interlude.
- * A wide handwoven runner hangs in the middle of the room. The camera
- * never moves: the wool breathes, the light plays, and as the visitor
- * scrolls on the runner turns slowly, drifts back and lets them walk
- * past — the pattern holding its geometry at every distance.
+ * ZARBIA — the loom interlude, now wearing the real thing.
+ * The Atlas runner itself — a hand-modelled, game-ready carpet — hangs
+ * in the middle of the room. When it first enters the frame it weaves
+ * itself in: a glowing ember thread sweeps the length of the pile,
+ * wool lifting at the weave-front while sparks swarm the live row.
+ * Afterward it simply lives — the pile breathes, gold dust drifts,
+ * a slow sheen crosses the wool every half-minute — and as the visitor
+ * scrolls on, the runner turns, drifts back, and lets them walk past.
  *
- * The wool face is an Atlas Zarbia: a deep crimson field, a thick
- * ivory/royal-blue geometric border, one small blue Berber lozenge in
- * the centre — drawn onto canvas at init, never shipped as images.
+ * Model: "Game Ready Carpet" — Voidy Entertainment (Sketchfab),
+ * CC-BY-NC-4.0 · https://sketchfab.com/VoidyAssets
  */
+
+const MODEL_URL = '/models/zarbia.glb'
+
+/* how wide the runner stands in the room, in world units */
+const RUG_TARGET_W = 6.6
+/* resting recline of the hang — near-vertical tapestry, leaning back */
+const HANG_TILT = 1.31
+/* seconds for the weave-in reveal */
+const REVEAL_S = 3.4
+/* the reveal front shares one parametrisation between both shader
+   stages: zp = uReveal * (1 + 2·PAD) − PAD, so at rest nothing
+   discards and nothing glows */
+const REVEAL_PAD = 0.18
+
+/* resting weave pacing: the wool breathes slowly, so a lower frame
+   rate is invisible until the visitor steers */
+const IDLE_FRAME_DIVISOR = 10
+const ACTIVE_AFTER_MS = 1200
+
+const PARTICLE_COUNT: Record<string, number> = { high: 650, medium: 380, low: 150 }
 
 function detectTier() {
   const coarse = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches
@@ -39,408 +73,27 @@ function detectTier() {
   return Math.min(window.devicePixelRatio, 2)
 }
 
-/* the zarbia's woven palette — warm, deep, traditional */
-const PAL = {
-  red: '#b71f2e',
-  redDark: '#8e1a26',
-  redLight: '#c93341',
-  ivory: '#e9dec0',
-  ivoryDark: '#d5c7a1',
-  blue: '#22418c',
-  navy: '#16294f',
-  olive: '#6d6e35',
-  rust: '#b4552b',
-} as const
-
-/* the same design, in wool-grays, to light the bump map */
-const PILE: Record<keyof typeof PAL, string> = {
-  red: '#3a3430',
-  redDark: '#2c2825',
-  redLight: '#453e38',
-  ivory: '#8a8178',
-  ivoryDark: '#6f685f',
-  blue: '#4a4540',
-  navy: '#262320',
-  olive: '#3c3833',
-  rust: '#373330',
-}
-
-type RugPalette = typeof PAL | typeof PILE
-
-function fiberStroke(ctx: CanvasRenderingContext2D, x: number, y: number, len: number, a: number) {
-  ctx.strokeStyle = `rgba(28, 26, 22, ${a})`
-  ctx.lineWidth = 1 + Math.random() * 0.9
-  ctx.beginPath()
-  ctx.moveTo(x, y)
-  ctx.lineTo(x + (Math.random() - 0.5) * 1.4, y - len)
-  ctx.stroke()
-}
-
-function wavyRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, amp = 4) {
-  const seg = 5
-  ctx.beginPath()
-  for (let e = 0; e < 4; e++) {
-    for (let s = 0; s <= seg; s++) {
-      const t = s / seg
-      let px: number
-      let py: number
-      if (e === 0) {
-        px = x + w * t
-        py = y
-      } else if (e === 1) {
-        px = x + w
-        py = y + h * t
-      } else if (e === 2) {
-        px = x + w * (1 - t)
-        py = y + h
-      } else {
-        px = x
-        py = y + h * (1 - t)
-      }
-      /* the weaver's hand: each edge wanders a little */
-      const jo = (Math.random() - 0.5) * 2 * amp
-      if (e === 0 || e === 2) py += jo
-      else px += jo
-      if (s === 0 && e === 0) ctx.moveTo(px, py)
-      else ctx.lineTo(px, py)
-    }
-  }
-  ctx.closePath()
-}
-
-function rhombus(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx: number, ry: number, rot = 0) {
-  ctx.save()
-  ctx.translate(cx, cy)
-  ctx.rotate(rot)
-  ctx.beginPath()
-  ctx.moveTo(0, -ry)
-  ctx.lineTo(rx, 0)
-  ctx.lineTo(0, ry)
-  ctx.lineTo(-rx, 0)
-  ctx.closePath()
-  ctx.fill()
-  ctx.restore()
-}
-
-function zigzagX(
-  ctx: CanvasRenderingContext2D,
-  y: number,
-  x0: number,
-  x1: number,
-  teeth: number,
-  amp: number
-) {
-  const w = x1 - x0
-  ctx.beginPath()
-  ctx.moveTo(x0, y)
-  for (let i = 1; i <= teeth * 2; i++) {
-    ctx.lineTo(x0 + (w * i) / (teeth * 2), y + (i % 2 ? -amp : amp))
-  }
-  ctx.lineTo(x1, y)
-  ctx.stroke()
-}
-
-function zigzagY(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y0: number,
-  y1: number,
-  teeth: number,
-  amp: number
-) {
-  const h = y1 - y0
-  ctx.beginPath()
-  ctx.moveTo(x, y0)
-  for (let i = 1; i <= teeth * 2; i++) {
-    ctx.lineTo(x + (i % 2 ? -amp : amp), y0 + (h * i) / (teeth * 2))
-  }
-  ctx.lineTo(x, y1)
-  ctx.stroke()
-}
-
-/* motif stamp — a diamond with its tribal companion */
-function stampDiamond(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  rot: number,
-  F: RugPalette,
-  withRust: boolean
-) {
-  ctx.fillStyle = F.ivory
-  rhombus(ctx, cx, cy, 11, 15, rot)
-  ctx.fillStyle = F.rust
-  rhombus(ctx, cx, cy + (rot ? -15 : 15) * 0.9, 4, 6, rot)
-  if (withRust) {
-    ctx.fillStyle = F.olive
-    rhombus(ctx, cx + 14, cy, 3.4, 5, rot)
-  }
-}
-
-/* the whole runner — bands, motifs, field, medallion. Drawn with a
-   palette so the same loom paints both the colour face and the pile map.
-   Canvas is 1536 × 1024, the long Atlas proportion. */
-function rugPaint(ctx: CanvasRenderingContext2D, F: RugPalette, fringe: boolean) {
-  /* the woven base — deep crimson, everywhere */
-  ctx.fillStyle = F.red
-  ctx.fillRect(0, 0, 1536, 1024)
-
-  /* short ivory fringe at both ends */
-  if (fringe) {
-    ctx.strokeStyle = F.ivory
-    for (let i = 0; i < 240; i++) {
-      const x = Math.random() * 1536
-      const top = Math.random() < 0.5
-      const y = top ? 4 + Math.random() * 26 : 994 + Math.random() * 26
-      const len = 10 + Math.random() * 14
-      ctx.lineWidth = 1.4 + Math.random() * 0.9
-      ctx.beginPath()
-      ctx.moveTo(x, y)
-      ctx.lineTo(x + (Math.random() - 0.5) * 3, y + (top ? -len : len))
-      ctx.stroke()
-    }
-  }
-
-  /* 2 — thick natural-wool ivory band */
-  ctx.fillStyle = F.ivory
-  wavyRect(ctx, 84, 61, 1368, 902, 5)
-  ctx.fill()
-  ctx.globalAlpha = 0.35
-  for (let i = 0; i < 350; i++) {
-    ctx.fillStyle = F.ivoryDark
-    ctx.fillRect(
-      88 + Math.random() * 1360,
-      65 + Math.random() * 894,
-      1 + Math.random() * 2,
-      1 + Math.random() * 3
-    )
-  }
-  ctx.globalAlpha = 1
-
-  /* 3 — royal-blue geometric border */
-  ctx.fillStyle = F.blue
-  wavyRect(ctx, 168, 99, 1200, 826, 4)
-  ctx.fill()
-
-  /* ivory zigzag running through the blue border, all four sides */
-  ctx.strokeStyle = F.ivory
-  ctx.lineWidth = 5
-  zigzagX(ctx, 116, 190, 1346, 42, 8)
-  zigzagX(ctx, 908, 190, 1346, 42, 8)
-  zigzagY(ctx, 212, 108, 916, 20, 8)
-  zigzagY(ctx, 1324, 108, 916, 20, 8)
-
-  /* tribal diamonds + rust/olive accents marching down the blue border */
-  ctx.lineWidth = 1
-  for (let i = 0; i < 68; i++) {
-    const t = (i + 0.5) / 68
-    const jit = (Math.random() - 0.5) * 6
-    const band = Math.random()
-    if (band < 0.16) {
-      ctx.fillStyle = F.rust
-      rhombus(ctx, 190 + t * 1160, 134 + jit, 6, 9)
-    } else if (band < 0.3) {
-      ctx.fillStyle = F.olive
-      rhombus(ctx, 190 + t * 1160, 890 + jit, 4, 6)
-    } else {
-      stampDiamond(ctx, 190 + t * 1160, 134 + jit, 0, F, false)
-      stampDiamond(ctx, 190 + t * 1160, 890 + jit, 0, F, false)
-    }
-  }
-  for (let i = 0; i < 30; i++) {
-    const t = (i + 0.5) / 30
-    const jit = (Math.random() - 0.5) * 6
-    ctx.fillStyle = F.ivory
-    rhombus(ctx, 248 + jit, 116 + t * 792, 9, 12, Math.PI / 2)
-    rhombus(ctx, 1288 + jit, 116 + t * 792, 9, 12, Math.PI / 2)
-    if (i % 3 === 0) {
-      ctx.fillStyle = F.rust
-      rhombus(ctx, 190 + jit, 116 + t * 792, 4.5, 7, Math.PI / 2)
-      rhombus(ctx, 1346 + jit, 116 + t * 792, 4.5, 7, Math.PI / 2)
-    }
-  }
-
-  /* 4 — ivory ground with sharp tribal geometry: navy zigzags,
-     triangle teeth, sparse rust and olive accents */
-  ctx.fillStyle = F.ivory
-  wavyRect(ctx, 252, 136, 1032, 752, 3.5)
-  ctx.fill()
-
-  ctx.strokeStyle = F.navy
-  ctx.lineWidth = 4
-  zigzagX(ctx, 148, 268, 1268, 34, 6)
-  zigzagX(ctx, 158, 268, 1268, 34, 6)
-  zigzagX(ctx, 866, 268, 1268, 34, 6)
-  zigzagX(ctx, 876, 268, 1268, 34, 6)
-  zigzagY(ctx, 268, 144, 880, 20, 6)
-  zigzagY(ctx, 278, 144, 880, 20, 6)
-  zigzagY(ctx, 1258, 144, 880, 20, 6)
-  zigzagY(ctx, 1268, 144, 880, 20, 6)
-
-  /* triangle teeth pointing into the band, navy */
-  ctx.fillStyle = F.navy
-  for (let i = 0; i < 66; i++) {
-    const x = 268 + i * 15.2
-    const y = 146 + (i % 2) * 9
-    ctx.beginPath()
-    ctx.moveTo(x, y)
-    ctx.lineTo(x + 7, y)
-    ctx.lineTo(x + 3.5, y - 9)
-    ctx.closePath()
-    ctx.fill()
-  }
-  for (let i = 0; i < 66; i++) {
-    const x = 268 + i * 15.2
-    const y = 878 - (i % 2) * 9
-    ctx.beginPath()
-    ctx.moveTo(x, y)
-    ctx.lineTo(x + 7, y)
-    ctx.lineTo(x + 3.5, y + 9)
-    ctx.closePath()
-    ctx.fill()
-  }
-
-  /* sparse rust diamonds on the ivory band */
-  ctx.fillStyle = F.rust
-  for (let i = 0; i < 40; i++) {
-    if (i % 2 === 0) continue
-    rhombus(ctx, 280 + i * 24, 168 + (i % 4) * 18, 4.5, 6.5)
-    rhombus(ctx, 280 + i * 24, 856 - (i % 4) * 18, 4.5, 6.5)
-  }
-
-  /* 5 — thin dark-navy framing line around the field */
-  ctx.fillStyle = F.navy
-  wavyRect(ctx, 333, 172, 870, 680, 2.5)
-  ctx.fill()
-
-  /* 6 — very thin olive lines hugging the field edge */
-  ctx.strokeStyle = F.olive
-  ctx.lineWidth = 2.5
-  zigzagX(ctx, 162, 356, 1180, 32, 4.5)
-  zigzagX(ctx, 862, 356, 1180, 32, 4.5)
-  zigzagY(ctx, 344, 178, 846, 30, 4.5)
-  zigzagY(ctx, 1192, 178, 846, 30, 4.5)
-
-  /* 7 — the central field: uninterrupted crimson, lived-in */
-  ctx.fillStyle = F.red
-  wavyRect(ctx, 354, 181, 828, 662, 3)
-  ctx.fill()
-
-  /* subtle warp-and-weft tone variation across the red */
-  ctx.lineWidth = 1
-  for (let i = 0; i < 350; i++) {
-    const x = 358 + Math.random() * 820
-    const y = 185 + Math.random() * 654
-    const len = 8 + Math.random() * 26
-    ctx.globalAlpha = 0.06 + Math.random() * 0.05
-    ctx.strokeStyle = Math.random() < 0.5 ? F.redDark : F.redLight
-    ctx.beginPath()
-    ctx.moveTo(x, y)
-    ctx.lineTo(x + (Math.random() - 0.5) * 2, y + len)
-    ctx.stroke()
-  }
-  ctx.globalAlpha = 1
-
-  /* sparse corner marks — the weaver's quiet signatures */
-  ctx.fillStyle = F.navy
-  rhombus(ctx, 390, 216, 7, 10)
-  rhombus(ctx, 1146, 216, 7, 10)
-  rhombus(ctx, 390, 808, 7, 10)
-  rhombus(ctx, 1146, 808, 7, 10)
-  ctx.fillStyle = F.rust
-  rhombus(ctx, 372, 200, 5, 7)
-  rhombus(ctx, 1164, 200, 5, 7)
-  rhombus(ctx, 372, 824, 5, 7)
-  rhombus(ctx, 1164, 824, 5, 7)
-
-  /* the medallion: the compact Berber lozenge, small against the runner */
-  const cx = 768
-  const cy = 512
-  ctx.fillStyle = F.ivory
-  rhombus(ctx, cx, cy, 120, 160)
-  ctx.fillStyle = F.ivoryDark
-  ctx.globalAlpha = 0.5
-  rhombus(ctx, cx + 5, cy + 6, 99, 132)
-  ctx.globalAlpha = 1
-  ctx.fillStyle = F.blue
-  rhombus(ctx, cx, cy, 92, 126)
-  ctx.fillStyle = F.red
-  rhombus(ctx, cx, cy, 42, 58)
-  ctx.fillStyle = F.navy
-  rhombus(ctx, cx, cy, 13, 19)
-
-  /* tribal marks around the lozenge */
-  ctx.fillStyle = F.rust
-  rhombus(ctx, cx, cy - 178, 7, 10)
-  rhombus(ctx, cx, cy + 178, 7, 10)
-  ctx.fillStyle = F.navy
-  rhombus(ctx, cx - 133, cy, 6, 9)
-  rhombus(ctx, cx + 133, cy, 6, 9)
-  ctx.fillStyle = F.olive
-  rhombus(ctx, cx - 146, cy, 3.5, 5)
-  rhombus(ctx, cx + 146, cy, 3.5, 5)
-  ctx.fillStyle = F.blue
-  rhombus(ctx, cx - 94, cy - 130, 18, 24)
-  rhombus(ctx, cx + 94, cy - 130, 18, 24)
-  rhombus(ctx, cx - 94, cy + 130, 18, 24)
-  rhombus(ctx, cx + 94, cy + 130, 18, 24)
-  ctx.fillStyle = F.rust
-  rhombus(ctx, cx - 94, cy - 130, 6, 9)
-  rhombus(ctx, cx + 94, cy - 130, 6, 9)
-  rhombus(ctx, cx - 94, cy + 130, 6, 9)
-  rhombus(ctx, cx + 94, cy + 130, 6, 9)
-}
-
-/** The wool face: the handwoven Zarbia under a buried pile of fibres. */
-function drawWool(): HTMLCanvasElement {
-  const c = document.createElement('canvas')
-  c.width = 1536
-  c.height = 1024
-  const ctx = c.getContext('2d')!
-  rugPaint(ctx, PAL, true)
-  /* the pile — thousands of fine threads over the pattern */
-  for (let i = 0; i < 7000; i++) {
-    fiberStroke(
-      ctx,
-      Math.random() * 1536,
-      Math.random() * 1024,
-      2 + Math.random() * 5,
-      0.02 + Math.random() * 0.05
-    )
-  }
-  return c
-}
-
-/** Monochrome pile map — the same loom, for the bump map. */
-function drawPile(): HTMLCanvasElement {
-  const c = document.createElement('canvas')
-  c.width = 1536
-  c.height = 1024
-  const ctx = c.getContext('2d')!
-  rugPaint(ctx, PILE, false)
-  for (let i = 0; i < 6000; i++) {
-    fiberStroke(
-      ctx,
-      Math.random() * 1536,
-      Math.random() * 1024,
-      2 + Math.random() * 5,
-      0.03 + Math.random() * 0.07
-    )
-  }
-  return c
-}
-
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
 const smooth = (a: number) => {
   const t = clamp01(a)
   return t * t * (3 - 2 * t)
 }
+const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
-/* resting weave pacing: same idle cadence as the entrance installation —
-   the wool's breath is slow, so a lower frame rate is invisible until
-   the visitor steers the loom */
-const IDLE_FRAME_DIVISOR = 10
-const ACTIVE_AFTER_MS = 1200
+/** soft round glow for the kiln-halo behind the runner */
+function drawHalo(): HTMLCanvasElement {
+  const c = document.createElement('canvas')
+  c.width = 256
+  c.height = 256
+  const ctx = c.getContext('2d')!
+  const g = ctx.createRadialGradient(128, 128, 8, 128, 128, 128)
+  g.addColorStop(0, 'rgba(255, 214, 156, 0.55)')
+  g.addColorStop(0.45, 'rgba(214, 140, 70, 0.18)')
+  g.addColorStop(1, 'rgba(120, 60, 24, 0)')
+  ctx.fillStyle = g
+  ctx.fillRect(0, 0, 256, 256)
+  return c
+}
 
 export interface ZarbiaControl {
   /** scroll progress through the loom, 0..1 */
@@ -451,20 +104,29 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const reduced = useReducedMotion()
   const quality = useQualityTier()
+  /* null once the runner is off the loom (loaded); 0..1 while loading */
+  const [progress, setProgress] = useState<number | null>(0)
+  const progressPct = useRef(-1)
 
   useEffect(() => {
     if (reduced) return
     const canvas = canvasRef.current
     if (!canvas) return
 
+    let raf = 0
+    let alive = true
+    let visible = true
+
     const renderer = new WebGLRenderer({
       canvas,
-      antialias: true,
+      antialias: quality !== 'low',
       alpha: true,
       powerPreference: 'high-performance',
     })
     renderer.setClearColor(0x000000, 0)
     renderer.setPixelRatio(detectTier())
+    renderer.toneMapping = ACESFilmicToneMapping
+    renderer.toneMappingExposure = 1.12
 
     const scene = new Scene()
     const camera = new PerspectiveCamera(50, 1, 0.05, 60)
@@ -472,74 +134,159 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
     camera.lookAt(0, 0, 0)
 
     /* light: a warm kiln light from the left, a cool glaze rim from the back */
-    const warm = new DirectionalLight(0xffe9c9, 2.4)
+    const warm = new DirectionalLight(0xffe9c9, 2.6)
     warm.position.set(3.5, 5, 6)
     scene.add(warm)
-    const rim = new DirectionalLight(0x8fb0ff, 0.8)
+    const rim = new DirectionalLight(0x8fb0ff, 1.1)
     rim.position.set(-5, 2, -4)
     scene.add(rim)
-    scene.add(new AmbientLight(0xfff3df, 0.5))
+    scene.add(new AmbientLight(0xfff3df, 0.65))
 
+    /* stage hierarchy —
+       root:   scroll turn/drift/scale + the float
+       hang:   the tapestry recline; sway lives here too
+       holder: the model itself, centred and scaled to the room */
     const root = new Group()
+    const hang = new Group()
+    const holder = new Group()
+    hang.rotation.x = HANG_TILT
+    root.add(hang)
+    hang.add(holder)
     scene.add(root)
 
-    /* the long Atlas runner — 96 × 48 woof segments (48 × 24 on weak
-       devices, where the normals recompute is halved) */
-    const segW = quality === 'low' ? 48 : 96
-    const segH = quality === 'low' ? 24 : 48
-    const geo = new PlaneGeometry(6.4, 3.2, segW, segH)
-    const flat = new Float32Array(geo.attributes.position.array)
-    const baseZ = new Float32Array(geo.attributes.position.array)
-    const uv = geo.attributes.uv.array as Float32Array
-    /* subtle woven displacement, baked once: the surface catches light
-       like dense wool, without ever looking like waves */
-    const hash = (a: number, b: number) => {
-      const s = Math.sin(a * 127.1 + b * 311.7) * 43758.5453
-      return s - Math.floor(s)
-    }
-    for (let i = 0; i < baseZ.length; i += 3) {
-      const vi = i / 3
-      const nx = uv[vi * 2]
-      const ny = uv[vi * 2 + 1]
-      baseZ[i + 2] =
-        (hash(nx * 53, ny * 79) - 0.5) * 0.03 +
-        Math.sin(nx * Math.PI * 14) * 0.004 * Math.sin(ny * Math.PI * 12)
+    /* shared weave clock — cloth, sparks and dust all read it */
+    const uni = {
+      uTime: { value: 0 },
+      uReveal: { value: 0 },
+      /* object-space amplitudes, re-derived from the fit on resize */
+      uLiftObj: { value: 0.6 },
+      uWaveObj: { value: 0.25 },
+      uEdgeColor: { value: new Color(1.0, 0.62, 0.28) },
+      uSheenColor: { value: new Color(1.0, 0.93, 0.78) },
     }
 
-    const wool = new CanvasTexture(drawWool())
-    wool.anisotropy = 4
-    const pile = new CanvasTexture(drawPile())
-
-    const rugMat = new MeshStandardMaterial({
-      map: wool,
-      bumpMap: pile,
-      bumpScale: 0.055,
-      roughness: 1,
-      metalness: 0,
+    /* ---- the dust -------------------------------------------------------
+       sparks crowd the weave-front while the loom runs; afterward they
+       thin into gold motes drifting across the runner. Every particle
+       is computed in the vertex shader from its seed — the CPU never
+       touches them. */
+    const dustCount = PARTICLE_COUNT[quality] ?? 380
+    const dustGeo = new BufferGeometry()
+    const dustPos = new Float32Array(dustCount * 3)
+    const dustSeed = new Float32Array(dustCount * 4)
+    for (let i = 0; i < dustCount * 4; i++) dustSeed[i] = Math.random()
+    dustGeo.setAttribute('position', new BufferAttribute(dustPos, 3))
+    dustGeo.setAttribute('aSeed', new BufferAttribute(dustSeed, 4))
+    const dustUni = {
+      uTime: uni.uTime,
+      uReveal: uni.uReveal,
+      uFade: { value: 1 },
+      uHalf: { value: new Vector3(3.3, 2.15, 0) },
+      uPr: { value: renderer.getPixelRatio() },
+    }
+    const dustMat = new ShaderMaterial({
+      uniforms: dustUni,
       transparent: true,
-      depthWrite: true,
+      depthWrite: false,
+      blending: AdditiveBlending,
+      vertexShader: /* glsl */ `
+        attribute vec4 aSeed;
+        uniform float uTime;
+        uniform float uReveal;
+        uniform vec3 uHalf;
+        uniform float uPr;
+        varying float vAlpha;
+        varying float vWarm;
+
+        void main() {
+          float cycle = fract(uTime * (0.04 + aSeed.w * 0.05) + aSeed.x);
+
+          /* resting field: spread across the whole runner */
+          vec3 p = vec3(
+            (aSeed.y * 2.0 - 1.0) * uHalf.x,
+            cycle * (0.5 + aSeed.z * 0.7) - uHalf.y * 0.45,
+            (aSeed.z * 2.0 - 1.0) * uHalf.y
+          );
+          p.x += sin(uTime * (0.3 + aSeed.y) + aSeed.z * 40.0) * 0.08;
+
+          /* while the weave runs, the sparks crowd the live row */
+          float sparkMix = 1.0 - smoothstep(0.72, 1.0, uReveal);
+          float frontX = mix(-uHalf.x * 1.02, uHalf.x * 1.02, uReveal);
+          p.x = mix(p.x, frontX + (aSeed.w * 2.0 - 1.0) * 0.55, sparkMix);
+          p.y = mix(p.y, (cycle - 0.15) * (0.35 + aSeed.z * 0.5), sparkMix);
+          p.z = mix(p.z, (aSeed.y * 2.0 - 1.0) * 0.25, sparkMix);
+
+          vec4 mv = modelViewMatrix * vec4(p, 1.0);
+          float twinkle = 0.55 + 0.45 * sin(uTime * (1.5 + aSeed.x * 4.0) + aSeed.y * 43.0);
+          float lifeIn = smoothstep(0.0, 0.12, cycle);
+          float lifeOut = 1.0 - smoothstep(0.82, 1.0, cycle);
+          vAlpha = lifeIn * lifeOut * twinkle * mix(0.38, 0.95, sparkMix);
+          vWarm = aSeed.w;
+          gl_Position = projectionMatrix * mv;
+          gl_PointSize =
+            (1.6 + aSeed.x * 4.2) * uPr * mix(1.0, 1.7, sparkMix) * (5.2 / max(1.0, -mv.z));
+        }
+      `,
+      fragmentShader: /* glsl */ `
+        uniform float uFade;
+        varying float vAlpha;
+        varying float vWarm;
+
+        void main() {
+          float d = length(gl_PointCoord - 0.5);
+          float disc = smoothstep(0.5, 0.06, d);
+          vec3 col = mix(vec3(1.0, 0.77, 0.47), vec3(1.0, 0.54, 0.25), vWarm);
+          float a = disc * vAlpha * uFade;
+          if (a < 0.003) discard;
+          gl_FragColor = vec4(col, a);
+        }
+      `,
     })
-    const rug = new Mesh(geo, rugMat)
-    root.add(rug)
+    const dust = new Points(dustGeo, dustMat)
+    dust.frustumCulled = false
+    hang.add(dust)
 
-    /* pointer parallax */
-    const pointer = { x: 0, y: 0, tx: 0, ty: 0 }
-    const onPointer = (e: PointerEvent) => {
-      pointer.tx = (e.clientX / window.innerWidth - 0.5) * 2
-      pointer.ty = (e.clientY / window.innerHeight - 0.5) * 2
-      lastActivity = performance.now()
+    /* the kiln-halo: a breath of warm light behind the wool */
+    const haloTex = new CanvasTexture(drawHalo())
+    const haloMat = new SpriteMaterial({
+      map: haloTex,
+      transparent: true,
+      opacity: 0.16,
+      depthWrite: false,
+      blending: AdditiveBlending,
+    })
+    const halo = new Sprite(haloMat)
+    halo.position.set(0, 0, -0.9)
+    hang.add(halo)
+
+    /* ---- responsive fit: the runner always fits the room --------------- */
+    let fit = 1
+    let modelS0 = 1
+    let shiftX = 0
+    const fitRoom = () => {
+      const visH = 2 * 4.8 * Math.tan(MathUtils.degToRad(camera.fov / 2))
+      const visW = visH * camera.aspect
+      fit = Math.min(1, (visW * 0.92) / RUG_TARGET_W)
+      /* wide rooms: the reading column owns the left wall — the runner
+         leans right so text and textile share the frame */
+      shiftX = camera.aspect > 1.2 ? 0.55 : 0
+      root.position.x = shiftX
+      /* shader amplitudes are authored in world units, expressed here
+         in the carpet's own enormous object space */
+      const s = Math.max(1e-4, modelS0 * fit)
+      uni.uLiftObj.value = 0.055 / s
+      uni.uWaveObj.value = 0.022 / s
     }
-    window.addEventListener('pointermove', onPointer, { passive: true })
+    fitRoom()
 
-    /* pause when the loom is offscreen */
-    let visible = true
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        visible = entry.isIntersecting
-      },
-      { rootMargin: '15% 0px 15% 0px' }
-    )
-    io.observe(canvas)
+    /* ---- the runner itself --------------------------------------------- */
+    const rugMats: MeshStandardMaterial[] = []
+    const disposables: Set<{ dispose: () => void }> = new Set()
+
+    let revealStart = -1
+    let lastP = control.current.p
+    let lastActivity = performance.now()
+    let frame = 0
 
     const glSource = {
       stats: () => ({
@@ -550,11 +297,143 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
     }
     glRegistry.register(glSource)
 
-    let raf = 0
-    let normalBudget = 0
-    let frame = 0
-    let lastP = control.current.p
-    let lastActivity = performance.now()
+    /* pause when the loom is offscreen */
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting
+      },
+      { rootMargin: '15% 0px 15% 0px' }
+    )
+    io.observe(canvas)
+
+    /* pointer parallax */
+    const pointer = { x: 0, y: 0, tx: 0, ty: 0 }
+    const onPointer = (e: PointerEvent) => {
+      pointer.tx = (e.clientX / window.innerWidth - 0.5) * 2
+      pointer.ty = (e.clientY / window.innerHeight - 0.5) * 2
+      lastActivity = performance.now()
+    }
+    window.addEventListener('pointermove', onPointer, { passive: true })
+
+    new GLTFLoader().load(
+      MODEL_URL,
+      (gltf) => {
+        if (!alive) return
+        const rugRoot = gltf.scene as Group
+
+        /* centre the carpet on its pivot, then size it to the room */
+        const box = new Box3().setFromObject(rugRoot)
+        const size = new Vector3()
+        const center = new Vector3()
+        box.getSize(size)
+        box.getCenter(center)
+        modelS0 = RUG_TARGET_W / Math.max(size.x, 1e-4)
+        holder.scale.setScalar(modelS0)
+        rugRoot.position.set(-center.x, -center.y, -center.z)
+        holder.add(rugRoot)
+        fitRoom()
+
+        /* the halo takes the runner's measure (its depth becomes the
+           hanging height once reclined) */
+        halo.scale.set(size.x * modelS0 * 1.5, size.z * modelS0 * 1.9, 1)
+        dustUni.uHalf.value.set((size.x * modelS0) / 2, (size.z * modelS0) / 2, 0)
+
+        /* every surface the model brought gets the weave treatment */
+        const maxAniso = Math.min(8, renderer.capabilities.getMaxAnisotropy())
+        rugRoot.traverse((o) => {
+          const mesh = o as { geometry?: { dispose(): void }; material?: unknown }
+          if (!mesh.geometry) return
+          disposables.add(mesh.geometry)
+          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+          for (const mat of mats) {
+            const std = mat as MeshStandardMaterial | undefined
+            if (!std || !std.isMeshStandardMaterial) continue
+            rugMats.push(std)
+            disposables.add(std)
+            for (const value of Object.values(std)) {
+              if (value && typeof value === 'object' && 'isTexture' in value) {
+                ;(value as { anisotropy: number }).anisotropy = maxAniso
+                disposables.add(value as { dispose(): void })
+              }
+            }
+            std.transparent = true
+            std.side = DoubleSide
+            /* stitch the loom into the PBR surface: the reveal sweep,
+               the breathing pile, the travelling sheen */
+            std.onBeforeCompile = (shader) => {
+              Object.assign(shader.uniforms, uni)
+              const pad = REVEAL_PAD.toFixed(4)
+              const span = (1 + REVEAL_PAD * 2).toFixed(4)
+              shader.vertexShader =
+                `
+                varying vec2 vZarbiaUv;
+                uniform float uTime;
+                uniform float uReveal;
+                uniform float uLiftObj;
+                uniform float uWaveObj;
+                ` + shader.vertexShader
+              shader.vertexShader = shader.vertexShader.replace(
+                '#include <begin_vertex>',
+                `#include <begin_vertex>
+                vZarbiaUv = uv;
+                float zFront = uReveal * ${span} - ${pad};
+                float zBreathe = uWaveObj * smoothstep(0.82, 1.0, uReveal)
+                  * sin(vZarbiaUv.y * 6.2832 + uTime * 0.5)
+                  * sin(vZarbiaUv.x * 9.4248 - uTime * 0.35);
+                float zLift = exp(-pow((zFront - vZarbiaUv.x) * 8.0, 2.0));
+                transformed.y += zBreathe + zLift * uLiftObj;`
+              )
+              shader.fragmentShader =
+                `
+                varying vec2 vZarbiaUv;
+                uniform float uTime;
+                uniform float uReveal;
+                uniform vec3 uEdgeColor;
+                uniform vec3 uSheenColor;
+                ` + shader.fragmentShader
+              shader.fragmentShader = shader.fragmentShader.replace(
+                '#include <clipping_planes_fragment>',
+                `#include <clipping_planes_fragment>
+                float zarbiaEdge = 0.0;
+                float zarbiaSheen = 0.0;
+                {
+                  float zFront = uReveal * ${span} - ${pad};
+                  float zD = zFront - vZarbiaUv.x;
+                  if (zD < 0.0) discard;
+                  zarbiaEdge = smoothstep(0.13, 0.0, zD);
+                  zarbiaEdge *= 0.72 + 0.28 * sin(vZarbiaUv.x * 240.0 - uTime * 24.0);
+                  float zC = 1.28 - fract(uTime * 0.026) * 1.62;
+                  zarbiaSheen = smoothstep(0.17, 0.0, abs(vZarbiaUv.x - zC));
+                }`
+              )
+              shader.fragmentShader = shader.fragmentShader.replace(
+                '#include <emissivemap_fragment>',
+                `#include <emissivemap_fragment>
+                totalEmissiveRadiance += uEdgeColor * zarbiaEdge * 1.7;
+                totalEmissiveRadiance += uSheenColor * zarbiaSheen * 0.15;`
+              )
+            }
+            std.customProgramCacheKey = () => 'zarbia-weave'
+            std.needsUpdate = true
+          }
+        })
+
+        setProgress(null)
+      },
+      (ev) => {
+        if (!alive || !ev.total) return
+        const pct = Math.floor((ev.loaded / ev.total) * 100)
+        if (pct >= progressPct.current + 3) {
+          progressPct.current = pct
+          setProgress(pct / 100)
+        }
+      },
+      (err) => {
+        console.warn('[zarbia] the loom could not load the runner', err)
+        if (alive) setProgress(null)
+      }
+    )
+
     const timer = new Timer()
 
     const tick = () => {
@@ -562,59 +441,52 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
       timer.update()
       const dt = Math.min(timer.getDelta(), 0.05)
       const t = timer.getElapsed()
-      /* the loom is offscreen: stop paying for it entirely — no motion,
-         no normals, no render. It wakes up clean on the way back in. */
-      if (!visible) {
-        normalBudget = 0
-        return
-      }
-      /* resting weave: the wool keeps breathing at a low cadence (~10fps); the
-         moment the visitor steers it — pointer or scroll — the loom
-         runs at full frame rate again */
+      /* the loom is offscreen: stop paying for it entirely */
+      if (!visible) return
+
+      const rp = revealStart < 0 ? 0 : clamp01((t - revealStart) / REVEAL_S)
+      uni.uReveal.value = easeInOutCubic(rp)
+      uni.uTime.value = t
+
+      /* resting weave: low cadence until steered; the reveal always
+         counts as steering — it must run at full rate */
       const p = control.current.p
-      const steered = Math.abs(p - lastP) > 0.0005 || performance.now() - lastActivity < ACTIVE_AFTER_MS
+      const steered =
+        rp < 1 || Math.abs(p - lastP) > 0.0005 || performance.now() - lastActivity < ACTIVE_AFTER_MS
       lastP = p
       frame++
       if (!steered && frame % IDLE_FRAME_DIVISOR !== 0) return
+
+      /* the first seen frame starts the loom */
+      if (revealStart < 0) revealStart = t
 
       pointer.x += (pointer.tx - pointer.x) * Math.min(1, dt * 2.4)
       pointer.y += (pointer.ty - pointer.y) * Math.min(1, dt * 2.4)
 
       museumState.weave = p
 
-      /* the camera never moves — the room holds still around the runner */
+      /* the camera holds its ground — only a slow parallax lean */
       camera.position.x = pointer.x * 0.16
       camera.position.y = 0.35 + pointer.y * 0.12
       camera.lookAt(0, -0.05, 0)
 
-      /* calm: a slight display tilt, a slow turn and drift as you scroll */
-      root.rotation.x = 0.05 - pointer.y * 0.05
-      root.rotation.y = (p - 0.5) * 0.4 + pointer.x * 0.1
-      root.rotation.z = pointer.x * 0.03
-      root.position.y = -0.05 + Math.sin(t * 0.45) * 0.02
+      /* the float: the runner rises into place as the weave closes,
+         then hangs there, swaying gently, alive */
+      const settle = 1 - easeInOutCubic(rp)
+      const sway = Math.sin(t * 0.32) * 0.03
+      hang.rotation.x = HANG_TILT - pointer.y * 0.045 + Math.sin(t * 0.41) * 0.012
+      hang.rotation.z = sway + pointer.x * 0.03
+      root.rotation.y = (p - 0.5) * 0.5 + sway * 0.6 + pointer.x * 0.07
+      root.position.y = Math.sin(t * 0.5) * 0.05 - 0.28 * settle
       root.position.z = p * 1.1
-      root.scale.setScalar(Math.max(0.4, 1 - p * 0.08))
-
-      /* the wool breathes — a slow living wave, never exaggerated */
-      const wave = 0.03 * Math.sin(t * 0.55)
-      const arr = geo.attributes.position.array as Float32Array
-      for (let i = 0; i < arr.length; i += 3) {
-        const vi = i / 3
-        const ny = uv[vi * 2 + 1]
-        const nx = uv[vi * 2] * 2 - 1
-        arr[i + 1] = flat[i + 1] + wave * Math.sin(ny * Math.PI) * Math.sin(nx * Math.PI * 1.8 + t * 0.7)
-        arr[i + 2] = baseZ[i + 2]
-      }
-      geo.attributes.position.needsUpdate = true
-      /* the wave is ~0.03u tall — recomputing vertex normals every frame
-         is invisible and expensive; the weave gets fresh normals every
-         sixth frame and the light still turns with it */
-      normalBudget++
-      if (normalBudget % 6 === 0) geo.computeVertexNormals()
+      root.scale.setScalar(fit * (0.94 + 0.06 * easeInOutCubic(rp)) * Math.max(0.4, 1 - p * 0.08))
 
       /* the runner lets the visitor walk on */
       const fade = smooth((p - 0.55) / 0.45)
-      rugMat.opacity = 1 - fade * 0.72
+      const op = 1 - fade * 0.78
+      for (const m of rugMats) m.opacity = op
+      haloMat.opacity = 0.16 * (1 - fade)
+      dustUni.uFade.value = 1 - fade * 0.85
 
       renderer.render(scene, camera)
     }
@@ -626,25 +498,48 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
       renderer.setSize(w, h, false)
       camera.aspect = w / h
       camera.updateProjectionMatrix()
+      fitRoom()
     }
     resize()
     window.addEventListener('resize', resize, { passive: true })
 
     return () => {
+      alive = false
       cancelAnimationFrame(raf)
       io.disconnect()
       glRegistry.unregister(glSource)
       window.removeEventListener('pointermove', onPointer)
       window.removeEventListener('resize', resize)
-      geo.dispose()
-      wool.dispose()
-      pile.dispose()
-      rugMat.dispose()
+      disposables.forEach((d) => d.dispose())
+      dustGeo.dispose()
+      dustMat.dispose()
+      haloTex.dispose()
+      haloMat.dispose()
       renderer.dispose()
     }
   }, [reduced, control, quality])
 
   if (reduced) return null
 
-  return <canvas ref={canvasRef} aria-hidden="true" className="h-full w-full" />
+  return (
+    <>
+      <canvas ref={canvasRef} aria-hidden="true" className="h-full w-full" />
+      {progress !== null && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-[12%] flex justify-center"
+        >
+          <div className="h-[2px] w-36 overflow-hidden rounded bg-text/10">
+            <div
+              className="h-full bg-gold transition-[width] duration-300 ease-out"
+              style={{
+                width: `${Math.max(4, Math.round(progress * 100))}%`,
+                opacity: progress === 0 ? 0.25 : 0.8,
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </>
+  )
 }

@@ -46,7 +46,7 @@ const NOTES: CuratorNote[] = [
   {
     id: 'n3',
     tag: 'on the zarbia',
-    body: 'The runner is 1,536 × 1,024 px of wool painted onto a canvas at init — 20,000 fibre strokes for the pile alone. No texture file was ever shipped; the loom draws every thread.',
+    body: 'The runner is a real, hand-modelled game-ready carpet — 22 triangles carrying three baked 2K maps. The loom still does the weaving: a shader sweep stitches it into the room on arrival, wool lifting at the live row.',
     tilt: '-rotate-[0.5deg]',
   },
   {

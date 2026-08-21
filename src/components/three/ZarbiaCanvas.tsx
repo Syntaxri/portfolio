@@ -234,7 +234,7 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
 
         void main() {
           float d = length(gl_PointCoord - 0.5);
-          float disc = smoothstep(0.5, 0.06, d);
+          float disc = 1.0 - smoothstep(0.06, 0.5, d);
           vec3 col = mix(vec3(1.0, 0.77, 0.47), vec3(1.0, 0.54, 0.25), vWarm);
           float a = disc * vAlpha * uFade;
           if (a < 0.003) discard;
@@ -380,7 +380,10 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
                 float zBreathe = uWaveObj * smoothstep(0.82, 1.0, uReveal)
                   * sin(vZarbiaUv.y * 6.2832 + uTime * 0.5)
                   * sin(vZarbiaUv.x * 9.4248 - uTime * 0.35);
-                float zLift = exp(-pow((zFront - vZarbiaUv.x) * 8.0, 2.0));
+                /* NB. pow(negative, 2.0) is undefined in GLSL ES — real
+                   drivers NaN it and the rug vanishes; square by hand */
+                float zD = (zFront - vZarbiaUv.x) * 8.0;
+                float zLift = exp(-zD * zD);
                 transformed.y += zBreathe + zLift * uLiftObj;`
               )
               shader.fragmentShader =
@@ -400,10 +403,10 @@ export function ZarbiaCanvas({ control }: { control: React.MutableRefObject<Zarb
                   float zFront = uReveal * ${span} - ${pad};
                   float zD = zFront - vZarbiaUv.x;
                   if (zD < 0.0) discard;
-                  zarbiaEdge = smoothstep(0.13, 0.0, zD);
+                  zarbiaEdge = 1.0 - smoothstep(0.0, 0.13, zD);
                   zarbiaEdge *= 0.72 + 0.28 * sin(vZarbiaUv.x * 240.0 - uTime * 24.0);
                   float zC = 1.28 - fract(uTime * 0.026) * 1.62;
-                  zarbiaSheen = smoothstep(0.17, 0.0, abs(vZarbiaUv.x - zC));
+                  zarbiaSheen = 1.0 - smoothstep(0.0, 0.17, abs(vZarbiaUv.x - zC));
                 }`
               )
               shader.fragmentShader = shader.fragmentShader.replace(

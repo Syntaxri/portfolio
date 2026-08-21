@@ -47,6 +47,10 @@ const nextConfig = {
     // Everything else stays strict: remote origins are impossible, and
     // inline scripts only exist as Next-generated hydration payloads.
     // Revisit when the upstream fix lands.
+    // connect-src keeps blob: because three.js GLTFLoader re-fetches
+    // GLB-embedded textures as object URLs (fetch(blob:) is governed
+    // by connect-src, not img-src) — without it the zarbia renders
+    // untextured on production.
     // Skipped in `next dev`: React dev mode requires eval() for its
     // debugging features, and HMR relies on inline/eval — the strict
     // policy is a production guarantee only.
@@ -69,7 +73,7 @@ const nextConfig = {
           "script-src 'self' 'unsafe-inline'",
           "img-src 'self' data: blob:",
           "font-src 'self' data:",
-          "connect-src 'self'",
+          "connect-src 'self' blob:",
           `frame-src ${liveFrames}`,
           "frame-ancestors 'none'",
           "base-uri 'self'",

@@ -157,7 +157,7 @@ export function LivingRoom() {
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center justify-between gap-3 border-b border-[rgba(197,165,90,0.25)] px-2 pb-2.5"
-                  aria-label={`${current.title} — open live`}
+                  aria-label={`${current.title} — open live (opens in a new tab)`}
                 >
                   <span className="flex w-6 shrink-0 items-center justify-center rounded-[0.2rem] border border-[rgba(197,165,90,0.5)] p-1 text-[0.95rem] leading-none text-[#c5a75a]">
                     {current.title.slice(0, 1)}
@@ -219,7 +219,7 @@ export function LivingRoom() {
                       {current.title} lives at its own address.
                     </p>
                     <a href={current.liveUrl} target="_blank" rel="noreferrer" className="btn-ghost">
-                      Open live ↗
+                      Open live ↗<span className="sr-only"> (opens in a new tab)</span>
                     </a>
                   </div>
                 )}
@@ -294,7 +294,7 @@ export function LivingRoom() {
                 rel="noreferrer"
                 className="label transition-colors hover:text-accent"
               >
-                {current.liveUrl?.replace('https://', '')} ↗
+                {current.liveUrl?.replace('https://', '')} ↗<span className="sr-only"> (opens in a new tab)</span>
               </a>
             </div>
           </div>
@@ -336,7 +336,7 @@ export function LivingRoom() {
                   rel="noreferrer"
                   className="flex h-8 items-center rounded-[0.2rem] border border-[rgba(197,165,90,0.4)] px-3 font-mono text-[0.58rem] uppercase tracking-[0.16em] text-[#c5a75a] transition-colors hover:border-[#c5a75a]"
                 >
-                  Open live ↗
+                  Open live ↗<span className="sr-only"> (opens in a new tab)</span>
                 </a>
                 <button
                   ref={closeRef}
@@ -424,7 +424,7 @@ export function LivingRoom() {
                     rel="noreferrer"
                     className="label text-center text-[#c5a75a] transition-colors hover:text-[#e9e3d4]"
                   >
-                    {current.liveUrl?.replace('https://', '')} ↗
+                    {current.liveUrl?.replace('https://', '')} ↗<span className="sr-only"> (opens in a new tab)</span>
                   </a>
                 </div>
               </aside>

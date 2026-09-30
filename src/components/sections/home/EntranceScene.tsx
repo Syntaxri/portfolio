@@ -234,15 +234,14 @@ export function EntranceScene() {
               data-hero-reveal
               className="mt-4 font-sans text-[clamp(0.9rem,1.5vw,1.1rem)] font-semibold uppercase tracking-[0.12em] text-text-2"
             >
-              Full-Stack Software Developer
+              Software Engineer & Creative Technologist
             </p>
 
             <p
               data-hero-reveal
               className="serif mt-5 max-w-[54ch] text-[clamp(1.05rem,1.6vw,1.35rem)] leading-[1.5] text-text-2"
             >
-              I engineer robust, scalable software solutions across the full technology stack, from intuitive
-              user interfaces to reliable backend systems and data infrastructure.
+              I build digital products from the database to the DOM. I engineer robust Java backends that scale, and craft fluid Next.js interfaces that feel alive.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-3" data-hero-reveal>
@@ -347,7 +346,10 @@ export function EntranceScene() {
           </div>
         </div>
 
-        <div className="pointer-events-none relative z-10 flex justify-end">
+        <div className="pointer-events-none relative z-10 flex items-center justify-between">
+          <span className="label label-muted" data-hero-reveal>
+            {!reduced ? 'Double-click canvas to re-fire' : ''}
+          </span>
           <span className="label label-muted" data-hero-reveal>
             {site.name} — {new Date().getFullYear()}
           </span>

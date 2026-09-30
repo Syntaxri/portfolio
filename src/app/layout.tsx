@@ -114,7 +114,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${archivo.variable} ${fraunces.variable} ${spaceMono.variable} no-cursor`}
+        className={`${archivo.variable} ${fraunces.variable} ${spaceMono.variable}`}
       >
         <JsonLd />
         <SmoothScrollProvider>

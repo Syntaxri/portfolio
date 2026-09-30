@@ -8,10 +8,10 @@ import { Monogram } from '@/components/museum/Monogram'
 import { site, socials } from '@/lib/data/site'
 
 const ROOMS = [
-  { href: '/#craft', label: 'Workshop' },
-  { href: '/#collection', label: 'Collection' },
+  { href: '/#collection', label: 'Work' },
+  { href: '/#living', label: 'Live' },
+  { href: '/#craft', label: 'Stack' },
   { href: '/#archive', label: 'Archive' },
-  { href: '/#living', label: 'Living' },
 ] as const
 
 /**
@@ -149,14 +149,14 @@ export function Topbar() {
           </div>
           <div className="flex flex-1 flex-col justify-center gap-2 px-6">
             {[
-              { href: '/', label: 'Gallery of Origins', n: '00' },
-              { href: '/#living', label: 'Hall of Living Code', n: '01' },
-              { href: '/#courtyard', label: 'Fountain Court', n: '02' },
-              { href: '/#craft', label: 'Workshop of Systems', n: '03' },
-              { href: '/#collection', label: 'Collection of Works', n: '04' },
-              { href: '/#archive', label: 'Archive of Memory', n: '05' },
-              { href: '/#exit', label: 'Threshold', n: '06' },
-              { href: '/about', label: 'The Keeper', n: 'A/V' },
+              { href: '/', label: 'Home', n: '00' },
+              { href: '/#living', label: 'Live Builds', n: '01' },
+              { href: '/#courtyard', label: 'Philosophy', n: '02' },
+              { href: '/#craft', label: 'Tech Stack', n: '03' },
+              { href: '/#collection', label: 'Featured Work', n: '04' },
+              { href: '/#archive', label: 'Project Archive', n: '05' },
+              { href: '/#exit', label: 'Contact', n: '06' },
+              { href: '/about', label: 'About', n: 'A/V' },
             ].map((r) => (
               <a
                 key={r.label}

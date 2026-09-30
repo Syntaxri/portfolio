@@ -128,9 +128,9 @@ export const projects: Project[] = [
     slug: 'auto-ecole-michlifen',
     accession: 'INV. IV',
     description:
-      'A driving school near Michlifen, online and findable — a live client site that turns inquiries into lessons.',
+      'A performance-optimized lead generation platform for a local driving school, engineered for instantaneous mobile delivery and maximum search visibility.',
     longDescription:
-      'Auto-École Michlifen is a commissioning for a driving school in the region: a clear, honest web presence that explains the offer, answers the common questions and collects leads. Designed and built to be found, read and acted on from a phone — because that is where the next pupil is looking.',
+      'Auto-École Michlifen is a highly performant web presence built to capture local search traffic and convert leads. Engineered with Next.js for rapid static generation (SSG) and robust SEO, the platform delivers sub-second page loads on 3G mobile networks. It answers common questions and seamlessly collects leads, ensuring potential pupils face zero friction from discovery to contact.',
     tags: ['Next.js', 'React', 'SEO', 'Vercel'],
     glaze: 'terra',
     year: '2026',
@@ -269,9 +269,9 @@ export const projects: Project[] = [
     slug: 'le-sapin',
     accession: 'INV. VI',
     description:
-      'A local establishment gone digital — a live site that brings regulars online and welcomes new ones through the door.',
+      'A highly optimized, server-rendered Next.js web presence for a local establishment, designed to deliver perfect Lighthouse scores and zero layout shift.',
     longDescription:
-      'Le Sapin is a live client build for a local establishment: the essentials — what it is, where it is, what to expect — presented so that a stranger becomes a regular. Every build is a commission of trust; this one keeps the promise short.',
+      'Le Sapin is a live client build for a local establishment. Rather than relying on slow, monolithic site builders, the platform is engineered in pure Next.js and React to guarantee sub-second load times and perfect Lighthouse performance scores. The result is a highly accessible web presence that brings regulars online and seamlessly converts mobile visitors on the go.',
     tags: ['Next.js', 'React', 'Vercel'],
     glaze: 'ivory',
     year: '2026',

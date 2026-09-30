@@ -110,7 +110,14 @@ export function ContactForm() {
     'mt-2 w-full rounded-[0.3rem] border border-[rgba(28,26,22,0.2)] bg-[rgba(247,243,234,0.7)] px-4 py-3 text-sm text-text placeholder:text-text-3 focus:border-accent focus:outline-none transition-colors'
 
   return (
-    <form onSubmit={onSubmit} noValidate className="space-y-6">
+    <form 
+      onSubmit={onSubmit} 
+      action={`mailto:${site.email}`} 
+      method="post" 
+      encType="text/plain" 
+      noValidate 
+      className="space-y-6"
+    >
       <div className="grid gap-6 sm:grid-cols-2">
         <div>
           <label htmlFor="cf-name" className="label">

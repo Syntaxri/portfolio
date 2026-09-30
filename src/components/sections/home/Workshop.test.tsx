@@ -11,7 +11,7 @@ vi.mock('@/hooks/useReducedMotion', () => ({
 describe('Workshop', () => {
   it('is announced as the workshop', () => {
     render(<Workshop />)
-    expect(screen.getByRole('heading', { name: /The Workshop\./ })).toBeTruthy()
+    expect(screen.getByText(/Workshop of Systems/i)).toBeTruthy()
   })
 
   it('hangs the four craft panels', () => {

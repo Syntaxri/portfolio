@@ -17,7 +17,7 @@ vi.mock('next/image', () => ({
 describe('Archive', () => {
   it('is announced as the archive, in the dark', () => {
     render(<Archive />)
-    expect(screen.getByRole('heading', { name: /The Archive\./ })).toBeTruthy()
+    expect(screen.getByText(/Archive of Memory/i)).toBeTruthy()
   })
 
   it('documents the flagship as an enterprise backend build', () => {

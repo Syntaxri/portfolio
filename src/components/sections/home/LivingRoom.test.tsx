@@ -42,7 +42,7 @@ afterEach(() => {
 describe('LivingRoom', () => {
   it('opens the room with the living title and the projector plaque', () => {
     render(<LivingRoom />)
-    expect(screen.getByRole('heading', { name: /The Living Room\./ })).toBeTruthy()
+    expect(screen.getByText(/Hall of Living Code/i)).toBeTruthy()
     expect(screen.getAllByText(/Palais Amghass/).length).toBeGreaterThan(0)
   })
 

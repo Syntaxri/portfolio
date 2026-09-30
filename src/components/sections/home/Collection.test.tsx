@@ -11,7 +11,7 @@ vi.mock('@/hooks/useReducedMotion', () => ({
 describe('Collection', () => {
   it('is announced as the collection', () => {
     render(<Collection />)
-    expect(screen.getByRole('heading', { name: /The Collection\./ })).toBeTruthy()
+    expect(screen.getByText(/Collection of Works/i)).toBeTruthy()
   })
 
   it('heads every permanent piece into its exhibit room', () => {

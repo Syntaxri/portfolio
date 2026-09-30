@@ -11,7 +11,7 @@ vi.mock('@/hooks/useReducedMotion', () => ({
 describe('Fountain', () => {
   it('tells the founding story in four steps', () => {
     render(<Fountain />)
-    expect(screen.getByRole('heading', { name: /The Fountain\./ })).toBeTruthy()
+    expect(screen.getByText(/Fountain Court/i)).toBeTruthy()
     for (const word of ['Curiosity', 'Engineering', 'Projects', 'Products']) {
       expect(screen.getByText(word)).toBeTruthy()
     }

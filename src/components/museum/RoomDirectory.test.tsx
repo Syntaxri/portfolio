@@ -24,7 +24,7 @@ describe('RoomDirectory', () => {
     pathnameMock.mockReturnValue('/')
     document.getElementById = vi.fn(() => null) as never
     render(<RoomDirectory />)
-    for (const room of ['Atrium', 'Fountain', 'Workshop', 'Collection', 'Archive', 'Living', 'Exit']) {
+    for (const room of ['Gallery of Origins', 'Hall of Living Code', 'Fountain Court', 'Workshop of Systems', 'Collection of Works', 'Archive of Memory', 'Threshold']) {
       expect(screen.getByRole('button', { name: new RegExp(room) })).toBeTruthy()
     }
   })

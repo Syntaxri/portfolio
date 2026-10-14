@@ -968,4 +968,8 @@
   html {
     scroll-behavior: auto;
   }
+
+  .shortcut-card {
+    transition: none;
+  }
 }

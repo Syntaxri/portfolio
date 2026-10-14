@@ -12,6 +12,7 @@ import { PageTransition } from '@/components/animations/PageTransition'
 import { CraftDashboard } from '@/components/chrome/CraftDashboard'
 import { GitHubConsole } from '@/components/chrome/GitHubConsole'
 import { CuratorsKey } from '@/components/chrome/CuratorsKey'
+import { ShortcutModal } from '@/components/chrome/ShortcutModal'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { Analytics } from '@/components/analytics/Analytics'
 import { site } from '@/lib/data/site'
@@ -133,6 +134,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <CraftDashboard />
           <GitHubConsole />
           <CuratorsKey />
+          <ShortcutModal />
           <Analytics />
         </SmoothScrollProvider>
       </body>

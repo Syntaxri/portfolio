@@ -293,7 +293,7 @@ export function ShortcutModal() {
         role="dialog"
         aria-modal="true"
         aria-label="Keyboard shortcuts"
-        className="relative w-full max-w-lg rounded-2xl border border-[rgba(196,196,255,0.18)] bg-[#1a1611]/95 p-6 shadow-[0_32px_80px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl"
+        className="relative w-[min(900px,calc(100vw-3rem))] rounded-2xl border border-[rgba(196,196,255,0.18)] bg-[#1a1611]/95 p-7 shadow-[0_32px_80px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl"
       >
         {/* Close */}
         <button
@@ -315,7 +315,7 @@ export function ShortcutModal() {
         </p>
 
         {/* Cards */}
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-3">
           {cards.map((card, i) => (
             <Card key={card.title} card={card} index={i} />
           ))}

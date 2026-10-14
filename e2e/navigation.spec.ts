@@ -16,7 +16,7 @@ test.describe('Navigation', () => {
     }
 
     const navLink = page
-      .locator('a[href="/#collection"], a[href="/#archive"], a[href="/#exit"]')
+      .locator('#room-menu a[href="/#collection"], #room-menu a[href="/#archive"], #room-menu a[href="/#exit"]')
       .first()
     await navLink.waitFor({ state: 'visible', timeout: CLICK_TIMEOUT })
     await navLink.scrollIntoViewIfNeeded()

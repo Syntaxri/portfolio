@@ -1,61 +1,56 @@
 import { test, expect } from '@playwright/test'
 
-/**
- * Navigation E2E tests — verify smooth scrolling and anchor navigation.
- */
+const CLICK_TIMEOUT = 15_000
 
 test.describe('Navigation', () => {
   test('should have working anchor links', async ({ page }) => {
-    await page.goto('/')
-    await page.waitForTimeout(4000)
+    await page.goto('/', { waitUntil: 'networkidle' })
 
-    // Click on a navigation link (actual hrefs from Topbar)
-    const navLink = page.locator('a[href="/#collection"], a[href="/#archive"], a[href="/#exit"]').first()
-    await navLink.click()
+    const navLink = page
+      .locator('a[href="/#collection"], a[href="/#archive"], a[href="/#exit"]')
+      .first()
+    await navLink.waitFor({ state: 'visible', timeout: CLICK_TIMEOUT })
+    await navLink.scrollIntoViewIfNeeded()
+    await navLink.click({ timeout: CLICK_TIMEOUT })
     await page.waitForTimeout(2000)
 
-    // Should have scrolled to the section
     const scrollY = await page.evaluate(() => window.scrollY)
     expect(scrollY).toBeGreaterThan(0)
   })
 
   test('should have working room directory', async ({ page }) => {
-    await page.goto('/')
-    await page.waitForTimeout(4000)
+    await page.goto('/', { waitUntil: 'networkidle' })
 
-    // Check if room directory exists (desktop only)
     const directory = page.locator('[class*="directory"], [class*="rail"]')
     const count = await directory.count()
 
     if (count > 0) {
-      // Click on a directory item
       const dirItem = directory.first().locator('a, button').first()
-      await dirItem.click()
+      await dirItem.waitFor({ state: 'visible', timeout: CLICK_TIMEOUT })
+      await dirItem.scrollIntoViewIfNeeded()
+      await dirItem.click({ timeout: CLICK_TIMEOUT })
       await page.waitForTimeout(2000)
 
-      // Should have scrolled
       const scrollY = await page.evaluate(() => window.scrollY)
       expect(scrollY).toBeGreaterThan(0)
     }
   })
 
   test('should have working back-to-top functionality', async ({ page }) => {
-    await page.goto('/')
-    await page.waitForTimeout(4000)
+    await page.goto('/', { waitUntil: 'networkidle' })
 
-    // Scroll down
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
     await page.waitForTimeout(1000)
 
-    // Look for back to top button
     const backToTop = page.locator('a[href="#main"], button:has-text("Back"), button:has-text("↑")')
     const count = await backToTop.count()
 
     if (count > 0) {
-      await backToTop.first().click()
+      await backToTop.first().waitFor({ state: 'visible', timeout: CLICK_TIMEOUT })
+      await backToTop.first().scrollIntoViewIfNeeded()
+      await backToTop.first().click({ timeout: CLICK_TIMEOUT })
       await page.waitForTimeout(2000)
 
-      // Should be back at top
       const scrollY = await page.evaluate(() => window.scrollY)
       expect(scrollY).toBeLessThan(100)
     }

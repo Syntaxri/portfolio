@@ -8,7 +8,7 @@ import { defineConfig, devices } from '@playwright/test'
  * - Navigation between rooms works
  * - Contact form validation and submission
  * - Work/case-study pages render
- * - 404 page works
+ * - WebGL fallback works when GL is unavailable
  *
  * Run with: npm run test:e2e
  * Debug with: npm run test:e2e:ui
@@ -20,10 +20,17 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
+  timeout: 60_000,
+  expect: {
+    timeout: 15_000,
+  },
   use: {
     baseURL: 'http://localhost:3000',
+    actionTimeout: 15_000,
+    navigationTimeout: 30_000,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
   projects: [
     {

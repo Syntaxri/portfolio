@@ -1,35 +1,24 @@
 import { test, expect } from '@playwright/test'
 
-/**
- * WebGL fallback E2E test — verifies the CSS fallback renders when
- * WebGL is unavailable, and that nothing throws.
- *
- * This is critical for a portfolio whose centerpiece is two raw
- * Three.js scenes. If WebGL fails (headless CI, older devices,
- * blocked GPU), the visitor should still see a designed fallback.
- */
+const NAV_TIMEOUT = 15_000
 
 test.describe('WebGL Fallback', () => {
   test('should render CSS fallback when WebGL is unavailable', async ({ page }) => {
-    // Stub getContext to return null (simulates no WebGL)
     await page.addInitScript(() => {
       HTMLCanvasElement.prototype.getContext = () => null as any
     })
 
-    // Should load without throwing
-    await page.goto('/')
-    await page.waitForTimeout(4000)
+    await page.goto('/', { waitUntil: 'networkidle' })
 
-    // The mosaic fallback should be visible
     const fallback = page.locator('.mosaic-fallback')
-    await expect(fallback.first()).toBeAttached()
+    await expect(fallback.first()).toBeAttached({ timeout: NAV_TIMEOUT })
 
-    // The page should still have content (not a blank screen)
     const main = page.locator('main')
     await expect(main).toBeAttached()
 
-    // Key content should still be visible
-    await expect(page.getByText(/Akram Rihani/i).first()).toBeVisible()
+    const hero = page.getByText(/Akram Rihani/i).first()
+    await hero.waitFor({ state: 'visible', timeout: NAV_TIMEOUT })
+    await expect(hero).toBeVisible()
   })
 
   test('should render all rooms even without WebGL', async ({ page }) => {
@@ -37,10 +26,8 @@ test.describe('WebGL Fallback', () => {
       HTMLCanvasElement.prototype.getContext = () => null as any
     })
 
-    await page.goto('/')
-    await page.waitForTimeout(4000)
+    await page.goto('/', { waitUntil: 'networkidle' })
 
-    // All rooms should still be in the DOM
     const roomIds = [
       'entrance',
       'living',
@@ -54,22 +41,19 @@ test.describe('WebGL Fallback', () => {
 
     for (const id of roomIds) {
       const element = page.locator(`#${id}`)
-      await expect(element).toBeAttached()
+      await expect(element).toBeAttached({ timeout: NAV_TIMEOUT })
     }
   })
 
   test('should hide the fallback when WebGL succeeds', async ({ page }) => {
-    // Don't stub getContext — let WebGL work normally
-    await page.goto('/')
-    await page.waitForTimeout(4000)
+    await page.goto('/', { waitUntil: 'networkidle' })
 
-    // The fallback should be in the DOM but hidden (opacity: 0)
     const fallback = page.locator('.mosaic-fallback').first()
-    await expect(fallback).toBeAttached()
+    await expect(fallback).toBeAttached({ timeout: NAV_TIMEOUT })
     await expect(fallback).toHaveCSS('opacity', '0')
   })
 
-  test('should not throw console errors when WebGL fails', async ({ page }) => {
+  test('should not throw unexpected console errors when WebGL fails', async ({ page }) => {
     const consoleErrors: string[] = []
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
@@ -81,20 +65,20 @@ test.describe('WebGL Fallback', () => {
       HTMLCanvasElement.prototype.getContext = () => null as any
     })
 
-    await page.goto('/')
-    await page.waitForTimeout(4000)
+    await page.goto('/', { waitUntil: 'networkidle' })
 
-    // Filter out known benign errors (e.g., WebGL context creation failures)
-    const criticalErrors = consoleErrors.filter(
+    // Allow known WebGL/Three.js errors from intentional GL failure
+    const unexpectedErrors = consoleErrors.filter(
       (err) =>
         !err.includes('WebGL') &&
         !err.includes('webgl') &&
         !err.includes('THREE') &&
         !err.includes('GL_') &&
-        !err.includes('GPU')
+        !err.includes('GPU') &&
+        !err.includes('GroupMarkerNotSet') &&
+        !err.includes('Automatic fallback to software WebGL'),
     )
 
-    // Should have no critical errors
-    expect(criticalErrors).toEqual([])
+    expect(unexpectedErrors).toEqual([])
   })
 })

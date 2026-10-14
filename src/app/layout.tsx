@@ -13,6 +13,7 @@ import { CraftDashboard } from '@/components/chrome/CraftDashboard'
 import { GitHubConsole } from '@/components/chrome/GitHubConsole'
 import { CuratorsKey } from '@/components/chrome/CuratorsKey'
 import { JsonLd } from '@/components/seo/JsonLd'
+import { Analytics } from '@/components/analytics/Analytics'
 import { site } from '@/lib/data/site'
 
 const archivo = Archivo({
@@ -132,6 +133,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <CraftDashboard />
           <GitHubConsole />
           <CuratorsKey />
+          <Analytics />
         </SmoothScrollProvider>
       </body>
     </html>

@@ -327,8 +327,14 @@ export function EntranceScene() {
                       <MosaicCanvas autostart={entered} />
                     </div>
                   )}
-                  <div className="mosaic-fallback" aria-hidden="true" />
                 </WebGLErrorBoundary>
+                {/* the CSS fallback sits OUTSIDE the error boundary — when
+                    WebGL fails, the boundary returns null and this
+                    designed gradient takes over */}
+                <div
+                  className={`mosaic-fallback${glFailed ? ' is-visible' : ''}`}
+                  aria-hidden="true"
+                />
               </div>
 
               {/* the kiln's proof mark — stamped over the room, then gone.

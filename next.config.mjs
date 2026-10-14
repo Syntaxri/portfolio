@@ -1,6 +1,12 @@
+import bundleAnalyzer from '@next/bundle-analyzer'
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+})
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  productionBrowserSourceMaps: true,
+const nextConfig = withBundleAnalyzer({
+  productionBrowserSourceMaps: false,
   images: {
     formats: ['image/avif', 'image/webp'],
     qualities: [75, 82],
@@ -70,10 +76,10 @@ const nextConfig = {
         value: [
           "default-src 'self'",
           "style-src 'self' 'unsafe-inline'",
-          "script-src 'self' 'unsafe-inline'",
+          "script-src 'self' 'unsafe-inline' https://plausible.io",
           "img-src 'self' data: blob:",
           "font-src 'self' data:",
-          "connect-src 'self' blob:",
+          "connect-src 'self' blob: https://plausible.io",
           `frame-src ${liveFrames}`,
           "frame-ancestors 'none'",
           "base-uri 'self'",
@@ -91,6 +97,6 @@ const nextConfig = {
       },
     ]
   },
-}
+})
 
 export default nextConfig

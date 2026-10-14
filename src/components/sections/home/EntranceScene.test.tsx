@@ -20,8 +20,11 @@ vi.mock('next/dynamic', () => {
   }
 })
 
+const mockBoundaryFail = vi.fn(() => false)
+
 vi.mock('@/components/three/WebGLErrorBoundary', () => ({
-  WebGLErrorBoundary: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  WebGLErrorBoundary: ({ children }: { children: React.ReactNode }) =>
+    mockBoundaryFail() ? null : <>{children}</>,
 }))
 
 describe('EntranceScene', () => {
@@ -39,6 +42,14 @@ describe('EntranceScene', () => {
   it('renders a static fallback so the room survives without WebGL', () => {
     const { container } = render(<EntranceScene />)
     expect(container.querySelector('.mosaic-fallback')).not.toBeNull()
+  })
+
+  it('renders the fallback even when the error boundary fails', () => {
+    mockBoundaryFail.mockReturnValue(true)
+    const { container } = render(<EntranceScene />)
+    // The fallback is outside the boundary, so it still renders
+    expect(container.querySelector('.mosaic-fallback')).not.toBeNull()
+    mockBoundaryFail.mockReturnValue(false)
   })
 
   it('is calm for reduced motion users: content present without choreography', () => {

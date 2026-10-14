@@ -8,12 +8,17 @@ import { Monogram } from '@/components/museum/Monogram'
 
 /**
  * SHORTCUT MODAL — appears on every site load.
- * Three cards: two existing shortcuts (Ctrl+Shift+K, Ctrl+Shift+G) and
- * a new one (Ctrl+Shift+R) that downloads the resume.
  *
- * Glassmorphism aesthetic matching the museum's dark panels. GSAP-powered
- * entrance with staggered cards. Escape, backdrop click, or close button
- * dismisses. Respects prefers-reduced-motion.
+ * Three shortcut cards:
+ *   1. Ctrl+Shift+K  — Conservation Console (live FPS/GPU stats)
+ *   2. Ctrl+Shift+G  — Keeper's Ledger (owner's GitHub activity)
+ *   3. Alt+Shift+D   — Download Resume (triggers PDF download)
+ *
+ * Modal reopens with Alt+Shift+R.
+ *
+ * All shortcuts are mutually exclusive, ignore editable elements,
+ * and use preventDefault to avoid browser conflicts where possible.
+ * Respects prefers-reduced-motion.
  */
 
 interface ShortcutCard {
@@ -22,6 +27,17 @@ interface ShortcutCard {
   description: string
   icon: 'console' | 'ledger' | 'download'
   action?: () => void
+}
+
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false
+  const tag = target.tagName.toLowerCase()
+  return (
+    tag === 'input' ||
+    tag === 'textarea' ||
+    tag === 'select' ||
+    target.isContentEditable
+  )
 }
 
 function KeyCap({ label }: { label: string }) {
@@ -106,13 +122,13 @@ export function ShortcutModal() {
   const lastFocusRef = useRef<HTMLElement | null>(null)
   const reduced = useReducedMotion()
 
-  // Show on mount — every site load
+  /* Show on mount — every site load */
   useEffect(() => {
     const t = requestAnimationFrame(() => setShow(true))
     return () => cancelAnimationFrame(t)
   }, [])
 
-  // Animate in/out
+  /* Animate in */
   useEffect(() => {
     if (!show) return
     setOpen(true)
@@ -126,40 +142,62 @@ export function ShortcutModal() {
       gsap.fromTo(
         backdropRef.current,
         { opacity: 0 },
-        { opacity: 1, duration: 0.5, ease: 'power2.out' }
+        { opacity: 1, duration: 0.5, ease: 'power2.out' },
       )
       gsap.fromTo(
         panelRef.current,
         { opacity: 0, scale: 0.94, y: 16, filter: 'blur(8px)' },
-        { opacity: 1, scale: 1, y: 0, filter: 'blur(0px)', duration: 0.6, ease: 'expo.out' }
+        { opacity: 1, scale: 1, y: 0, filter: 'blur(0px)', duration: 0.6, ease: 'expo.out' },
       )
       gsap.fromTo(
         '.shortcut-card',
         { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'expo.out', delay: 0.15 }
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'expo.out', delay: 0.15 },
       )
     })
 
     lastFocusRef.current = document.activeElement as HTMLElement | null
     closeRef.current?.focus()
 
-    return () => {
-      ctx.revert()
-    }
+    return () => ctx.revert()
   }, [show, reduced])
 
-  // Keyboard: Ctrl+Shift+R toggles, Escape closes
+  /* Centralized keyboard handler — mutually exclusive, skips editable elements */
   useEffect(() => {
-    if (!open) return
-
     const onKey = (e: KeyboardEvent) => {
-      // Ctrl+Shift+R — toggle the shortcut modal (resume download)
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'r') {
+      if (isEditableTarget(e.target)) return
+
+      const mod = e.ctrlKey || e.metaKey
+
+      // Ctrl+Shift+K — toggle Conservation Console
+      if (mod && e.shiftKey && e.key.toLowerCase() === 'k') {
         e.preventDefault()
-        setShow((v) => !v)
+        window.dispatchEvent(new Event('ar:toggle-console'))
         return
       }
-      // Escape closes
+
+      // Ctrl+Shift+G — toggle Keeper's Ledger
+      if (mod && e.shiftKey && e.key.toLowerCase() === 'g') {
+        e.preventDefault()
+        window.dispatchEvent(new Event('ar:toggle-github'))
+        return
+      }
+
+      // Alt+Shift+D — download resume
+      if (e.altKey && e.shiftKey && e.key.toLowerCase() === 'd') {
+        e.preventDefault()
+        downloadResume()
+        return
+      }
+
+      // Alt+Shift+R — reopen the modal
+      if (e.altKey && e.shiftKey && e.key.toLowerCase() === 'r') {
+        e.preventDefault()
+        setShow(true)
+        return
+      }
+
+      // Escape — close the modal
       if (e.key === 'Escape') {
         e.preventDefault()
         setShow(false)
@@ -168,7 +206,16 @@ export function ShortcutModal() {
 
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [open])
+  }, [])
+
+  const downloadResume = useCallback(() => {
+    const a = document.createElement('a')
+    a.href = '/Akram-Rihani-CV.pdf'
+    a.download = 'Akram-Rihani-Resume.pdf'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }, [])
 
   const close = useCallback(() => {
     if (reduced || !panelRef.current || !backdropRef.current) {
@@ -201,7 +248,7 @@ export function ShortcutModal() {
     ctx.revert()
   }, [reduced])
 
-  // Restore focus on unmount
+  /* Restore focus on unmount */
   useEffect(() => {
     if (!show && lastFocusRef.current) {
       lastFocusRef.current.focus()
@@ -214,28 +261,23 @@ export function ShortcutModal() {
     {
       keys: ['Ctrl', 'Shift', 'K'],
       title: 'Conservation Console',
-      description: 'Live FPS, draw calls, GPU state, and the current room — read from the real installation.',
+      description:
+        'Live FPS, draw calls, GPU state, and the current room — read from the real installation.',
       icon: 'console',
     },
     {
       keys: ['Ctrl', 'Shift', 'G'],
-      title: "Keeper's Ledger",
-      description: 'Your live GitHub profile, recent repos, and commit activity via the cached proxy.',
+      title: "Owner's GitHub",
+      description:
+        "Opens the portfolio owner's GitHub profile, recent repositories, and commit activity through the cached proxy.",
       icon: 'ledger',
     },
     {
-      keys: ['Ctrl', 'Shift', 'R'],
+      keys: ['Alt', 'Shift', 'D'],
       title: 'Download Resume',
-      description: `Download ${site.name}'s resume as a PDF — or just press the button below.`,
+      description: `Download ${site.name}'s resume as a PDF — or press the button below.`,
       icon: 'download',
-      action: () => {
-        const a = document.createElement('a')
-        a.href = '/Akram-Rihani-CV.pdf'
-        a.download = 'Akram-Rihani-CV.pdf'
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-      },
+      action: downloadResume,
     },
   ]
 
@@ -285,7 +327,7 @@ export function ShortcutModal() {
 
         {/* Footer hint */}
         <p className="mt-5 border-t border-[rgba(196,196,255,0.08)] pt-3 text-center font-mono text-[0.55rem] uppercase tracking-[0.14em] text-[#6f6756]">
-          Press Esc or click outside to close · Ctrl+Shift+R reopens
+          Press Esc or click outside to close · Alt+Shift+R reopens
         </p>
       </div>
     </div>

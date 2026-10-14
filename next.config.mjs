@@ -10,6 +10,12 @@ const nextConfig = withBundleAnalyzer({
   images: {
     formats: ['image/avif', 'image/webp'],
     qualities: [75, 82],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+      },
+    ],
   },
   headers: async () => {
     const headers = [
@@ -77,7 +83,7 @@ const nextConfig = withBundleAnalyzer({
           "default-src 'self'",
           "style-src 'self' 'unsafe-inline'",
           "script-src 'self' 'unsafe-inline' https://plausible.io",
-          "img-src 'self' data: blob:",
+          "img-src 'self' data: blob: https://avatars.githubusercontent.com",
           "font-src 'self' data:",
           "connect-src 'self' blob: https://plausible.io",
           `frame-src ${liveFrames}`,

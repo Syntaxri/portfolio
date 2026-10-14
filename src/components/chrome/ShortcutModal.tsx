@@ -83,7 +83,7 @@ function Card({
 
   return (
     <div
-      className="shortcut-card group flex flex-col gap-3 rounded-xl border border-[rgba(196,196,255,0.12)] bg-[rgba(26,22,17,0.6)] p-4 transition-colors duration-300 hover:border-[rgba(196,196,255,0.25)] hover:bg-[rgba(35,30,24,0.7)]"
+      className="shortcut-card group flex min-w-0 flex-col gap-3 overflow-hidden rounded-xl border border-[rgba(196,196,255,0.12)] bg-[rgba(26,22,17,0.6)] p-4 transition-colors duration-300 hover:border-[rgba(196,196,255,0.25)] hover:bg-[rgba(35,30,24,0.7)]"
       data-index={index}
     >
       <div className="flex items-center gap-2.5">
@@ -92,7 +92,7 @@ function Card({
           {card.title}
         </span>
       </div>
-      <div className="flex items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1.5">
         {card.keys.map((k, i) => (
           <span key={k} className="flex items-center gap-1.5">
             {i > 0 && <span className="font-mono text-[0.55rem] text-[#6f6756]">+</span>}
@@ -225,27 +225,23 @@ export function ShortcutModal() {
       return
     }
 
-    const ctx = gsap.context(() => {
-      gsap.to(panelRef.current, {
-        opacity: 0,
-        scale: 0.96,
-        y: 8,
-        duration: 0.3,
-        ease: 'power2.in',
-      })
-      gsap.to(backdropRef.current, {
-        opacity: 0,
-        duration: 0.3,
-        ease: 'power2.in',
-        onComplete: () => {
-          setShow(false)
-          setOpen(false)
-          lastFocusRef.current?.focus()
-        },
-      })
+    gsap.to(panelRef.current, {
+      opacity: 0,
+      scale: 0.96,
+      y: 8,
+      duration: 0.3,
+      ease: 'power2.in',
     })
-
-    ctx.revert()
+    gsap.to(backdropRef.current, {
+      opacity: 0,
+      duration: 0.3,
+      ease: 'power2.in',
+      onComplete: () => {
+        setShow(false)
+        setOpen(false)
+        lastFocusRef.current?.focus()
+      },
+    })
   }, [reduced])
 
   /* Restore focus on unmount */

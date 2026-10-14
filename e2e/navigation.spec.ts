@@ -3,11 +3,15 @@ import { test, expect } from '@playwright/test'
 const CLICK_TIMEOUT = 15_000
 
 test.describe('Navigation', () => {
-  test('should have working anchor links', async ({ page }) => {
+  test('should have working anchor links', async ({ page, isMobile }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
 
-    // On mobile the desktop nav links are hidden behind a hamburger — open it first
-    const isMobile = page.viewportSize()?.width !== undefined && page.viewportSize()!.width < 768
+    // Mobile: open the hamburger directory dialog, then click a link inside it
+    // Desktop: the links are directly visible in the topbar nav
+    const navLink = isMobile
+      ? page.locator('#room-menu a[href="/#collection"], #room-menu a[href="/#archive"], #room-menu a[href="/#exit"]').first()
+      : page.locator('a[href="/#collection"], a[href="/#archive"], a[href="/#exit"]').first()
+
     if (isMobile) {
       const hamburger = page.locator('button[aria-label="Toggle the directory"]')
       await hamburger.waitFor({ state: 'visible', timeout: CLICK_TIMEOUT })
@@ -15,9 +19,6 @@ test.describe('Navigation', () => {
       await page.waitForTimeout(500)
     }
 
-    const navLink = page
-      .locator('#room-menu a[href="/#collection"], #room-menu a[href="/#archive"], #room-menu a[href="/#exit"]')
-      .first()
     await navLink.waitFor({ state: 'visible', timeout: CLICK_TIMEOUT })
     await navLink.scrollIntoViewIfNeeded()
     await navLink.click({ timeout: CLICK_TIMEOUT })

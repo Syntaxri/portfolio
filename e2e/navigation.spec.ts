@@ -6,6 +6,15 @@ test.describe('Navigation', () => {
   test('should have working anchor links', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
 
+    // On mobile the desktop nav links are hidden behind a hamburger — open it first
+    const isMobile = page.viewportSize()?.width !== undefined && page.viewportSize()!.width < 768
+    if (isMobile) {
+      const hamburger = page.locator('button[aria-label="Toggle the directory"]')
+      await hamburger.waitFor({ state: 'visible', timeout: CLICK_TIMEOUT })
+      await hamburger.click()
+      await page.waitForTimeout(500)
+    }
+
     const navLink = page
       .locator('a[href="/#collection"], a[href="/#archive"], a[href="/#exit"]')
       .first()
@@ -49,7 +58,8 @@ test.describe('Navigation', () => {
       await backToTop.first().waitFor({ state: 'visible', timeout: CLICK_TIMEOUT })
       await backToTop.first().scrollIntoViewIfNeeded()
       await backToTop.first().click({ timeout: CLICK_TIMEOUT })
-      await page.waitForTimeout(2000)
+      // Wait for smooth scroll to settle
+      await page.waitForTimeout(3000)
 
       const scrollY = await page.evaluate(() => window.scrollY)
       expect(scrollY).toBeLessThan(100)

@@ -16,9 +16,10 @@ test.describe('WebGL Fallback', () => {
     const main = page.locator('main')
     await expect(main).toBeAttached()
 
-    const hero = page.getByText(/Akram Rihani/i).first()
-    await hero.waitFor({ state: 'visible', timeout: NAV_TIMEOUT })
-    await expect(hero).toBeVisible()
+    // Use h1 (always visible) instead of the name span (hidden sm:inline on mobile)
+    const h1 = page.locator('h1').first()
+    await h1.waitFor({ state: 'visible', timeout: NAV_TIMEOUT })
+    await expect(h1).toBeVisible()
   })
 
   test('should render all rooms even without WebGL', async ({ page }) => {

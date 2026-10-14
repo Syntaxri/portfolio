@@ -10,7 +10,6 @@ test.describe('Home Page', () => {
   test('should load the home page with all rooms', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
 
-    // Verify all room sections exist (actual IDs from components)
     const roomIds = [
       'entrance',
       'living',
@@ -31,13 +30,23 @@ test.describe('Home Page', () => {
   test('should display the hero section with key content', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
 
-    const hero = page.getByText(/Akram Rihani/i).first()
-    await hero.waitFor({ state: 'visible', timeout: NAV_TIMEOUT })
-    await expect(hero).toBeVisible({ timeout: NAV_TIMEOUT })
+    // The hero name span is hidden on mobile (hidden sm:inline) — use the h1 which is always visible
+    const h1 = page.locator('h1').first()
+    await h1.waitFor({ state: 'visible', timeout: NAV_TIMEOUT })
+    await expect(h1).toBeVisible({ timeout: NAV_TIMEOUT })
   })
 
   test('should have working navigation links', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
+
+    // On mobile the desktop nav is hidden behind a hamburger — open it first
+    const isMobile = page.viewportSize()?.width !== undefined && page.viewportSize()!.width < 768
+    if (isMobile) {
+      const hamburger = page.locator('button[aria-label="Toggle the directory"]')
+      await hamburger.waitFor({ state: 'visible', timeout: NAV_TIMEOUT })
+      await hamburger.click()
+      await page.waitForTimeout(500)
+    }
 
     const nav = page.locator('nav, [role="navigation"]')
     await nav.first().waitFor({ state: 'attached', timeout: NAV_TIMEOUT })

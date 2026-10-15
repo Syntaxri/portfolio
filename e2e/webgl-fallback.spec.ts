@@ -52,14 +52,14 @@ test.describe('WebGL Fallback', () => {
     const fallback = page.locator('.mosaic-fallback').first()
     await expect(fallback).toBeAttached({ timeout: NAV_TIMEOUT })
 
-    // Check if the WebGL canvas successfully initialized or if the fallback gracefully took over
-    const hasInstallation = await page.locator('[data-installation]').isVisible().catch(() => false)
-    if (hasInstallation) {
-      await expect(fallback).toHaveCSS('opacity', '0')
-    } else {
+    // Check if WebGL failed (which adds .is-visible and sets opacity 1) or succeeded (opacity 0)
+    const isFailed = await fallback.evaluate((el) => el.classList.contains('is-visible'))
+    if (isFailed) {
       // In headless environments without WebGL support (e.g. headless CI without GPU),
       // the designed fallback is visible as intended
       await expect(fallback).toHaveCSS('opacity', '1')
+    } else {
+      await expect(fallback).toHaveCSS('opacity', '0')
     }
   })
 

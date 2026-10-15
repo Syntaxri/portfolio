@@ -268,54 +268,56 @@ export function ShortcutModal() {
   ]
 
   return (
-    <div className="fixed inset-0 z-[180] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[180] overflow-y-auto">
       {/* Backdrop */}
       <div
         ref={backdropRef}
         onClick={close}
         data-testid="shortcut-backdrop"
-        className="absolute inset-0 bg-[#0a0806]/60 backdrop-blur-md"
+        className="fixed inset-0 bg-[#0a0806]/60 backdrop-blur-md"
         aria-hidden="true"
       />
 
-      {/* Panel */}
-      <div
-        ref={panelRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Keyboard shortcuts"
-        className="relative w-[min(900px,calc(100vw-3rem))] rounded-2xl border border-[rgba(196,196,255,0.18)] bg-[#1a1611]/95 p-7 shadow-[0_32px_80px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl"
-      >
-        {/* Close */}
-        <button
-          ref={closeRef}
-          onClick={close}
-          aria-label="Close shortcuts modal"
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-[0.3rem] border border-[rgba(196,196,255,0.2)] font-mono text-[0.65rem] text-[#8f8774] transition-all duration-200 hover:border-[rgba(196,196,255,0.5)] hover:text-[#e9e3d4] active:scale-95"
+      <div className="flex min-h-full items-center justify-center p-3 sm:p-6">
+        {/* Panel */}
+        <div
+          ref={panelRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Keyboard shortcuts"
+          className="relative my-auto w-[min(900px,calc(100vw-1.5rem))] max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-2xl border border-[rgba(196,196,255,0.18)] bg-[#1a1611]/95 p-5 sm:p-7 shadow-[0_32px_80px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl"
         >
-          ✕
-        </button>
+          {/* Close */}
+          <button
+            ref={closeRef}
+            onClick={close}
+            aria-label="Close shortcuts modal"
+            className="absolute right-4 top-4 sm:right-5 sm:top-5 flex h-8 w-8 items-center justify-center rounded-[0.3rem] border border-[rgba(196,196,255,0.2)] bg-[#1a1611] font-mono text-[0.65rem] text-[#8f8774] transition-all duration-200 hover:border-[rgba(196,196,255,0.5)] hover:text-[#e9e3d4] active:scale-95"
+          >
+            ✕
+          </button>
 
-        {/* Header */}
-        <div className="mb-1 flex items-center gap-3">
-          <Monogram className="h-8 w-8 text-[#c5a75a]" />
-          <h2 className="room-title text-[1.1rem] text-[#e9e3d4]">The Shortcuts</h2>
+          {/* Header */}
+          <div className="mb-1 flex items-center gap-3">
+            <Monogram className="h-8 w-8 text-[#c5a75a]" />
+            <h2 className="room-title text-[1.1rem] text-[#e9e3d4]">The Shortcuts</h2>
+          </div>
+          <p className="mb-5 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-[#8f8774]">
+            Three doors into the museum&apos;s hidden rooms
+          </p>
+
+          {/* Cards */}
+          <div className="grid gap-4 sm:grid-cols-3">
+            {cards.map((card, i) => (
+              <Card key={card.title} card={card} index={i} />
+            ))}
+          </div>
+
+          {/* Footer hint */}
+          <p className="mt-5 border-t border-[rgba(196,196,255,0.08)] pt-3 text-center font-mono text-[0.55rem] uppercase tracking-[0.14em] text-[#6f6756]">
+            Press Esc or click outside to close · Alt+Shift+R reopens
+          </p>
         </div>
-        <p className="mb-5 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-[#8f8774]">
-          Three doors into the museum&apos;s hidden rooms
-        </p>
-
-        {/* Cards */}
-        <div className="grid gap-4 sm:grid-cols-3">
-          {cards.map((card, i) => (
-            <Card key={card.title} card={card} index={i} />
-          ))}
-        </div>
-
-        {/* Footer hint */}
-        <p className="mt-5 border-t border-[rgba(196,196,255,0.08)] pt-3 text-center font-mono text-[0.55rem] uppercase tracking-[0.14em] text-[#6f6756]">
-          Press Esc or click outside to close · Alt+Shift+R reopens
-        </p>
       </div>
     </div>
   )

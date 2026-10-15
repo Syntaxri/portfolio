@@ -53,18 +53,9 @@ export function CraftDashboard() {
   const lastFocusRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'k') {
-        e.preventDefault()
-        setOpen((v) => !v)
-      }
-      if (e.key === 'Escape') setOpen(false)
-    }
     const onToggle = () => setOpen((v) => !v)
-    window.addEventListener('keydown', onKey)
     window.addEventListener('ar:toggle-console', onToggle)
     return () => {
-      window.removeEventListener('keydown', onKey)
       window.removeEventListener('ar:toggle-console', onToggle)
     }
   }, [])

@@ -283,6 +283,7 @@ export function ShortcutModal() {
       <div
         ref={backdropRef}
         onClick={close}
+        data-testid="shortcut-backdrop"
         className="absolute inset-0 bg-[#0a0806]/60 backdrop-blur-md"
         aria-hidden="true"
       />

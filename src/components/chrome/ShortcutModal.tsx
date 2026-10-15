@@ -114,13 +114,21 @@ function Card({
 }
 
 export function ShortcutModal() {
-  const [open, setOpen] = useState(false)
   const [show, setShow] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLDivElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
   const lastFocusRef = useRef<HTMLElement | null>(null)
   const reduced = useReducedMotion()
+
+  const downloadResume = useCallback(() => {
+    const a = document.createElement('a')
+    a.href = '/Akram-Rihani-CV.pdf'
+    a.download = 'Akram-Rihani-Resume.pdf'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }, [])
 
   /* Show on mount — every site load */
   useEffect(() => {
@@ -131,7 +139,6 @@ export function ShortcutModal() {
   /* Animate in */
   useEffect(() => {
     if (!show) return
-    setOpen(true)
 
     if (reduced || !panelRef.current || !backdropRef.current) {
       closeRef.current?.focus()
@@ -206,7 +213,7 @@ export function ShortcutModal() {
 
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  }, [downloadResume])
 
   const downloadResume = useCallback(() => {
     const a = document.createElement('a')

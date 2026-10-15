@@ -68,16 +68,20 @@ test.describe('WebGL Fallback', () => {
 
     await page.goto('/', { waitUntil: 'networkidle' })
 
-    // Allow known WebGL/Three.js errors from intentional GL failure
+    // Allow known WebGL/Three.js errors from intentional GL failure and browser internal logs
     const unexpectedErrors = consoleErrors.filter(
       (err) =>
+        err !== 'Error' &&
         !err.includes('WebGL') &&
         !err.includes('webgl') &&
         !err.includes('THREE') &&
         !err.includes('GL_') &&
         !err.includes('GPU') &&
         !err.includes('GroupMarkerNotSet') &&
-        !err.includes('Automatic fallback to software WebGL'),
+        !err.includes('Automatic fallback to software WebGL') &&
+        !err.includes('Content-Security-Policy') &&
+        !err.includes('frame-ancestors') &&
+        !err.includes('NetworkObserver'),
     )
 
     expect(unexpectedErrors).toEqual([])

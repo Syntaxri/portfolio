@@ -87,7 +87,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    if: github.event_name != 'pull_request' || matrix.project == 'chromium'
     strategy:
       fail-fast: false
       matrix:
@@ -106,9 +105,11 @@ jobs:
           cache: npm
 
       - name: Install dependencies
+        if: github.event_name != 'pull_request' || matrix.project == 'chromium'
         run: npm ci
 
       - name: Cache Playwright browsers
+        if: github.event_name != 'pull_request' || matrix.project == 'chromium'
         uses: actions/cache@v4
         id: playwright-cache
         with:
@@ -118,20 +119,22 @@ jobs:
             playwright-${{ runner.os }}-
 
       - name: Install Playwright dependencies
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        if: (steps.playwright-cache.outputs.cache-hit == 'true') && (github.event_name != 'pull_request' || matrix.project == 'chromium')
         run: npx playwright install-deps
 
       - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        if: (steps.playwright-cache.outputs.cache-hit != 'true') && (github.event_name != 'pull_request' || matrix.project == 'chromium')
         run: npx playwright install --with-deps
 
       - name: Download build artifact
+        if: github.event_name != 'pull_request' || matrix.project == 'chromium'
         uses: actions/download-artifact@v4
         with:
           name: next-build
           path: .next/
 
       - name: Run E2E tests
+        if: github.event_name != 'pull_request' || matrix.project == 'chromium'
         run: npx playwright test --project=${{ matrix.project }}
         env:
           PW_WORKERS: 2
@@ -139,7 +142,7 @@ jobs:
           CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
 
       - name: Upload Playwright report
-        if: failure()
+        if: failure() && (github.event_name != 'pull_request' || matrix.project == 'chromium')
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-${{ matrix.project }}

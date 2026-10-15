@@ -215,19 +215,9 @@ export function ShortcutModal() {
     return () => window.removeEventListener('keydown', onKey)
   }, [downloadResume])
 
-  const downloadResume = useCallback(() => {
-    const a = document.createElement('a')
-    a.href = '/Akram-Rihani-CV.pdf'
-    a.download = 'Akram-Rihani-Resume.pdf'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-  }, [])
-
   const close = useCallback(() => {
     if (reduced || !panelRef.current || !backdropRef.current) {
       setShow(false)
-      setOpen(false)
       lastFocusRef.current?.focus()
       return
     }
@@ -245,7 +235,6 @@ export function ShortcutModal() {
       ease: 'power2.in',
       onComplete: () => {
         setShow(false)
-        setOpen(false)
         lastFocusRef.current?.focus()
       },
     })

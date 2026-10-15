@@ -6,8 +6,14 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Contact Form', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
-    await page.waitForTimeout(4000)
+    await page.goto('/', { waitUntil: 'networkidle' })
+
+    // Dismiss the shortcut modal — its backdrop intercepts pointer events
+    const modal = page.locator('[role="dialog"][aria-label="Keyboard shortcuts"]')
+    if (await modal.isVisible({ timeout: 15_000 })) {
+      await page.locator('button[aria-label="Close shortcuts modal"]').click()
+      await page.waitForTimeout(500)
+    }
 
     // Scroll to the contact form
     await page.evaluate(() => {

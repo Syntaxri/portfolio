@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures'
 
 /**
  * Contact form E2E tests — verify form validation and submission.
@@ -7,13 +7,6 @@ import { test, expect } from '@playwright/test'
 test.describe('Contact Form', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
-
-    // Dismiss the shortcut modal — its backdrop intercepts pointer events
-    const modal = page.locator('[role="dialog"][aria-label="Keyboard shortcuts"]')
-    if (await modal.isVisible({ timeout: 15_000 })) {
-      await page.locator('button[aria-label="Close shortcuts modal"]').click()
-      await page.waitForTimeout(500)
-    }
 
     // Scroll to the contact form
     await page.evaluate(() => {

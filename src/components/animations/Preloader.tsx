@@ -123,6 +123,7 @@ export function Preloader() {
       window.__entranceReady = false
       window.dispatchEvent(new Event('ar:door-lift'))
       tl?.kill()
+      if (root) root.style.pointerEvents = 'none'
       gsap.to(root, {
         yPercent: -100,
         duration: 0.4,
@@ -149,6 +150,7 @@ export function Preloader() {
     <div
       ref={rootRef}
       aria-hidden
+      data-testid="preloader"
       className="fixed inset-0 z-[200] flex flex-col justify-between bg-bg px-5 py-4 sm:px-8"
     >
       <div className="flex items-center justify-between border-b border-[rgba(28,26,22,0.12)] pb-3">

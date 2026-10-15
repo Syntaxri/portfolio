@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures'
 
 const MODAL_TIMEOUT = 15_000
 
@@ -6,6 +6,7 @@ test.describe('ShortcutModal', () => {
   test('displays three shortcut cards with correct key combinations', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
 
+    await page.keyboard.press('Alt+Shift+R')
     const modal = page.locator('[role="dialog"][aria-label="Keyboard shortcuts"]')
     await modal.waitFor({ state: 'visible', timeout: MODAL_TIMEOUT })
 
@@ -19,6 +20,7 @@ test.describe('ShortcutModal', () => {
   test('close button dismisses the modal', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
 
+    await page.keyboard.press('Alt+Shift+R')
     const modal = page.locator('[role="dialog"][aria-label="Keyboard shortcuts"]')
     await modal.waitFor({ state: 'visible', timeout: MODAL_TIMEOUT })
 
@@ -30,6 +32,7 @@ test.describe('ShortcutModal', () => {
   test('backdrop click dismisses the modal', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
 
+    await page.keyboard.press('Alt+Shift+R')
     const modal = page.locator('[role="dialog"][aria-label="Keyboard shortcuts"]')
     await modal.waitFor({ state: 'visible', timeout: MODAL_TIMEOUT })
 
@@ -46,6 +49,7 @@ test.describe('ShortcutModal', () => {
   test('Escape key dismisses the modal', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
 
+    await page.keyboard.press('Alt+Shift+R')
     const modal = page.locator('[role="dialog"][aria-label="Keyboard shortcuts"]')
     await modal.waitFor({ state: 'visible', timeout: MODAL_TIMEOUT })
 
@@ -56,11 +60,6 @@ test.describe('ShortcutModal', () => {
 
   test('Ctrl+Shift+K opens conservation console exactly once', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
-
-    const modal = page.locator('[role="dialog"][aria-label="Keyboard shortcuts"]')
-    await modal.waitFor({ state: 'visible', timeout: MODAL_TIMEOUT })
-    await page.locator('button[aria-label="Close shortcuts modal"]').click()
-    await page.waitForTimeout(500)
 
     await page.keyboard.press('Control+Shift+K')
     await page.waitForTimeout(1000)
@@ -74,11 +73,6 @@ test.describe('ShortcutModal', () => {
 
   test('Ctrl+Shift+G opens GitHub ledger exactly once', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
-
-    const modal = page.locator('[role="dialog"][aria-label="Keyboard shortcuts"]')
-    await modal.waitFor({ state: 'visible', timeout: MODAL_TIMEOUT })
-    await page.locator('button[aria-label="Close shortcuts modal"]').click()
-    await page.waitForTimeout(500)
 
     await page.keyboard.press('Control+Shift+G')
     await page.waitForTimeout(1000)
@@ -94,9 +88,6 @@ test.describe('ShortcutModal', () => {
     await page.goto('/', { waitUntil: 'networkidle' })
 
     const modal = page.locator('[role="dialog"][aria-label="Keyboard shortcuts"]')
-    await modal.waitFor({ state: 'visible', timeout: MODAL_TIMEOUT })
-    await page.locator('button[aria-label="Close shortcuts modal"]').click()
-    await page.waitForTimeout(500)
 
     await page.keyboard.press('Alt+Shift+D')
     await page.waitForTimeout(1000)
@@ -112,7 +103,11 @@ test.describe('ShortcutModal', () => {
     await page.goto('/', { waitUntil: 'networkidle' })
 
     const modal = page.locator('[role="dialog"][aria-label="Keyboard shortcuts"]')
+
+    await page.keyboard.press('Alt+Shift+R')
     await modal.waitFor({ state: 'visible', timeout: MODAL_TIMEOUT })
+    await expect(modal).toBeVisible()
+
     await page.locator('button[aria-label="Close shortcuts modal"]').click()
     await page.waitForTimeout(500)
     await expect(modal).not.toBeAttached()

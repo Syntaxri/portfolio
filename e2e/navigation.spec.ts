@@ -1,17 +1,10 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures'
 
 const CLICK_TIMEOUT = 15_000
 
 test.describe('Navigation', () => {
   test('should have working anchor links', async ({ page, isMobile }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
-
-    // Dismiss the shortcut modal — its backdrop intercepts pointer events
-    const modal = page.locator('[role="dialog"][aria-label="Keyboard shortcuts"]')
-    if (await modal.isVisible({ timeout: 15_000 })) {
-      await page.locator('button[aria-label="Close shortcuts modal"]').click()
-      await page.waitForTimeout(500)
-    }
 
     // Mobile: open the hamburger directory dialog, then click a link inside it
     // Desktop: the links are directly visible in the topbar nav
@@ -55,13 +48,6 @@ test.describe('Navigation', () => {
 
   test('should have working back-to-top functionality', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
-
-    // Dismiss the shortcut modal — its backdrop intercepts pointer events
-    const modal = page.locator('[role="dialog"][aria-label="Keyboard shortcuts"]')
-    if (await modal.isVisible({ timeout: 15_000 })) {
-      await page.locator('button[aria-label="Close shortcuts modal"]').click()
-      await page.waitForTimeout(500)
-    }
 
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
     await page.waitForTimeout(1000)

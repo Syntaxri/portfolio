@@ -7,7 +7,7 @@ import { site } from '@/lib/data/site'
 import { Monogram } from '@/components/museum/Monogram'
 
 /**
- * SHORTCUT MODAL — appears on every site load.
+ * SHORTCUT MODAL
  *
  * Three shortcut cards:
  *   1. Ctrl+Shift+K  — Conservation Console (live FPS/GPU stats)
@@ -128,12 +128,6 @@ export function ShortcutModal() {
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
-  }, [])
-
-  /* Show on mount — every site load */
-  useEffect(() => {
-    const t = requestAnimationFrame(() => setShow(true))
-    return () => cancelAnimationFrame(t)
   }, [])
 
   /* Animate in */

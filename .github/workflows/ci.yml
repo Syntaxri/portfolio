@@ -140,7 +140,7 @@ jobs:
         if: github.event_name != 'pull_request' || matrix.project == 'chromium'
         run: npx playwright test --project=${{ matrix.project }}
         env:
-          PW_WORKERS: 2
+          PW_WORKERS: 3
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
 

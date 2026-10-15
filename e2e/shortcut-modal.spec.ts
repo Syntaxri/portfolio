@@ -3,6 +3,11 @@ import { test, expect } from './fixtures'
 const MODAL_TIMEOUT = 15_000
 
 test.describe('ShortcutModal', () => {
+  test.skip(
+    ({ isMobile, browserName }) => isMobile || browserName === 'webkit',
+    'Keyboard shortcuts are tested on desktop Chrome and Firefox only',
+  )
+
   test('displays three shortcut cards with correct key combinations', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
 

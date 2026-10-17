@@ -2,18 +2,17 @@
 
 ## Workflows
 
-| Workflow | Trigger | Jobs | Purpose |
-|---|---|---|---|
-| **CI** | Push to `main`, PR | `gate` → `checks` → `build` → `e2e` (matrix) | Fast PR feedback + full cross-browser on merge |
-| **Nightly** | `cron: '0 2 * * *'` | `e2e` (matrix: 5 projects) | Full cross-browser regression against `main` |
+| Workflow | Trigger            | Jobs                                         | Purpose                                        |
+| -------- | ------------------ | -------------------------------------------- | ---------------------------------------------- |
+| **CI**   | Push to `main`, PR | `gate` → `checks` → `build` → `e2e` (matrix) | Fast PR feedback + full cross-browser on merge |
 
 ## Pipeline Design
 
 ```
-PR (chromium only)        Push to main              Nightly (02:00 UTC)
-────────────────          ────────────              ────────────────────
-gate → checks → build     gate → checks → build     e2e (5 projects in parallel)
-  → e2e (chromium)          → e2e (5 projects)       30 min timeout
+PR (chromium only)        Push to main
+────────────────          ────────────
+gate → checks → build     gate → checks → build
+  → e2e (chromium)          → e2e (5 projects in parallel)
 ```
 
 ## Job Details
@@ -52,15 +51,14 @@ gate → checks → build     gate → checks → build     e2e (5 projects in p
 
 ## PR Coverage Strategy
 
-| Trigger | E2E projects | Why |
-|---|---|---|
-| `pull_request` | chromium only | Fastest signal; catches 90% of regressions |
-| `push` to `main` | all 5 | Full cross-browser before deploy |
-| `schedule` (nightly) | all 5 | Regression against `main` |
+| Trigger          | E2E projects  | Why                                        |
+| ---------------- | ------------- | ------------------------------------------ |
+| `pull_request`   | chromium only | Fastest signal; catches 90% of regressions |
+| `push` to `main` | all 5         | Full cross-browser before deploy           |
 
 ## Cost Optimizations
 
-- **Parallel shards**: 5 projects run concurrently on push/nightly
+- **Parallel shards**: 5 projects run concurrently on push to `main`
 - **PR chromium-only**: 80% reduction in E2E runner minutes on PRs
 - **No redundant builds**: `e2e` reuses `.next/` from `build` job
 - **Browser cache**: Lockfile-keyed cache avoids re-downloading ~500MB on every run
@@ -69,12 +67,12 @@ gate → checks → build     gate → checks → build     e2e (5 projects in p
 
 ## Performance Targets
 
-| Job | Current | Target |
-|---|---|---|
-| `checks` | ~1.5 min | ~1.5 min |
-| `build` | ~2 min | ~2 min |
+| Job                 | Current              | Target            |
+| ------------------- | -------------------- | ----------------- |
+| `checks`            | ~1.5 min             | ~1.5 min          |
+| `build`             | ~2 min               | ~2 min            |
 | `e2e` (full matrix) | ~21 min (sequential) | ~5 min (parallel) |
-| **PR wall-clock** | ~25 min | **< 8 min** |
+| **PR wall-clock**   | ~25 min              | **< 8 min**       |
 
 ## Tuning
 
